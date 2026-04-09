@@ -1,8 +1,10 @@
 import { getOrders } from "@/services/orders"
+import { requireAuth } from "@/lib/auth/get-session"
 import Link from "next/link"
 
 export default async function OrdersPage() {
-  const orders = await getOrders()
+  const user = await requireAuth()
+  const orders = await getOrders(user.id)
 
   return (
     <div className="space-y-6">

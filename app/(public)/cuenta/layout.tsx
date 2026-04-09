@@ -1,10 +1,13 @@
 "use client"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useSession, signOut } from "next-auth/react"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
+  const { data: session } = useSession()
+  const user = session?.user
 
   const navItems = [
     { label: "Mi Perfil", href: "/cuenta" },
@@ -23,11 +26,11 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
           <div className="p-4 border rounded-2xl bg-card">
             <div className="flex items-center gap-4 mb-6 pb-6 border-b">
                <div className="w-12 h-12 bg-primary/10 text-primary font-bold text-xl rounded-full flex items-center justify-center shrink-0">
-                 JP
+                 {user?.name?.charAt(0)?.toUpperCase() ?? "U"}
                </div>
                <div>
-                 <p className="font-semibold px-1">Juan Pérez</p>
-                 <p className="text-xs text-muted-foreground px-1">juan@ejemplo.com</p>
+                 <p className="font-semibold px-1">{user?.name ?? "Usuario"}</p>
+                 <p className="text-xs text-muted-foreground px-1">{user?.email ?? ""}</p>
                </div>
             </div>
             
@@ -49,7 +52,10 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                 )
               })}
               
-              <button className="px-4 py-3 text-left rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors mt-4">
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="px-4 py-3 text-left rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors mt-4"
+              >
                 Cerrar Sesión
               </button>
             </nav>

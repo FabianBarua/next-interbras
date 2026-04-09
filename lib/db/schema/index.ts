@@ -23,3 +23,9 @@ export * from "./promotions"
 
 // catalog presets
 export * from "./catalog-presets"
+
+// orders & commerce
+export * from "./orders"
+export * from "./order-items"
+export * from "./wishlists"
+export * from "./addresses"

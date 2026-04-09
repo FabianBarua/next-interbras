@@ -1,15 +1,17 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { OrderTracker } from "@/components/store/order-tracker"
 
-export default function ConfirmacionPage() {
+function ConfirmacionContent() {
+  const searchParams = useSearchParams()
   const [mounted, setMounted] = useState(false)
   useEffect(() => { setMounted(true) }, [])
   if (!mounted) return null
 
-  const orderId = `INT-${Date.now().toString().slice(-8)}`
+  const orderId = searchParams.get("orderId") ?? `INT-${Date.now().toString().slice(-8)}`
 
   return (
     <div className="container max-w-2xl px-4 py-16">
@@ -91,5 +93,13 @@ export default function ConfirmacionPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ConfirmacionPage() {
+  return (
+    <Suspense>
+      <ConfirmacionContent />
+    </Suspense>
   )
 }

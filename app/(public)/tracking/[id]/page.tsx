@@ -1,4 +1,4 @@
-import { getOrderById } from "@/services/orders"
+import { getOrderByIdPublic } from "@/services/orders"
 import { notFound } from "next/navigation"
 import { OrderTracker } from "@/components/store/order-tracker"
 import Link from "next/link"
@@ -7,7 +7,7 @@ import Image from "next/image"
 export default async function PublicTrackingPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
   const { id } = resolvedParams
-  const order = await getOrderById(id)
+  const order = await getOrderByIdPublic(id)
 
   if (!order) return notFound()
 

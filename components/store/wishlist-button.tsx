@@ -1,12 +1,16 @@
 "use client"
 import { useWishlistStore } from "@/store/wishlist-store"
+import { toggleWishlistAction } from "@/lib/actions/wishlist"
 import type { Product } from "@/types/product"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useTransition } from "react"
+import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 
 export function WishlistButton({ product, className = "" }: { product: Product; className?: string }) {
   const { wishlist, toggle } = useWishlistStore()
   const [isMounted, setIsMounted] = useState(false)
+  const { data: session } = useSession()
+  const [, startTransition] = useTransition()
   
   useEffect(() => {
     setIsMounted(true)
@@ -19,6 +23,13 @@ export function WishlistButton({ product, className = "" }: { product: Product; 
     e.stopPropagation()
     toggle(product)
     toast(isFav ? "Removido de favoritos" : "Añadido a favoritos")
+
+    // Sync with server if logged in (fire-and-forget)
+    if (session?.user?.id) {
+      startTransition(() => {
+        toggleWishlistAction(product.id).catch(() => {})
+      })
+    }
   }
 
   return (

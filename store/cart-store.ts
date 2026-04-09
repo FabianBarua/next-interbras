@@ -6,6 +6,7 @@ import type { Product, Variant } from '../types/product'
 interface CartState {
   cart: Cart
   lastAddedAt: number
+  _hydrated: boolean
   addItem: (product: Product, quantity: number, variant?: Variant) => void
   removeItem: (itemId: string) => void
   updateQuantity: (itemId: string, quantity: number) => void
@@ -17,6 +18,7 @@ export const useCartStore = create<CartState>()(
     (set) => ({
       cart: { items: [], totalItems: 0, subtotal: 0 },
       lastAddedAt: 0,
+      _hydrated: false,
       addItem: (product, quantity, variant) => set((state) => {
         const items = [...state.cart.items]
         const existing = items.find(i => i.productId === product.id && i.variantId === variant?.id)
@@ -47,6 +49,18 @@ export const useCartStore = create<CartState>()(
       }),
       clear: () => set({ cart: { items: [], totalItems: 0, subtotal: 0 } })
     }),
-    { name: 'interbras-cart' }
+    {
+      name: 'interbras-cart',
+      partialize: (state) => ({ cart: state.cart, lastAddedAt: state.lastAddedAt }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // Reset stale lastAddedAt so the cart preview doesn't auto-show on page load
+          if (Date.now() - state.lastAddedAt > 5000) {
+            state.lastAddedAt = 0
+          }
+          state._hydrated = true
+        }
+      },
+    }
   )
 )

@@ -9,6 +9,7 @@ import { useLocaleStore } from "@/store/locale-store"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
+import { createOrderAction } from "@/lib/actions/checkout"
 
 const SHIPPING_OPTIONS = [
   { id: "standard", label: "Envío Estándar", desc: "5-7 días hábiles", price: 8.5 },
@@ -17,8 +18,8 @@ const SHIPPING_OPTIONS = [
 ]
 
 const PAYMENT_METHODS = [
-  { id: "card", label: "Tarjeta de Crédito / Débito", icon: "card" },
-  { id: "transfer", label: "Transferencia Bancaria", icon: "bank" },
+  // { id: "card", label: "Tarjeta de Crédito / Débito", icon: "card" },
+  // { id: "transfer", label: "Transferencia Bancaria", icon: "bank" },
   { id: "cash", label: "Pago en Efectivo (sucursal)", icon: "cash" },
 ]
 
@@ -31,8 +32,9 @@ export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false)
   const [step, setStep] = useState(1)
   const [shipping, setShipping] = useState("standard")
-  const [payment, setPayment] = useState("card")
+  const [payment, setPayment] = useState("cash")
   const [processing, setProcessing] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const [form, setForm] = useState({
     nombre: "Juan",
@@ -64,12 +66,39 @@ export default function CheckoutPage() {
     { num: 3, label: "Pago" },
   ]
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     setProcessing(true)
-    setTimeout(() => {
+    setError(null)
+    try {
+      const res = await createOrderAction({
+        customerName: `${form.nombre} ${form.apellido}`,
+        customerEmail: form.email,
+        customerPhone: form.telefono || undefined,
+        customerDocument: form.documento || undefined,
+        shippingAddress: {
+          street: form.direccion,
+          city: form.ciudad,
+          state: form.departamento,
+          country: "Paraguay",
+        },
+        shippingMethod: shipping,
+        notes: undefined,
+        items: cart.items.map(item => ({
+          variantId: item.variantId!,
+          quantity: item.quantity,
+        })),
+      })
+      if ("error" in res) {
+        setError(res.error as string)
+        setProcessing(false)
+        return
+      }
       clear()
-      router.push("/checkout/confirmacion")
-    }, 1800)
+      router.push(`/checkout/confirmacion?orderId=${res.orderId}`)
+    } catch {
+      setError("Error al procesar el pedido. Intenta de nuevo.")
+      setProcessing(false)
+    }
   }
 
   if (cart.items.length === 0 && !processing) {
@@ -356,6 +385,10 @@ export default function CheckoutPage() {
                 <p className="text-[11px] text-muted-foreground text-center mt-4">
                   Al confirmar, aceptas los Términos y Condiciones y la Política de Privacidad.
                 </p>
+
+                {error && (
+                  <p className="text-sm text-destructive text-center mt-3 font-medium">{error}</p>
+                )}
               </div>
             )}
           </div>

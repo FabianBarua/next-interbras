@@ -1,32 +1,19 @@
 import { getOrderById } from "@/services/orders"
+import { requireAuth } from "@/lib/auth/get-session"
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import Image from "next/image"
 import { OrderTracker } from "@/components/store/order-tracker"
 import { Separator } from "@/components/ui/separator"
-import { productsMock } from "@/mock/products"
-
-function getProductImage(productId: string) {
-  const p = productsMock.find((pr) => pr.id === productId)
-  if (!p) return null
-  const img = p.images.find((i) => i.isMain) || p.images[0]
-  return img?.url || null
-}
-
-function getProductSlug(productId: string) {
-  const p = productsMock.find((pr) => pr.id === productId)
-  if (!p) return null
-  return `/productos/${p.category?.slug || "cat"}/${p.slug}`
-}
 
 export default async function OrderDetailPage(
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const user = await requireAuth()
   const resolvedParams = await params
   const { id } = resolvedParams
   const order = await getOrderById(id)
 
-  if (!order) {
+  if (!order || order.userId !== user.id) {
     notFound()
   }
 
@@ -110,29 +97,16 @@ export default async function OrderDetailPage(
             <h2 className="font-bold text-base mb-4">Artículos del Pedido</h2>
             <div className="space-y-0">
               {order.items.map((item, idx) => {
-                const imgUrl = getProductImage(item.productId)
-                const slug = getProductSlug(item.productId)
-
                 return (
                   <div key={item.id}>
                     <div className="flex items-center gap-4 py-4">
-                      <Link
-                        href={slug || "#"}
-                        className="relative w-16 h-16 sm:w-20 sm:h-20 bg-muted/30 rounded-lg overflow-hidden shrink-0 border hover:border-primary/30 transition-colors"
-                      >
-                        {imgUrl ? (
-                          <Image src={imgUrl} alt={item.productName.es} fill className="object-contain p-1.5" />
-                        ) : (
-                          <span className="flex items-center justify-center h-full text-xs text-muted-foreground">IMG</span>
-                        )}
-                      </Link>
+                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 bg-muted/30 rounded-lg overflow-hidden shrink-0 border flex items-center justify-center">
+                        <span className="text-xs text-muted-foreground font-medium">{item.productName.es?.slice(0, 3)?.toUpperCase() ?? "IMG"}</span>
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <Link
-                          href={slug || "#"}
-                          className="text-sm font-medium hover:text-primary transition-colors line-clamp-2"
-                        >
+                        <p className="text-sm font-medium line-clamp-2">
                           {item.productName.es}
-                        </Link>
+                        </p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Cant: {item.quantity} × US$ {fmt(item.price)}
                         </p>

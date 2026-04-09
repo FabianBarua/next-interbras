@@ -1,7 +1,9 @@
 import { getAddresses } from "@/services/user"
+import { requireAuth } from "@/lib/auth/get-session"
 
 export default async function AddressesPage() {
-  const addresses = await getAddresses()
+  const user = await requireAuth()
+  const addresses = await getAddresses(user.id)
 
   return (
     <div className="space-y-6">
