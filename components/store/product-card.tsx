@@ -1,17 +1,23 @@
 import Link from "next/link"
 import Image from "next/image"
-import type { Product } from "@/types/product"
+import type { Product, Variant } from "@/types/product"
 import { PriceDisplay } from "./price-display"
 import { WishlistButton } from "./wishlist-button"
 
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, variant }: { product: Product; variant?: Variant }) {
   const mainImage = product.images.find(img => img.isMain) || product.images[0]
-  const defaultVariant = product.variants[0]
+  const v = variant || product.variants[0]
   const productName = product.name?.es || product.name?.pt || "Producto"
+
+  // Build variant attribute tags
+  const attrs = v?.attributes ? Object.values(v.attributes) as string[] : []
+  const href = variant
+    ? `/productos/${product.category?.slug || 'other'}/${product.slug}?v=${variant.id}`
+    : `/productos/${product.category?.slug || 'other'}/${product.slug}`
 
   return (
     <div className="group relative flex flex-col rounded-xl bg-card border border-border/50 hover:border-border transition-all duration-300 overflow-hidden">
-      <Link href={`/productos/${product.category?.slug || 'other'}/${product.slug}`} className="absolute inset-0 z-10">
+      <Link href={href} className="absolute inset-0 z-10">
         <span className="sr-only">Ver {productName}</span>
       </Link>
 
@@ -42,8 +48,19 @@ export function ProductCard({ product }: { product: Product }) {
           {productName}
         </h3>
 
+        {/* Variant tags */}
+        {attrs.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-0.5">
+            {attrs.map((a) => (
+              <span key={a} className="text-[10px] text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded">
+                {a}
+              </span>
+            ))}
+          </div>
+        )}
+
         <div className="mt-auto pt-1.5">
-          <PriceDisplay externalCode={defaultVariant?.externalCode} />
+          <PriceDisplay externalCode={v?.externalCode} />
         </div>
       </div>
     </div>

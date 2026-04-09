@@ -1,10 +1,47 @@
 import { productsMock } from "../mock/products"
-import type { Product } from "../types/product"
+import type { Product, Variant } from "../types/product"
 
 const DELAY = 500
 
+export interface VariantEntry {
+  product: Product
+  variant: Variant
+}
+
 export async function getProducts(): Promise<Product[]> {
   return new Promise((resolve) => setTimeout(() => resolve(productsMock.filter(p => p.active)), DELAY))
+}
+
+/** Flatten all products into variant-level entries for listings */
+export async function getVariantEntries(): Promise<VariantEntry[]> {
+  const products = productsMock.filter(p => p.active)
+  const entries: VariantEntry[] = []
+  for (const product of products) {
+    if (product.variants.length === 0) {
+      entries.push({ product, variant: undefined as any })
+    } else {
+      for (const variant of product.variants) {
+        entries.push({ product, variant })
+      }
+    }
+  }
+  return new Promise((resolve) => setTimeout(() => resolve(entries), DELAY))
+}
+
+/** Flatten variants for a specific category */
+export async function getVariantEntriesByCategory(categorySlug: string): Promise<VariantEntry[]> {
+  const products = productsMock.filter(p => p.category?.slug === categorySlug && p.active)
+  const entries: VariantEntry[] = []
+  for (const product of products) {
+    if (product.variants.length === 0) {
+      entries.push({ product, variant: undefined as any })
+    } else {
+      for (const variant of product.variants) {
+        entries.push({ product, variant })
+      }
+    }
+  }
+  return new Promise((resolve) => setTimeout(() => resolve(entries), DELAY))
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {

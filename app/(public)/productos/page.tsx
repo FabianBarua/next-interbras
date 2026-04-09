@@ -1,11 +1,11 @@
-import { getProducts } from "@/services/products"
+import { getVariantEntries } from "@/services/products"
 import { getCategories } from "@/services/categories"
 import { ProductCard } from "@/components/store/product-card"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 
 export default async function ProductsPage() {
-  const [products, categories] = await Promise.all([
-    getProducts(),
+  const [entries, categories] = await Promise.all([
+    getVariantEntries(),
     getCategories(),
   ])
 
@@ -50,14 +50,17 @@ export default async function ProductsPage() {
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-3xl font-bold tracking-tight">Todos los Productos</h1>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">{products.length} productos</span>
-              {/* Add sort select here in real implementation */}
+              <span className="text-sm text-muted-foreground">{entries.length} variantes</span>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map(product => (
-              <ProductCard key={product.id} product={product} />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {entries.map((entry) => (
+              <ProductCard
+                key={entry.variant?.id || entry.product.id}
+                product={entry.product}
+                variant={entry.variant}
+              />
             ))}
           </div>
 

@@ -40,7 +40,7 @@ export function ProductGallery({ images, alt }: { images: ProductImage[]; alt: s
   }
 
   return (
-    <div ref={galleryRef} className="max-w-lg">
+    <div ref={galleryRef}>
       {/* Main image */}
       <a
         href={sorted[selected].url}
