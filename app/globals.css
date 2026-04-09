@@ -143,6 +143,19 @@
     }
 }
 
+@keyframes cartPulse {
+  0% { opacity: 0.6; transform: scale(0.95); }
+  50% { opacity: 0.3; transform: scale(1.02); }
+  100% { opacity: 0; transform: scale(1); }
+}
+
+@keyframes badgePop {
+  0% { transform: scale(0.5); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+
 @layer components {
   .container {
     @apply mx-auto w-full max-w-[1400px] px-4 md:px-8;

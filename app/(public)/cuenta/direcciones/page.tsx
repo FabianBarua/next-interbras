@@ -12,9 +12,9 @@ export default async function AddressesPage() {
         </button>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
         {addresses.map(addr => (
-          <div key={addr.id} className={`p-6 border rounded-2xl bg-card relative ${addr.isDefault ? 'border-primary shadow-sm' : ''}`}>
+          <div key={addr.id} className={`p-6 sm:p-8 rounded-3xl border bg-card relative shadow-xs hover:shadow-sm ring-1 ring-black/5 dark:ring-white/5 transition-all ${addr.isDefault ? 'border-primary/50 bg-primary/5' : 'border-border/50'}`}>
             {addr.isDefault && (
               <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-1 rounded">
                 Principal

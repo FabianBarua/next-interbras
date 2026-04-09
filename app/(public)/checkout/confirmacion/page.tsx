@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { OrderTracker } from "@/components/store/order-tracker"
 
 export default function ConfirmacionPage() {
   const [mounted, setMounted] = useState(false)
@@ -50,20 +51,28 @@ export default function ConfirmacionPage() {
           </div>
         </div>
 
-        {/* What's next */}
-        <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-          <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-muted/30">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2Z"/><polyline points="22,6 12,13 2,6"/></svg>
-            <span className="text-xs text-center text-muted-foreground">Recibirás un email con los detalles</span>
+        {/* Tracker Preview */}
+        <div className="w-full mb-10 text-left">
+           <OrderTracker status="PENDING" dateStr={new Date().toLocaleDateString("es-PY", { day: "numeric", month: "short" })} />
+        </div>
+
+        {/* What's next / WhatsApp Share */}
+        <div className="w-full bg-green-500/10 border border-green-500/20 rounded-2xl p-6 sm:p-8 mb-10 flex flex-col items-center text-center gap-4">
+          <div className="flex items-center gap-2 text-green-700 dark:text-green-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/><path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/></svg>
+            <h3 className="font-bold text-lg md:text-xl">Sigue tu pedido en tiempo real</h3>
           </div>
-          <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-muted/30">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
-            <span className="text-xs text-center text-muted-foreground">Preparamos tu envío en 24-48h</span>
-          </div>
-          <div className="flex flex-col items-center gap-2 p-4 rounded-lg bg-muted/30">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/></svg>
-            <span className="text-xs text-center text-muted-foreground">Tracking disponible pronto</span>
-          </div>
+          <p className="text-sm md:text-base text-green-800/80 dark:text-green-200/80 max-w-md">
+            Comparte este enlace único por WhatsApp con quien recibe el paquete o guárdalo para monitorear tu envío sin necesidad de iniciar sesión.
+          </p>
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(`¡Hola! Sigue el estado de mi pedido de Interbras en tiempo real aquí: http://localhost:3000/tracking/${orderId}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-3 inline-flex items-center gap-2 h-12 px-8 rounded-full bg-[#25D366] text-white font-bold hover:bg-[#128C7E] transition-all hover:scale-105 shadow-lg shadow-[#25D366]/20"
+          >
+            Guardar en WhatsApp
+          </a>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">

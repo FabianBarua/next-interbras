@@ -10,7 +10,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 
-export function ProductCarousel({ products }: { products: Product[] }) {
+export function ProductCarousel({ products, compact }: { products: Product[]; compact?: boolean }) {
   if (!products || products.length === 0) return null
 
   return (
@@ -22,9 +22,9 @@ export function ProductCarousel({ products }: { products: Product[] }) {
         }}
         className="w-full"
       >
-        <CarouselContent className="-ml-2 md:-ml-4">
+        <CarouselContent className="-ml-2 md:-ml-3">
           {products.map((product) => (
-            <CarouselItem key={product.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4">
+            <CarouselItem key={product.id} className={`pl-2 md:pl-3 ${compact ? 'basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5' : 'basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4'}`}>
               <ProductCard product={product} />
             </CarouselItem>
           ))}

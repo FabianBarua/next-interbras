@@ -10,7 +10,7 @@ export default async function OrdersPage() {
       
       <div className="space-y-4">
         {orders.map(order => (
-          <div key={order.id} className="p-6 border rounded-2xl bg-card flex flex-col md:flex-row md:items-center justify-between gap-6 hover:shadow-sm transition-all">
+          <div key={order.id} className="rounded-3xl border border-border/50 bg-card p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-sm hover:shadow-md ring-1 ring-black/5 dark:ring-white/5 transition-all">
             
             <div className="space-y-1">
               <div className="flex items-center gap-3">
@@ -41,7 +41,7 @@ export default async function OrdersPage() {
         ))}
 
         {orders.length === 0 && (
-          <div className="text-center py-12 text-muted-foreground border rounded-2xl">
+          <div className="text-center py-16 text-muted-foreground border border-dashed rounded-3xl bg-muted/20">
             Aún no tienes pedidos.
           </div>
         )}

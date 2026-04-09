@@ -4,26 +4,68 @@ import Link from "next/link"
 import Image from "next/image"
 import { useCartStore } from "@/store/cart-store"
 import { useLocaleStore } from "@/store/locale-store"
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 
 export function CartPreview() {
-  const { cart, removeItem } = useCartStore()
+  const { cart, removeItem, lastAddedAt } = useCartStore()
   const { locale } = useLocaleStore()
   const [open, setOpen] = useState(false)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [visible, setVisible] = useState(false) // controls the actual render for animation
+  const hoverRef = useRef(false)
+  const autoCloseRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const subtotal = cart.items.reduce(
     (acc, item) => acc + (item.variant?.externalCode?.priceUsd || 0) * item.quantity,
     0
   )
 
+  const clearAutoClose = useCallback(() => {
+    if (autoCloseRef.current) {
+      clearTimeout(autoCloseRef.current)
+      autoCloseRef.current = null
+    }
+  }, [])
+
+  const closeDropdown = useCallback(() => {
+    setOpen(false)
+    // wait for fade-out animation
+    setTimeout(() => setVisible(false), 200)
+  }, [])
+
+  const openDropdown = useCallback(() => {
+    setVisible(true)
+    // next frame so the fade-in triggers
+    requestAnimationFrame(() => setOpen(true))
+  }, [])
+
+  // Auto-show after adding to cart
+  useEffect(() => {
+    if (lastAddedAt === 0) return
+    clearAutoClose()
+    openDropdown()
+
+    autoCloseRef.current = setTimeout(() => {
+      if (!hoverRef.current) {
+        closeDropdown()
+      }
+    }, 3000)
+
+    return clearAutoClose
+  }, [lastAddedAt, clearAutoClose, openDropdown, closeDropdown])
+
   const handleEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    setOpen(true)
+    hoverRef.current = true
+    clearAutoClose()
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
+    openDropdown()
   }
 
   const handleLeave = () => {
-    timeoutRef.current = setTimeout(() => setOpen(false), 200)
+    hoverRef.current = false
+    hoverTimeoutRef.current = setTimeout(() => {
+      closeDropdown()
+    }, 250)
   }
 
   return (
@@ -32,7 +74,7 @@ export function CartPreview() {
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
-      {/* Cart Icon / Trigger — click goes to /carrito */}
+      {/* Cart Icon */}
       <Link
         href="/carrito"
         className="relative flex items-center justify-center p-2 rounded-full hover:bg-muted hover:text-primary transition-colors"
@@ -43,15 +85,24 @@ export function CartPreview() {
         </svg>
         <span className="sr-only">Carrito</span>
         {cart.totalItems > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 h-4.5 min-w-4.5 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center px-1">
+          <span
+            key={lastAddedAt}
+            className="absolute -top-0.5 -right-0.5 h-4.5 min-w-4.5 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center px-1 animate-[badgePop_0.35s_ease-out]"
+          >
             {cart.totalItems}
           </span>
         )}
       </Link>
 
-      {/* Hover dropdown */}
-      {open && (
-        <div className="absolute right-0 top-full mt-2 z-50 w-80 rounded-xl border bg-popover text-popover-foreground shadow-xl animate-in fade-in-0 zoom-in-95 duration-150">
+      {/* Dropdown */}
+      {visible && (
+        <div
+          className={`absolute right-0 top-full mt-2 z-50 w-80 rounded-xl border bg-popover text-popover-foreground shadow-xl transition-all duration-200 ${
+            open
+              ? "opacity-100 translate-y-0 scale-100"
+              : "opacity-0 -translate-y-1 scale-[0.97] pointer-events-none"
+          }`}
+        >
           {cart.items.length === 0 ? (
             <div className="flex flex-col items-center py-8 px-4 text-center">
               <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-3">
@@ -70,7 +121,7 @@ export function CartPreview() {
                 <p className="text-sm font-semibold">Mi Carrito ({cart.totalItems})</p>
               </div>
 
-              {/* Items (max 3 visible) */}
+              {/* Items */}
               <div className="max-h-64 overflow-y-auto">
                 {cart.items.slice(0, 4).map((item) => {
                   const img = item.product.images.find((i) => i.isMain) || item.product.images[0]

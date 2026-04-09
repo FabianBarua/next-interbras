@@ -5,6 +5,7 @@ import type { Product, Variant } from '../types/product'
 
 interface CartState {
   cart: Cart
+  lastAddedAt: number
   addItem: (product: Product, quantity: number, variant?: Variant) => void
   removeItem: (itemId: string) => void
   updateQuantity: (itemId: string, quantity: number) => void
@@ -15,6 +16,7 @@ export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
       cart: { items: [], totalItems: 0, subtotal: 0 },
+      lastAddedAt: 0,
       addItem: (product, quantity, variant) => set((state) => {
         const items = [...state.cart.items]
         const existing = items.find(i => i.productId === product.id && i.variantId === variant?.id)
@@ -31,7 +33,7 @@ export const useCartStore = create<CartState>()(
           })
         }
         const totalItems = items.reduce((acc, i) => acc + i.quantity, 0)
-        return { cart: { items, totalItems, subtotal: 0 } }
+        return { cart: { items, totalItems, subtotal: 0 }, lastAddedAt: Date.now() }
       }),
       removeItem: (itemId) => set((state) => {
         const items = state.cart.items.filter(i => i.id !== itemId)
