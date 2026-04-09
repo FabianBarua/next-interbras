@@ -45,6 +45,19 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+
+    /* Interbras Brand Colors */
+    --color-brand-50: #f2fbf2;
+    --color-brand-100: #e1f7e1;
+    --color-brand-200: #c3efc5;
+    --color-brand-300: #95e098;
+    --color-brand-400: #5fc965;
+    --color-brand-500: #36a53c;
+    --color-brand-600: #2a8f2f;
+    --color-brand-700: #247129;
+    --color-brand-800: #215a25;
+    --color-brand-900: #1d4a21;
+    --color-brand-950: #0b280e;
 }
 
 :root {
@@ -54,8 +67,9 @@
     --card-foreground: oklch(0.141 0.005 285.823);
     --popover: oklch(1 0 0);
     --popover-foreground: oklch(0.141 0.005 285.823);
-    --primary: oklch(0.841 0.238 128.85);
-    --primary-foreground: oklch(0.405 0.101 131.063);
+    /* Reemplazando el Lima default por el Interbras 500 */
+    --primary: #36a53c;
+    --primary-foreground: #ffffff;
     --secondary: oklch(0.967 0.001 286.375);
     --secondary-foreground: oklch(0.21 0.006 285.885);
     --muted: oklch(0.967 0.001 286.375);
@@ -89,8 +103,9 @@
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.21 0.006 285.885);
     --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.768 0.233 130.85);
-    --primary-foreground: oklch(0.405 0.101 131.063);
+    /* Reemplazando el Lima default por el Interbras 500 en oscuro */
+    --primary: #5fc965; /* Usamos brand-400 para mejor contraste oscuro */
+    --primary-foreground: #000000;
     --secondary: oklch(0.274 0.006 286.033);
     --secondary-foreground: oklch(0.985 0 0);
     --muted: oklch(0.274 0.006 286.033);
@@ -121,9 +136,15 @@
     @apply border-border outline-ring/50;
     }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground scroll-smooth;
     }
   html {
     @apply font-serif;
     }
+}
+
+@layer components {
+  .container {
+    @apply mx-auto w-full max-w-[1400px] px-4 md:px-8;
+  }
 }

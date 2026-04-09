@@ -2,6 +2,7 @@ import { Inter, Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { StoreProviders } from "@/store/providers"
 import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils";
 
@@ -28,8 +29,10 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          {children}
-          <Toaster />
+          <StoreProviders>
+            {children}
+            <Toaster />
+          </StoreProviders>
         </ThemeProvider>
       </body>
     </html>

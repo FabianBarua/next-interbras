@@ -18,8 +18,8 @@ export default auth((req) => {
     return NextResponse.redirect(new URL(target, req.url))
   }
 
-  // Protect /account routes
-  if (pathname.startsWith("/account") && !isLoggedIn) {
+  // Protect /cuenta routes
+  if (pathname.startsWith("/cuenta") && !isLoggedIn) {
     return NextResponse.redirect(new URL("/login", req.url))
   }
 
