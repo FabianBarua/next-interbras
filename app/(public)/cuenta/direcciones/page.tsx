@@ -1,16 +1,18 @@
 import { getAddresses } from "@/services/user"
 import { requireAuth } from "@/lib/auth/get-session"
+import { getDictionary } from "@/i18n/get-dictionary"
 
 export default async function AddressesPage() {
   const user = await requireAuth()
   const addresses = await getAddresses(user.id)
+  const dict = await getDictionary()
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Mis Direcciones</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{dict.account.addresses}</h1>
         <button className="px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-md hover:bg-primary/90 transition-colors">
-          Nueva Dirección
+          {dict.account.newAddress}
         </button>
       </div>
       
@@ -19,7 +21,7 @@ export default async function AddressesPage() {
           <div key={addr.id} className={`p-6 sm:p-8 rounded-3xl border bg-card relative shadow-xs hover:shadow-sm ring-1 ring-black/5 dark:ring-white/5 transition-all ${addr.isDefault ? 'border-primary/50 bg-primary/5' : 'border-border/50'}`}>
             {addr.isDefault && (
               <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-1 rounded">
-                Principal
+                {dict.account.primary}
               </span>
             )}
             
@@ -32,8 +34,8 @@ export default async function AddressesPage() {
             </div>
             
             <div className="flex gap-3">
-              <button className="text-sm font-medium text-primary hover:underline">Editar</button>
-              <button className="text-sm font-medium text-destructive hover:underline">Eliminar</button>
+              <button className="text-sm font-medium text-primary hover:underline">{dict.common.edit}</button>
+              <button className="text-sm font-medium text-destructive hover:underline">{dict.common.remove}</button>
             </div>
           </div>
         ))}

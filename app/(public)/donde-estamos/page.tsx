@@ -5,7 +5,7 @@ export default async function StoresPage() {
   const stores = await getStores()
 
   return (
-    <div className="container px-4 py-8">
+    <div className="container px-4 py-4 asd">
       <Breadcrumbs items={[{ label: "Dónde Estamos" }]} />
       
       <div className="mt-8 mb-16">

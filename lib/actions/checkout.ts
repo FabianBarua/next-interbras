@@ -49,7 +49,7 @@ export async function createOrderAction(data: unknown) {
 
   const parsed = checkoutSchema.safeParse(data)
   if (!parsed.success) {
-    return { error: parsed.error.issues[0].message }
+    return { error: "Datos inválidos. Revisa el formulario." }
   }
 
   const { shippingMethod, ...rest } = parsed.data
@@ -64,7 +64,8 @@ export async function createOrderAction(data: unknown) {
       paymentMethod: "cash",
     })
     return { orderId }
-  } catch (err: any) {
-    return { error: err?.message ?? "Error al crear el pedido." }
+  } catch (err) {
+    console.error("[checkout] Order creation failed", err)
+    return { error: "Error al procesar el pedido." }
   }
 }

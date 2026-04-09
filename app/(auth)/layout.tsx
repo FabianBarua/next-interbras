@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "@/i18n/link"
 import { getSiteConfig } from "@/lib/site-config"
 
 export default async function AuthLayout({

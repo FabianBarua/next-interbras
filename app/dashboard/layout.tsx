@@ -1,4 +1,4 @@
-import Link from "next/link"
+import Link from "@/i18n/link"
 import { redirect } from "next/navigation"
 import { getCurrentUser } from "@/lib/auth/get-session"
 

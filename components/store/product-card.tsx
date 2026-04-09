@@ -1,14 +1,18 @@
-import Link from "next/link"
+"use client"
+
+import Link from "@/i18n/link"
 import Image from "next/image"
 import type { Product, Variant } from "@/types/product"
 import { PriceDisplay } from "./price-display"
 import { WishlistButton } from "./wishlist-button"
 import { toVariantSlug } from "@/lib/variant-slug"
+import { useDictionary } from "@/i18n/context"
 
 export function ProductCard({ product, variant }: { product: Product; variant?: Variant }) {
+  const { locale } = useDictionary()
   const mainImage = product.images.find(img => img.isMain) || product.images[0]
   const v = variant || product.variants[0]
-  const productName = product.name?.es || product.name?.pt || "Producto"
+  const productName = product.name?.[locale] || product.name?.es || "Producto"
 
   // Build variant attribute tags
   const attrs = v?.attributes ? Object.values(v.attributes) as string[] : []

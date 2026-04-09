@@ -1,7 +1,7 @@
 "use client"
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from "@/i18n/link"
+import { useCanonicalPathname } from "@/i18n/context"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
@@ -22,7 +22,7 @@ const navItems: NavItem[] = [
 ]
 
 export function SidebarNav({ mobile }: { mobile?: boolean }) {
-  const pathname = usePathname()
+  const pathname = useCanonicalPathname()
 
   function isActive(href: string, exact?: boolean) {
     if (exact || href === "/dashboard") return pathname === href

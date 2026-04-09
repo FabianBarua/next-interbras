@@ -1,7 +1,7 @@
 "use client"
 
 import { useActionState } from "react"
-import Link from "next/link"
+import Link from "@/i18n/link"
 import { forgotPassword } from "@/lib/auth/actions/forgot-password"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

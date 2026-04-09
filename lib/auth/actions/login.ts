@@ -5,6 +5,7 @@ import { loginSchema } from "@/lib/auth/schemas"
 import { AuthError } from "next-auth"
 import { rateLimit } from "@/lib/rate-limit"
 import { headers } from "next/headers"
+import { logEvent } from "@/lib/logging"
 
 export async function login(formData: FormData) {
   const headersList = await headers()
@@ -32,6 +33,7 @@ export async function login(formData: FormData) {
     })
   } catch (error) {
     if (error instanceof AuthError) {
+      logEvent({ category: "auth", action: "login_failed", message: error.type, meta: { ip, email: result.data.email } })
       if (error.type === "CredentialsSignin") {
         return { error: "Email ou senha inválidos" }
       }
@@ -40,5 +42,6 @@ export async function login(formData: FormData) {
     throw error
   }
 
+  logEvent({ category: "auth", action: "login_success", meta: { ip, email: result.data.email } })
   return { success: true }
 }

@@ -1,26 +1,26 @@
 "use client"
 
-import Link from "next/link"
+import Link from "@/i18n/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useCartStore } from "@/store/cart-store"
-import { useLocaleStore } from "@/store/locale-store"
+import { useDictionary, useLocalePath } from "@/i18n/context"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { createOrderAction } from "@/lib/actions/checkout"
 
-const SHIPPING_OPTIONS = [
-  { id: "standard", label: "Envío Estándar", desc: "5-7 días hábiles", price: 8.5 },
-  { id: "express", label: "Envío Express", desc: "1-2 días hábiles", price: 15 },
-  { id: "pickup", label: "Retiro en Sucursal", desc: "Disponible en 24h", price: 0 },
+const SHIPPING_OPTIONS_DATA = [
+  { id: "standard", labelKey: "standardShipping" as const, descKey: "standardTime" as const, price: 8.5 },
+  { id: "express", labelKey: "expressShipping" as const, descKey: "expressTime" as const, price: 15 },
+  { id: "pickup", labelKey: "storePickup" as const, descKey: "pickupTime" as const, price: 0 },
 ]
 
-const PAYMENT_METHODS = [
-  // { id: "card", label: "Tarjeta de Crédito / Débito", icon: "card" },
-  // { id: "transfer", label: "Transferencia Bancaria", icon: "bank" },
-  { id: "cash", label: "Pago en Efectivo (sucursal)", icon: "cash" },
+const PAYMENT_METHODS_DATA = [
+  // { id: "card", labelKey: "cardPayment" as const, icon: "card" },
+  // { id: "transfer", labelKey: "transferPayment" as const, icon: "bank" },
+  { id: "cash", labelKey: "cashPayment" as const, icon: "cash" },
 ]
 
 const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -28,7 +28,11 @@ const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2,
 export default function CheckoutPage() {
   const router = useRouter()
   const { cart, clear } = useCartStore()
-  const { locale } = useLocaleStore()
+  const { dict, locale } = useDictionary()
+  const lp = useLocalePath()
+
+  const SHIPPING_OPTIONS = SHIPPING_OPTIONS_DATA.map(o => ({ ...o, label: dict.checkout[o.labelKey], desc: dict.checkout[o.descKey] }))
+  const PAYMENT_METHODS = PAYMENT_METHODS_DATA.map(p => ({ ...p, label: dict.checkout[p.labelKey] }))
   const [mounted, setMounted] = useState(false)
   const [step, setStep] = useState(1)
   const [shipping, setShipping] = useState("standard")
@@ -61,9 +65,9 @@ export default function CheckoutPage() {
   const total = subtotal + shippingCost
 
   const steps = [
-    { num: 1, label: "Datos" },
-    { num: 2, label: "Envío" },
-    { num: 3, label: "Pago" },
+    { num: 1, label: dict.checkout.stepData },
+    { num: 2, label: dict.checkout.stepShipping },
+    { num: 3, label: dict.checkout.stepPayment },
   ]
 
   const handleConfirm = async () => {
@@ -94,9 +98,9 @@ export default function CheckoutPage() {
         return
       }
       clear()
-      router.push(`/checkout/confirmacion?orderId=${res.orderId}`)
+      router.push(lp(`/checkout/confirmacion?orderId=${res.orderId}`))
     } catch {
-      setError("Error al procesar el pedido. Intenta de nuevo.")
+      setError(dict.checkout.orderError)
       setProcessing(false)
     }
   }
@@ -104,15 +108,15 @@ export default function CheckoutPage() {
   if (cart.items.length === 0 && !processing) {
     return (
       <div className="container max-w-5xl px-4 py-8">
-        <Breadcrumbs items={[{ label: "Mi Carrito", href: "/carrito" }, { label: "Checkout" }]} />
+        <Breadcrumbs items={[{ label: dict.cart.title, href: "/carrito" }, { label: "Checkout" }]} />
         <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border bg-card mt-8">
           <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
           </div>
-          <h2 className="text-xl font-bold mb-2">Tu carrito está vacío</h2>
-          <p className="text-muted-foreground text-sm mb-6">Agrega productos antes de continuar.</p>
+          <h2 className="text-xl font-bold mb-2">{dict.checkout.emptyCartTitle}</h2>
+          <p className="text-muted-foreground text-sm mb-6">{dict.checkout.emptyCartMsg}</p>
           <Link href="/productos" className="inline-flex h-11 items-center px-8 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors">
-            Ver Productos
+            {dict.common.viewProducts}
           </Link>
         </div>
       </div>
@@ -122,9 +126,9 @@ export default function CheckoutPage() {
   return (
     <div className="bg-muted/20 min-h-screen">
       <div className="container max-w-5xl px-4 py-8">
-        <Breadcrumbs items={[{ label: "Mi Carrito", href: "/carrito" }, { label: "Checkout" }]} />
+        <Breadcrumbs items={[{ label: dict.cart.title, href: "/carrito" }, { label: "Checkout" }]} />
 
-        <h1 className="text-2xl md:text-3xl font-bold tracking-tight mt-6 mb-8">Finalizar Compra</h1>
+        <h1 className="text-2xl md:text-3xl font-bold tracking-tight mt-6 mb-8">{dict.checkout.title}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
           {/* Main */}
@@ -167,27 +171,27 @@ export default function CheckoutPage() {
               <div className="p-6 md:p-8 border bg-card rounded-2xl shadow-sm animate-in fade-in-0 slide-in-from-right-4 duration-300">
                 <h2 className="text-lg font-bold tracking-tight mb-6 flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  Datos Personales
+                  {dict.checkout.personalInfo}
                 </h2>
 
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Field label="Nombre" value={form.nombre} onChange={(v) => setForm({ ...form, nombre: v })} />
-                    <Field label="Apellido" value={form.apellido} onChange={(v) => setForm({ ...form, apellido: v })} />
+                    <Field label={dict.checkout.firstName} value={form.nombre} onChange={(v) => setForm({ ...form, nombre: v })} />
+                    <Field label={dict.checkout.lastName} value={form.apellido} onChange={(v) => setForm({ ...form, apellido: v })} />
                   </div>
-                  <Field label="Correo electrónico" value={form.email} onChange={(v) => setForm({ ...form, email: v })} type="email" />
+                  <Field label={dict.checkout.email} value={form.email} onChange={(v) => setForm({ ...form, email: v })} type="email" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Field label="Teléfono" value={form.telefono} onChange={(v) => setForm({ ...form, telefono: v })} />
-                    <Field label="Documento (CI / RUC)" value={form.documento} onChange={(v) => setForm({ ...form, documento: v })} />
+                    <Field label={dict.checkout.phone} value={form.telefono} onChange={(v) => setForm({ ...form, telefono: v })} />
+                    <Field label={dict.checkout.document} value={form.documento} onChange={(v) => setForm({ ...form, documento: v })} />
                   </div>
 
                   <Separator className="my-2" />
 
-                  <h3 className="text-sm font-semibold pt-2">Dirección de Envío</h3>
-                  <Field label="Dirección" value={form.direccion} onChange={(v) => setForm({ ...form, direccion: v })} />
+                  <h3 className="text-sm font-semibold pt-2">{dict.checkout.shippingAddress}</h3>
+                  <Field label={dict.checkout.address} value={form.direccion} onChange={(v) => setForm({ ...form, direccion: v })} />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Field label="Ciudad" value={form.ciudad} onChange={(v) => setForm({ ...form, ciudad: v })} />
-                    <Field label="Departamento" value={form.departamento} onChange={(v) => setForm({ ...form, departamento: v })} />
+                    <Field label={dict.checkout.city} value={form.ciudad} onChange={(v) => setForm({ ...form, ciudad: v })} />
+                    <Field label={dict.checkout.state} value={form.departamento} onChange={(v) => setForm({ ...form, departamento: v })} />
                   </div>
                 </div>
 
@@ -195,7 +199,7 @@ export default function CheckoutPage() {
                   onClick={() => setStep(2)}
                   className="mt-6 w-full sm:w-auto inline-flex h-11 items-center justify-center px-8 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
                 >
-                  Continuar a Envío
+                  {dict.checkout.continueToShipping}
                 </button>
               </div>
             )}
@@ -205,7 +209,7 @@ export default function CheckoutPage() {
               <div className="p-6 md:p-8 border bg-card rounded-2xl shadow-sm animate-in fade-in-0 slide-in-from-right-4 duration-300">
                 <h2 className="text-lg font-bold tracking-tight mb-6 flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
-                  Opciones de Envío
+                  {dict.checkout.shippingOptions}
                 </h2>
 
                 <div className="space-y-3">
@@ -236,15 +240,15 @@ export default function CheckoutPage() {
                         <p className="text-xs text-muted-foreground">{opt.desc}</p>
                       </div>
                       <span className="text-sm font-bold">
-                        {opt.price === 0 ? "Gratis" : `US$ ${fmt(opt.price)}`}
+                        {opt.price === 0 ? dict.common.free : `US$ ${fmt(opt.price)}`}
                       </span>
                     </label>
                   ))}
                 </div>
 
                 <div className="mt-4 p-3 rounded-lg bg-muted/50 text-xs text-muted-foreground">
-                  <p><strong>Dirección:</strong> {form.direccion}, {form.ciudad}, {form.departamento}</p>
-                  <button onClick={() => setStep(1)} className="text-primary hover:underline mt-1">Cambiar dirección</button>
+                  <p><strong>{dict.checkout.address}:</strong> {form.direccion}, {form.ciudad}, {form.departamento}</p>
+                  <button onClick={() => setStep(1)} className="text-primary hover:underline mt-1">{dict.checkout.changeAddress}</button>
                 </div>
 
                 <div className="flex gap-3 mt-6">
@@ -252,13 +256,13 @@ export default function CheckoutPage() {
                     onClick={() => setStep(1)}
                     className="inline-flex h-11 items-center justify-center px-6 border rounded-lg text-sm font-medium hover:bg-muted transition-colors"
                   >
-                    Volver
+                    {dict.common.back}
                   </button>
                   <button
                     onClick={() => setStep(3)}
                     className="inline-flex h-11 items-center justify-center px-8 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
                   >
-                    Continuar a Pago
+                    {dict.checkout.continueToPayment}
                   </button>
                 </div>
               </div>
@@ -269,7 +273,7 @@ export default function CheckoutPage() {
               <div className="p-6 md:p-8 border bg-card rounded-2xl shadow-sm animate-in fade-in-0 slide-in-from-right-4 duration-300">
                 <h2 className="text-lg font-bold tracking-tight mb-6 flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                  Método de Pago
+                  {dict.checkout.paymentMethod}
                 </h2>
 
                 <div className="space-y-3">
@@ -314,29 +318,29 @@ export default function CheckoutPage() {
                 {/* Mock card form */}
                 {payment === "card" && (
                   <div className="mt-5 space-y-4 p-4 rounded-xl border bg-muted/30">
-                    <Field label="Número de Tarjeta" value="4111 1111 1111 1111" onChange={() => {}} placeholder="0000 0000 0000 0000" />
+                    <Field label={dict.checkout.cardNumber} value="4111 1111 1111 1111" onChange={() => {}} placeholder="0000 0000 0000 0000" />
                     <div className="grid grid-cols-2 gap-4">
-                      <Field label="Vencimiento" value="12/28" onChange={() => {}} placeholder="MM/AA" />
-                      <Field label="CVV" value="123" onChange={() => {}} placeholder="123" />
+                      <Field label={dict.checkout.expiry} value="12/28" onChange={() => {}} placeholder="MM/AA" />
+                      <Field label={dict.checkout.cvv} value="123" onChange={() => {}} placeholder="123" />
                     </div>
-                    <Field label="Nombre en la Tarjeta" value="JUAN PEREZ" onChange={() => {}} />
+                    <Field label={dict.checkout.cardName} value="JUAN PEREZ" onChange={() => {}} />
                   </div>
                 )}
 
                 {payment === "transfer" && (
                   <div className="mt-5 p-4 rounded-xl border bg-muted/30 text-sm space-y-2">
-                    <p className="font-semibold">Datos para Transferencia:</p>
-                    <p className="text-muted-foreground">Banco: Banco Continental</p>
-                    <p className="text-muted-foreground">Cuenta: 0123-456789-001</p>
-                    <p className="text-muted-foreground">Titular: Interbras Paraguay S.A.</p>
-                    <p className="text-xs text-muted-foreground mt-2">Envía el comprobante a pagos@interbras.com.py</p>
+                    <p className="font-semibold">{dict.checkout.transferInfo}</p>
+                    <p className="text-muted-foreground">{dict.checkout.bank}</p>
+                    <p className="text-muted-foreground">{dict.checkout.accountNumber}</p>
+                    <p className="text-muted-foreground">{dict.checkout.holder}</p>
+                    <p className="text-xs text-muted-foreground mt-2">{dict.checkout.sendReceipt}</p>
                   </div>
                 )}
 
                 {payment === "cash" && (
                   <div className="mt-5 p-4 rounded-xl border bg-muted/30 text-sm space-y-1">
-                    <p className="font-semibold">Pago en Sucursal</p>
-                    <p className="text-muted-foreground">Tendrás 48 horas para realizar el pago en cualquiera de nuestras sucursales.</p>
+                    <p className="font-semibold">{dict.checkout.cashTitle}</p>
+                    <p className="text-muted-foreground">{dict.checkout.cashDesc}</p>
                   </div>
                 )}
 
@@ -345,16 +349,16 @@ export default function CheckoutPage() {
                 {/* Order summary mini */}
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-muted-foreground">{dict.common.subtotal}</span>
                     <span>US$ {fmt(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Envío ({SHIPPING_OPTIONS.find(s => s.id === shipping)?.label})</span>
-                    <span>{shippingCost === 0 ? "Gratis" : `US$ ${fmt(shippingCost)}`}</span>
+                    <span className="text-muted-foreground">{dict.common.shipping} ({SHIPPING_OPTIONS.find(s => s.id === shipping)?.label})</span>
+                    <span>{shippingCost === 0 ? dict.common.free : `US$ ${fmt(shippingCost)}`}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between font-bold text-base">
-                    <span>Total</span>
+                    <span>{dict.common.total}</span>
                     <span className="text-primary">US$ {fmt(total)}</span>
                   </div>
                 </div>
@@ -364,7 +368,7 @@ export default function CheckoutPage() {
                     onClick={() => setStep(2)}
                     className="inline-flex h-11 items-center justify-center px-6 border rounded-lg text-sm font-medium hover:bg-muted transition-colors"
                   >
-                    Volver
+                    {dict.common.back}
                   </button>
                   <button
                     onClick={handleConfirm}
@@ -377,13 +381,13 @@ export default function CheckoutPage() {
                         Procesando...
                       </span>
                     ) : (
-                      `Confirmar Pedido — US$ ${fmt(total)}`
+                      `${dict.checkout.confirmOrder} — US$ ${fmt(total)}`
                     )}
                   </button>
                 </div>
 
                 <p className="text-[11px] text-muted-foreground text-center mt-4">
-                  Al confirmar, aceptas los Términos y Condiciones y la Política de Privacidad.
+                  {dict.checkout.termsNotice}
                 </p>
 
                 {error && (
@@ -397,7 +401,7 @@ export default function CheckoutPage() {
           <div className="lg:sticky lg:top-24 h-fit">
             <div className="rounded-2xl border bg-card p-5 space-y-4">
               <h2 className="font-bold text-base tracking-tight">
-                Resumen ({cart.totalItems} {cart.totalItems === 1 ? "producto" : "productos"})
+                {dict.cart.summary} ({cart.totalItems} {cart.totalItems === 1 ? dict.common.product : dict.common.products})
               </h2>
 
               <div className="max-h-60 overflow-y-auto space-y-3">
@@ -429,25 +433,25 @@ export default function CheckoutPage() {
 
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">{dict.common.subtotal}</span>
                   <span>US$ {fmt(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Envío</span>
-                  <span>{step < 2 ? "A calcular" : shippingCost === 0 ? "Gratis" : `US$ ${fmt(shippingCost)}`}</span>
+                  <span className="text-muted-foreground">{dict.common.shipping}</span>
+                  <span>{step < 2 ? dict.cart.toCalculate : shippingCost === 0 ? dict.common.free : `US$ ${fmt(shippingCost)}`}</span>
                 </div>
               </div>
 
               <Separator />
 
               <div className="flex justify-between items-center">
-                <span className="font-bold">Total</span>
+                <span className="font-bold">{dict.common.total}</span>
                 <span className="text-lg font-black text-primary">US$ {fmt(total)}</span>
               </div>
 
               <div className="flex items-center justify-center gap-1.5 pt-2 text-[11px] text-muted-foreground">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Compra segura
+                {dict.common.securePurchase}
               </div>
             </div>
           </div>

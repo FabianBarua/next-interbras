@@ -1,24 +1,25 @@
 "use client"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from "@/i18n/link"
 import { useSession, signOut } from "next-auth/react"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
+import { useDictionary, useCanonicalPathname } from "@/i18n/context"
 
 export default function AccountLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
+  const pathname = useCanonicalPathname()
   const { data: session } = useSession()
+  const { dict } = useDictionary()
   const user = session?.user
 
   const navItems = [
-    { label: "Mi Perfil", href: "/cuenta" },
-    { label: "Mis Pedidos", href: "/cuenta/pedidos" },
-    { label: "Mi Lista de Deseos", href: "/cuenta/wishlist" },
-    { label: "Mis Direcciones", href: "/cuenta/direcciones" },
+    { label: dict.account.profile, href: "/cuenta" },
+    { label: dict.account.orders, href: "/cuenta/pedidos" },
+    { label: dict.account.wishlist, href: "/cuenta/wishlist" },
+    { label: dict.account.addresses, href: "/cuenta/direcciones" },
   ]
 
   return (
-    <div className="container px-4 py-8 mb-16">
-      <Breadcrumbs items={[{ label: "Mi Cuenta" }]} />
+    <div className="container px-4 py-4 asd mb-16">
+      <Breadcrumbs items={[{ label: dict.account.myAccount }]} />
       
       <div className="flex flex-col md:flex-row gap-8 mt-8">
         {/* Sidebar Nav */}
@@ -29,7 +30,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                  {user?.name?.charAt(0)?.toUpperCase() ?? "U"}
                </div>
                <div>
-                 <p className="font-semibold px-1">{user?.name ?? "Usuario"}</p>
+                 <p className="font-semibold px-1">{user?.name ?? dict.account.user}</p>
                  <p className="text-xs text-muted-foreground px-1">{user?.email ?? ""}</p>
                </div>
             </div>
@@ -56,7 +57,7 @@ export default function AccountLayout({ children }: { children: React.ReactNode 
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className="px-4 py-3 text-left rounded-lg text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors mt-4"
               >
-                Cerrar Sesión
+                {dict.account.logout}
               </button>
             </nav>
           </div>

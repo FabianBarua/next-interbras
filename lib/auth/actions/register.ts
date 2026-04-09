@@ -10,6 +10,7 @@ import { sendEmail } from "@/lib/email/send"
 import { getRequestUrl } from "@/lib/get-base-url"
 import { signIn } from "@/lib/auth"
 import { headers } from "next/headers"
+import { logEvent } from "@/lib/logging"
 
 export async function register(formData: FormData) {
   const headersList = await headers()
@@ -55,6 +56,8 @@ export async function register(formData: FormData) {
 
   const siteUrl = await getRequestUrl()
   await sendEmail(email, "welcome", { nome: name, siteUrl })
+
+  logEvent({ category: "auth", action: "register_success", meta: { ip, email } })
 
   // Auto sign-in after registration
   try {

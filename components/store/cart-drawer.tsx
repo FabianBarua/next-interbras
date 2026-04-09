@@ -1,17 +1,17 @@
 "use client"
 
 import { useCartStore } from "@/store/cart-store"
-import { useLocaleStore } from "@/store/locale-store"
+import { useDictionary } from "@/i18n/context"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { QuantitySelector } from "./quantity-selector"
 import { PriceDisplay } from "./price-display"
 import Image from "next/image"
-import Link from "next/link"
+import Link from "@/i18n/link"
 import React, { useState } from "react"
 
 export function CartDrawer({ children }: { children: React.ReactNode }) {
   const { cart, removeItem } = useCartStore()
-  const { locale } = useLocaleStore()
+  const { locale } = useDictionary()
   const [open, setOpen] = useState(false)
 
   return (

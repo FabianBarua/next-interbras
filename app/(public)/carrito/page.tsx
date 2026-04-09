@@ -1,9 +1,9 @@
 "use client"
 
-import Link from "next/link"
+import Link from "@/i18n/link"
 import Image from "next/image"
 import { useCartStore } from "@/store/cart-store"
-import { useLocaleStore } from "@/store/locale-store"
+import { useDictionary } from "@/i18n/context"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { QuantitySelector } from "@/components/store/quantity-selector"
 import { useState, useEffect } from "react"
@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 
 export default function CartPage() {
   const { cart, removeItem, clear } = useCartStore()
-  const { locale } = useLocaleStore()
+  const { dict, locale } = useDictionary()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => { setMounted(true) }, [])
@@ -26,18 +26,18 @@ export default function CartPage() {
 
   return (
     <div className="container max-w-5xl px-4 py-8">
-      <Breadcrumbs items={[{ label: "Mi Carrito" }]} />
+      <Breadcrumbs items={[{ label: dict.cart.title }]} />
 
       <div className="flex items-center justify-between mt-6 mb-8">
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
-          Carrito de Compras
+          {dict.cart.shoppingCart}
         </h1>
         {cart.items.length > 0 && (
           <button
             onClick={clear}
             className="text-xs text-muted-foreground hover:text-destructive transition-colors underline underline-offset-2"
           >
-            Vaciar carrito
+            {dict.cart.clearCart}
           </button>
         )}
       </div>
@@ -50,15 +50,15 @@ export default function CartPage() {
               <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
             </svg>
           </div>
-          <h2 className="text-xl font-bold tracking-tight mb-2">Tu carrito está vacío</h2>
+          <h2 className="text-xl font-bold tracking-tight mb-2">{dict.cart.emptyTitle}</h2>
           <p className="text-muted-foreground text-sm max-w-sm mb-6">
-            Explora nuestro catálogo y agrega los productos que más te gusten.
+            {dict.cart.emptyDesc}
           </p>
           <Link
             href="/productos"
             className="inline-flex h-11 items-center px-8 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
           >
-            Ver Productos
+            {dict.common.viewProducts}
           </Link>
         </div>
       ) : (
@@ -103,7 +103,7 @@ export default function CartPage() {
                           )}
                         </div>
                         <button
-                          title="Eliminar"
+                          title={dict.common.remove}
                           onClick={() => removeItem(item.id)}
                           className="p-1.5 rounded-md opacity-40 hover:opacity-100 hover:bg-destructive/10 text-destructive transition-all shrink-0"
                         >
@@ -135,25 +135,25 @@ export default function CartPage() {
           {/* Summary */}
           <div className="lg:sticky lg:top-24 h-fit">
             <div className="rounded-2xl border bg-card p-6 space-y-5">
-              <h2 className="font-bold text-lg tracking-tight">Resumen</h2>
+              <h2 className="font-bold text-lg tracking-tight">{dict.cart.summary}</h2>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">
-                    Subtotal ({cart.totalItems} {cart.totalItems === 1 ? "producto" : "productos"})
+                    {dict.common.subtotal} ({cart.totalItems} {cart.totalItems === 1 ? dict.common.product : dict.common.products})
                   </span>
                   <span className="font-medium">US$ {fmt(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Envío</span>
-                  <span className="text-xs font-medium text-muted-foreground">A calcular</span>
+                  <span className="text-muted-foreground">{dict.common.shipping}</span>
+                  <span className="text-xs font-medium text-muted-foreground">{dict.cart.toCalculate}</span>
                 </div>
               </div>
 
               <Separator />
 
               <div className="flex items-center justify-between">
-                <span className="font-bold">Total estimado</span>
+                <span className="font-bold">{dict.cart.estimatedTotal}</span>
                 <span className="text-xl font-black text-primary">US$ {fmt(subtotal)}</span>
               </div>
 
@@ -161,21 +161,21 @@ export default function CartPage() {
                 href="/checkout"
                 className="flex w-full items-center justify-center h-12 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-sm"
               >
-                Proceder al Checkout
+                {dict.cart.proceedCheckout}
               </Link>
 
               <Link
                 href="/productos"
                 className="flex w-full items-center justify-center h-10 text-sm font-medium border rounded-lg hover:bg-muted transition-colors"
               >
-                Seguir Comprando
+                {dict.common.continueShopping}
               </Link>
 
               <div className="flex items-center justify-center gap-2 pt-1 text-xs text-muted-foreground">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
-                Pago 100% seguro
+                {dict.common.securePayment}
               </div>
             </div>
           </div>

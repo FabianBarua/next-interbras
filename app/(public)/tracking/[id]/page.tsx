@@ -1,7 +1,7 @@
 import { getOrderByIdPublic } from "@/services/orders"
 import { notFound } from "next/navigation"
 import { OrderTracker } from "@/components/store/order-tracker"
-import Link from "next/link"
+import Link from "@/i18n/link"
 import Image from "next/image"
 
 export default async function PublicTrackingPage({ params }: { params: Promise<{ id: string }> }) {

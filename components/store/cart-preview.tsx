@@ -1,14 +1,16 @@
 "use client"
 
-import Link from "next/link"
+import Link from "@/i18n/link"
 import Image from "next/image"
 import { useCartStore } from "@/store/cart-store"
-import { useLocaleStore } from "@/store/locale-store"
+import { useDictionary } from "@/i18n/context"
 import { useState, useRef, useEffect, useCallback } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { CartDrawer } from "./cart-drawer"
 
 export function CartPreview() {
   const { cart, removeItem, lastAddedAt } = useCartStore()
-  const { locale } = useLocaleStore()
+  const { dict, locale } = useDictionary()
   const [open, setOpen] = useState(false)
   const [visible, setVisible] = useState(false) // controls the actual render for animation
   const hoverRef = useRef(false)
@@ -54,7 +56,10 @@ export function CartPreview() {
     return clearAutoClose
   }, [lastAddedAt, clearAutoClose, openDropdown, closeDropdown])
 
+  const isMobile = useIsMobile()
+
   const handleEnter = () => {
+    if (isMobile) return
     hoverRef.current = true
     clearAutoClose()
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
@@ -62,12 +67,41 @@ export function CartPreview() {
   }
 
   const handleLeave = () => {
+    if (isMobile) return
     hoverRef.current = false
     hoverTimeoutRef.current = setTimeout(() => {
       closeDropdown()
     }, 250)
   }
 
+  const cartIcon = (
+    <span className="relative inline-flex items-center justify-center rounded-md h-9 w-9 hover:bg-accent hover:text-accent-foreground transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
+        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+      </svg>
+      <span className="sr-only">{dict.nav.cart}</span>
+      {cart.totalItems > 0 && (
+        <span
+          key={lastAddedAt}
+          className="absolute -top-0.5 -right-0.5 h-4.5 min-w-4.5 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center px-1 animate-[badgePop_0.35s_ease-out]"
+        >
+          {cart.totalItems}
+        </span>
+      )}
+    </span>
+  )
+
+  // Mobile: use Sheet via CartDrawer
+  if (isMobile) {
+    return (
+      <CartDrawer>
+        <button className="relative">{cartIcon}</button>
+      </CartDrawer>
+    )
+  }
+
+  // Desktop: hover dropdown
   return (
     <div
       className="relative"
@@ -77,21 +111,9 @@ export function CartPreview() {
       {/* Cart Icon */}
       <Link
         href="/carrito"
-        className="relative flex items-center justify-center p-2 rounded-full hover:bg-muted hover:text-primary transition-colors"
+        className="relative flex items-center justify-center"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
-          <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-        </svg>
-        <span className="sr-only">Carrito</span>
-        {cart.totalItems > 0 && (
-          <span
-            key={lastAddedAt}
-            className="absolute -top-0.5 -right-0.5 h-4.5 min-w-4.5 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center px-1 animate-[badgePop_0.35s_ease-out]"
-          >
-            {cart.totalItems}
-          </span>
-        )}
+        {cartIcon}
       </Link>
 
       {/* Dropdown */}
@@ -111,14 +133,14 @@ export function CartPreview() {
                   <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
                 </svg>
               </div>
-              <p className="text-sm font-medium">Tu carrito está vacío</p>
-              <p className="text-xs text-muted-foreground mt-1">Agrega productos para comenzar.</p>
+              <p className="text-sm font-medium">{dict.nav.emptyCart}</p>
+              <p className="text-xs text-muted-foreground mt-1">{dict.nav.emptyCartHint}</p>
             </div>
           ) : (
             <>
               {/* Header */}
               <div className="px-4 py-3 border-b">
-                <p className="text-sm font-semibold">Mi Carrito ({cart.totalItems})</p>
+                <p className="text-sm font-semibold">{dict.cart.title} ({cart.totalItems})</p>
               </div>
 
               {/* Items */}
@@ -148,7 +170,7 @@ export function CartPreview() {
                           removeItem(item.id)
                         }}
                         className="opacity-0 group-hover/item:opacity-100 p-1 rounded-sm hover:bg-destructive/10 text-destructive transition-all shrink-0"
-                        title="Eliminar"
+                        title={dict.common.remove}
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                       </button>
@@ -158,7 +180,7 @@ export function CartPreview() {
                 {cart.items.length > 4 && (
                   <div className="px-4 py-2 text-center">
                     <p className="text-xs text-muted-foreground">
-                      +{cart.items.length - 4} producto{cart.items.length - 4 > 1 ? "s" : ""} más
+                      +{cart.items.length - 4} {dict.common.products} {dict.common.more}
                     </p>
                   </div>
                 )}
@@ -167,7 +189,7 @@ export function CartPreview() {
               {/* Footer */}
               <div className="border-t px-4 py-3 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Subtotal</span>
+                  <span className="text-xs text-muted-foreground">{dict.common.subtotal}</span>
                   <span className="text-sm font-bold">
                     US$ {subtotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                   </span>
@@ -177,13 +199,13 @@ export function CartPreview() {
                     href="/carrito"
                     className="flex-1 text-center text-xs font-medium py-2 rounded-md border hover:bg-muted transition-colors"
                   >
-                    Ver Carrito
+                    {dict.nav.viewCart}
                   </Link>
                   <Link
                     href="/checkout"
                     className="flex-1 text-center text-xs font-medium py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                   >
-                    Checkout
+                    {dict.nav.checkout}
                   </Link>
                 </div>
               </div>

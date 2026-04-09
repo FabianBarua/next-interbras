@@ -1,9 +1,13 @@
-import Link from "next/link"
+"use client"
+
+import Link from "@/i18n/link"
 import Image from "next/image"
 import type { Category } from "@/types/category"
+import { useDictionary } from "@/i18n/context"
 
 export function CategoryCard({ category }: { category: Category }) {
-  const name = category.name?.es || category.name?.pt || "Categoría"
+  const { locale } = useDictionary()
+  const name = category.name?.[locale] || category.name?.es || "Categoría"
   
   return (
     <Link 

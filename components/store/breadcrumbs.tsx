@@ -1,5 +1,8 @@
-import Link from "next/link"
+"use client"
+
+import Link from "@/i18n/link"
 import React from "react"
+import { useDictionary } from "@/i18n/context"
 
 interface BreadcrumbItem {
   label: string
@@ -7,11 +10,13 @@ interface BreadcrumbItem {
 }
 
 export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
+  const { dict } = useDictionary()
+
   return (
     <nav aria-label="Breadcrumb" className="my-4">
       <ol className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <li>
-          <Link href="/" className="hover:text-primary transition-colors">Inicio</Link>
+          <Link href="/" className="hover:text-primary transition-colors">{dict.nav.home}</Link>
         </li>
         {items.map((item, index) => (
           <React.Fragment key={index}>

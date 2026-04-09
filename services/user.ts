@@ -10,9 +10,14 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
     if (rows.length === 0) return null
     const u = rows[0]
 
-    const addrRows = await db.select().from(addresses)
-      .where(eq(addresses.userId, userId))
-      .orderBy(asc(addresses.createdAt))
+    let addrRows: (typeof addresses.$inferSelect)[] = []
+    try {
+      addrRows = await db.select().from(addresses)
+        .where(eq(addresses.userId, userId))
+        .orderBy(asc(addresses.createdAt))
+    } catch (err) {
+      console.error("[getUserProfile] Failed to fetch addresses", err)
+    }
 
     return {
       id: u.id,

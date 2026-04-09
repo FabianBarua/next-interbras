@@ -1,7 +1,7 @@
 import { getOrderById } from "@/services/orders"
 import { requireAuth } from "@/lib/auth/get-session"
 import { notFound } from "next/navigation"
-import Link from "next/link"
+import Link from "@/i18n/link"
 import { OrderTracker } from "@/components/store/order-tracker"
 import { Separator } from "@/components/ui/separator"
 

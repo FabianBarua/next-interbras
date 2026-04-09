@@ -1,11 +1,12 @@
-import Link from "next/link"
+import Link from "@/i18n/link"
 import Image from "next/image"
 import { MobileMenu } from "./mobile-menu"
 import { LanguageSwitcher } from "./language-switcher"
 import { NavCategories } from "./nav-categories"
 import { CartPreview } from "./cart-preview"
+import { AccountMenu } from "./account-menu"
 
-export function Header() {
+export async function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/70 backdrop-blur-xl supports-backdrop-filter:bg-background/60 shadow-sm transition-all">
       <div className="container flex h-16 sm:h-20 items-center justify-between">
@@ -26,18 +27,15 @@ export function Header() {
           <NavCategories />
         </div>
 
-        {/* Right Nav (User, Cart, Language) */}
-        <div className="flex items-center gap-3 flex-1 justify-end">
+        {/* Right Nav: Switch → Cart → Account */}
+        <div className="flex items-center gap-1 flex-1 justify-end">
           <div className="hidden sm:block">
             <LanguageSwitcher />
           </div>
-          
-          <Link href="/cuenta" className="hover:text-primary transition-colors p-2 rounded-full hover:bg-muted">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span className="sr-only">Cuenta</span>
-          </Link>
 
           <CartPreview />
+
+          <AccountMenu />
         </div>
       </div>
     </header>

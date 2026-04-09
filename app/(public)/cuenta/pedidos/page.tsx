@@ -1,14 +1,16 @@
 import { getOrders } from "@/services/orders"
 import { requireAuth } from "@/lib/auth/get-session"
-import Link from "next/link"
+import Link from "@/i18n/link"
+import { getDictionary } from "@/i18n/get-dictionary"
 
 export default async function OrdersPage() {
   const user = await requireAuth()
   const orders = await getOrders(user.id)
+  const dict = await getDictionary()
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold tracking-tight">Mis Pedidos</h1>
+      <h1 className="text-2xl font-bold tracking-tight">{dict.account.orders}</h1>
       
       <div className="space-y-4">
         {orders.map(order => (
@@ -17,11 +19,11 @@ export default async function OrdersPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <span className="font-bold text-lg">#{order.id.split('-')[1]}</span>
-                {order.status === "DELIVERED" && <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">Entregado</span>}
-                {order.status === "PROCESSING" && <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">En proceso</span>}
+                {order.status === "DELIVERED" && <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">{dict.account.delivered}</span>}
+                {order.status === "PROCESSING" && <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">{dict.account.inProcess}</span>}
               </div>
               <p className="text-sm text-muted-foreground">
-                {new Date(order.createdAt).toLocaleDateString()} • {order.items.length} productos
+                {new Date(order.createdAt).toLocaleDateString()} • {order.items.length} {dict.common.products}
               </p>
             </div>
 
@@ -35,7 +37,7 @@ export default async function OrdersPage() {
                 href={`/cuenta/pedidos/${order.id}`}
                 className="px-4 py-2 border rounded-md font-medium text-sm hover:bg-accent transition-colors"
               >
-                Ver Detalle
+                {dict.account.viewDetail}
               </Link>
             </div>
 
@@ -44,7 +46,7 @@ export default async function OrdersPage() {
 
         {orders.length === 0 && (
           <div className="text-center py-16 text-muted-foreground border border-dashed rounded-3xl bg-muted/20">
-            Aún no tienes pedidos.
+            {dict.account.noOrders}
           </div>
         )}
       </div>

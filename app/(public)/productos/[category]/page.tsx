@@ -19,7 +19,7 @@ export default async function CategoryPage(
   const entries = await getVariantEntriesByCategory(category.slug)
 
   return (
-    <div className="container px-4 py-8">
+    <div className="container px-4 py-4 asd">
       <Breadcrumbs items={[
         { label: "Productos", href: "/productos" },
         { label: category.name.es }
