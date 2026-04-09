@@ -1,15 +1,18 @@
 import { getStores } from "@/services/stores"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
+import { getDictionary, getLocale } from "@/i18n/get-dictionary"
 
 export default async function StoresPage() {
   const stores = await getStores()
+  const dict = await getDictionary()
+  const locale = await getLocale()
 
   return (
     <div className="container px-4 py-4 asd">
-      <Breadcrumbs items={[{ label: "Dónde Estamos" }]} />
+      <Breadcrumbs items={[{ label: dict.nav.locations }]} />
       
       <div className="mt-8 mb-16">
-        <h1 className="text-3xl font-bold tracking-tight mb-8">Nuestras Sucursales</h1>
+        <h1 className="text-3xl font-bold tracking-tight mb-8">{dict.locations.title}</h1>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="space-y-6">
@@ -30,12 +33,12 @@ export default async function StoresPage() {
                   
                   <div className="flex items-start gap-3 text-muted-foreground">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span>{store.businessHours.es}</span>
+                    <span>{store.businessHours[locale] || store.businessHours.es}</span>
                   </div>
                 </div>
                 
                 <button className="mt-6 w-full px-4 text-sm py-2 font-semibold text-primary border border-primary rounded-md hover:bg-primary/5 transition-colors">
-                  Ver en Google Maps
+                  {dict.locations.viewOnMap}
                 </button>
               </div>
             ))}
@@ -45,7 +48,7 @@ export default async function StoresPage() {
             {/* Map Placeholder */}
             <div className="text-center p-6 space-y-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mx-auto text-primary opacity-50"><map name="map-1"/><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/></svg>
-              <p className="text-lg font-medium text-muted-foreground">Mapa Interactivo no disponible en preview mock</p>
+              <p className="text-lg font-medium text-muted-foreground">{dict.locations.mapPlaceholder}</p>
             </div>
             
             {/* FAKE MAP DOTS */}

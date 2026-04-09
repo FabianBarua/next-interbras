@@ -1,5 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    optimizePackageImports: [
+      "radix-ui",
+      "@phosphor-icons/react",
+      "lucide-react",
+      "recharts",
+      "@fancyapps/ui",
+    ],
+  },
   async headers() {
     return [
       {

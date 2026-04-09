@@ -15,6 +15,7 @@ export interface ExternalCEC {
 export interface ProductImage {
   id: string
   productId: string
+  variantId: string | null
   url: string
   alt: string | null
   isMain: boolean
@@ -27,6 +28,8 @@ export interface Variant {
   sku: string
   name: I18nText | null
   attributes: Record<string, any>
+  stock: number | null
+  images: ProductImage[]
   externalCode?: ExternalCEC
 }
 
@@ -45,6 +48,5 @@ export interface Product {
   updatedAt: string
 
   category?: Category
-  images: ProductImage[]
   variants: Variant[]
 }

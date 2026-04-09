@@ -5,6 +5,7 @@ import { NavCategories } from "./nav-categories"
 import { CartPreview } from "./cart-preview"
 import { AccountMenu } from "./account-menu"
 import { InterbrasLogo } from "./interbras-logo"
+import { SearchDialog, SearchTrigger } from "./search-dialog"
 
 export async function Header() {
   return (
@@ -27,8 +28,10 @@ export async function Header() {
           <NavCategories />
         </div>
 
-        {/* Right Nav: Switch → Cart → Account */}
+        {/* Right Nav: Search → Switch → Cart → Account */}
         <div className="flex items-center gap-1 flex-1 justify-end">
+          <SearchTrigger />
+
           <div className="hidden sm:block">
             <LanguageSwitcher />
           </div>
@@ -38,6 +41,9 @@ export async function Header() {
           <AccountMenu />
         </div>
       </div>
+
+      {/* Global search dialog (Cmd+K) */}
+      <SearchDialog />
     </header>
   )
 }

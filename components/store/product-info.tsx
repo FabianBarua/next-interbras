@@ -7,25 +7,28 @@ import { AddToCartButton } from "@/components/store/add-to-cart-button"
 import { WishlistButton } from "@/components/store/wishlist-button"
 import { Separator } from "@/components/ui/separator"
 import { toVariantSlug } from "@/lib/variant-slug"
+import { useDictionary } from "@/i18n/context"
 
-export function ProductInfo({ product, initialVariantId, categorySlug }: { product: Product; initialVariantId?: string; categorySlug?: string }) {
+export function ProductInfo({ product, initialVariantId, categorySlug, onVariantChange }: { product: Product; initialVariantId?: string; categorySlug?: string; onVariantChange?: (variantId: string) => void }) {
+  const { dict, locale } = useDictionary()
   const [selectedId, setSelectedId] = useState(
     initialVariantId || product.variants[0]?.id
   )
   const v = product.variants.find((x) => x.id === selectedId) || product.variants[0]
-  const name = product.name.es
-  const stock = (v?.externalCode?.metadata as any)?.stock
+  const name = product.name[locale] || product.name.es
+  const stock = v?.stock ?? null
   const cecCode = v?.externalCode?.code
 
   // Update URL bar when variant changes (no full navigation)
   const handleVariantChange = useCallback((variantId: string) => {
     setSelectedId(variantId)
+    onVariantChange?.(variantId)
     const newVariant = product.variants.find((x) => x.id === variantId)
     if (newVariant && categorySlug) {
       const newSlug = toVariantSlug(product, newVariant)
       window.history.replaceState(null, "", `/productos/${categorySlug}/${newSlug}`)
     }
-  }, [product, categorySlug])
+  }, [product, categorySlug, onVariantChange])
 
   // Group variant attributes for selector
   const attrKeys = getAttributeKeys(product.variants)
@@ -35,7 +38,7 @@ export function ProductInfo({ product, initialVariantId, categorySlug }: { produ
       {/* Category + Name */}
       <div>
         <p className="text-[11px] font-semibold text-primary uppercase tracking-wider mb-1">
-          {product.category?.name?.es}
+          {product.category?.name?.[locale] || product.category?.name?.es}
         </p>
         <h1 className="text-xl font-bold tracking-tight leading-tight">{name}</h1>
         {v?.sku && (
@@ -49,15 +52,20 @@ export function ProductInfo({ product, initialVariantId, categorySlug }: { produ
       {/* Price + stock */}
       <div className="flex items-end justify-between gap-4">
         <PriceDisplay externalCode={v?.externalCode} className="text-lg" />
-        {stock > 0 ? (
+        {stock !== null && stock > 0 ? (
           <span className="text-[11px] font-medium text-green-600 flex items-center gap-1 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-            Stock: {stock}
+            {dict.products.stock}: {stock}
+          </span>
+        ) : stock === 0 ? (
+          <span className="text-[11px] font-medium text-red-600 flex items-center gap-1 shrink-0">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+            {dict.products.outOfStock}
           </span>
         ) : (
           <span className="text-[11px] font-medium text-amber-600 flex items-center gap-1 shrink-0">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-            Consultar
+            {dict.products.checkAvailability}
           </span>
         )}
       </div>
@@ -73,6 +81,7 @@ export function ProductInfo({ product, initialVariantId, categorySlug }: { produ
               attrKey={key}
               selectedVariant={v}
               onSelect={handleVariantChange}
+              dict={dict}
             />
           ))}
         </div>
@@ -87,18 +96,18 @@ export function ProductInfo({ product, initialVariantId, categorySlug }: { produ
       </div>
 
       {/* Description */}
-      {product.description?.es && (
+      {(product.description?.[locale] || product.description?.es) && (
         <p className="text-xs text-muted-foreground leading-relaxed">
-          {product.description.es}
+          {product.description[locale] || product.description.es}
         </p>
       )}
 
       {/* Trust badges */}
       <div className="grid grid-cols-2 gap-1.5 pt-1">
-        <Badge icon="package" text="Envío a todo el país" />
-        <Badge icon="shield" text="Garantía Interbras" />
-        <Badge icon="card" text="Todas las tarjetas" />
-        <Badge icon="store" text="Retiro en tienda" />
+        <Badge icon="package" text={dict.products.shippingBadge} />
+        <Badge icon="shield" text={dict.products.warrantyBadge} />
+        <Badge icon="card" text={dict.products.cardBadge} />
+        <Badge icon="store" text={dict.products.storeBadge} />
       </div>
     </div>
   )
@@ -120,12 +129,14 @@ function VariantAttrSelector({
   attrKey,
   selectedVariant,
   onSelect,
+  dict,
 }: {
   label: string
   variants: Variant[]
   attrKey: string
   selectedVariant: Variant
   onSelect: (id: string) => void
+  dict: any
 }) {
   // Get unique values for this attr
   const values = Array.from(new Set(variants.map((v) => v.attributes[attrKey]).filter(Boolean)))
@@ -133,10 +144,10 @@ function VariantAttrSelector({
 
   // Labels for known keys
   const labelMap: Record<string, string> = {
-    color: "Color",
-    voltage: "Voltaje",
-    size: "Tamaño",
-    capacity: "Capacidad",
+    color: dict.products.attrColor,
+    voltage: dict.products.attrVoltage,
+    size: dict.products.attrSize,
+    capacity: dict.products.attrCapacity,
   }
 
   return (
@@ -147,19 +158,28 @@ function VariantAttrSelector({
       <div className="flex flex-wrap gap-1.5">
         {values.map((val) => {
           const active = val === selectedValue
-          // Find a variant that matches this value + current other attributes
-          const target = findBestVariant(variants, attrKey, val, selectedVariant)
+          // Find a variant that matches this value + current other attributes (strict only)
+          const target = findExactVariant(variants, attrKey, val, selectedVariant)
+          const available = !!target
           return (
             <button
               key={val}
-              onClick={() => target && onSelect(target.id)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
+              disabled={!available}
+              onClick={() => available && onSelect(target.id)}
+              className={`relative px-3 py-1.5 text-xs font-medium rounded-md border transition-colors ${
                 active
                   ? "border-primary bg-primary/10 text-primary"
-                  : "border-border hover:border-muted-foreground/50 text-muted-foreground hover:text-foreground"
+                  : available
+                    ? "border-border hover:border-muted-foreground/50 text-muted-foreground hover:text-foreground"
+                    : "border-border/50 text-muted-foreground/40 cursor-not-allowed"
               }`}
             >
               {val}
+              {!available && (
+                <span className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden>
+                  <span className="block w-[calc(100%-8px)] h-px bg-muted-foreground/40 rotate-[-12deg]" />
+                </span>
+              )}
             </button>
           )
         })}
@@ -168,23 +188,18 @@ function VariantAttrSelector({
   )
 }
 
-function findBestVariant(
+function findExactVariant(
   variants: Variant[],
   changedKey: string,
   newValue: string,
   current: Variant
 ): Variant | undefined {
-  // Try to find variant matching all current attrs but with this one changed
+  // Only find variant matching all current attrs but with this one changed — no fallback
   const otherKeys = Object.keys(current.attributes).filter((k) => k !== changedKey)
-  let match = variants.find((v) => {
+  return variants.find((v) => {
     if (v.attributes[changedKey] !== newValue) return false
     return otherKeys.every((k) => v.attributes[k] === current.attributes[k])
   })
-  if (!match) {
-    // Fallback: any variant with that value
-    match = variants.find((v) => v.attributes[changedKey] === newValue)
-  }
-  return match
 }
 
 const icons: Record<string, React.ReactNode> = {

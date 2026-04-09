@@ -3,21 +3,23 @@
 import type { OrderStatus } from "@/types/order"
 import { Check, Package, Clock, Truck, Home } from "lucide-react"
 import { useState, useEffect } from "react"
+import { useDictionary } from "@/i18n/context"
 
 interface TrackerProps {
   status: OrderStatus
   dateStr?: string
 }
 
-const STAGES = [
-  { id: "PENDING", label: "Recibido", desc: "Pago en revisión", detail: "Estamos verificando el ingreso de tu pago.", Icon: Clock },
-  { id: "PROCESSING", label: "Procesando", desc: "Preparando embalaje", detail: "Control de calidad y empaquetado de tu orden.", Icon: Package },
-  { id: "SHIPPED", label: "En Camino", desc: "En poder del courier", detail: "Tu paquete está en ruta hacia tu dirección.", Icon: Truck },
-  { id: "DELIVERED", label: "Entregado", desc: "Paquete entregado", detail: "¡Tu pedido fue entregado con éxito!", Icon: Home },
-]
-
 export function OrderTracker({ status, dateStr }: TrackerProps) {
+  const { dict } = useDictionary()
   const [mounted, setMounted] = useState(false)
+
+  const STAGES = [
+    { id: "PENDING", label: dict.orderTracker.received, desc: dict.orderTracker.receivedDesc, detail: dict.orderTracker.receivedDetail, Icon: Clock },
+    { id: "PROCESSING", label: dict.orderTracker.processing, desc: dict.orderTracker.processingDesc, detail: dict.orderTracker.processingDetail, Icon: Package },
+    { id: "SHIPPED", label: dict.orderTracker.shipped, desc: dict.orderTracker.shippedDesc, detail: dict.orderTracker.shippedDetail, Icon: Truck },
+    { id: "DELIVERED", label: dict.orderTracker.delivered, desc: dict.orderTracker.deliveredDesc, detail: dict.orderTracker.deliveredDetail, Icon: Home },
+  ]
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 80)
@@ -31,8 +33,8 @@ export function OrderTracker({ status, dateStr }: TrackerProps) {
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
         </div>
         <div>
-          <p className="font-bold text-sm">Orden Cancelada</p>
-          <p className="text-xs opacity-80 mt-0.5">Este pedido fue anulado. Si hubo un cargo, será reembolsado.</p>
+          <p className="font-bold text-sm">{dict.orderTracker.cancelled}</p>
+          <p className="text-xs opacity-80 mt-0.5">{dict.orderTracker.cancelledDetail}</p>
         </div>
       </div>
     )
@@ -94,13 +96,13 @@ export function OrderTracker({ status, dateStr }: TrackerProps) {
             {status !== "DELIVERED" && (
               <span className="inline-flex items-center gap-1 text-[10px] font-medium text-primary">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                Activo
+                {dict.orderTracker.active}
               </span>
             )}
           </div>
           <p className="text-xs text-muted-foreground mt-1">{STAGES[activeIdx].detail}</p>
           {dateStr && (
-            <p className="text-[11px] text-muted-foreground mt-1.5">Última actualización: {dateStr}</p>
+            <p className="text-[11px] text-muted-foreground mt-1.5">{dict.orderTracker.lastUpdate}: {dateStr}</p>
           )}
         </div>
       </div>

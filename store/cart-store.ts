@@ -20,10 +20,13 @@ export const useCartStore = create<CartState>()(
       lastAddedAt: 0,
       _hydrated: false,
       addItem: (product, quantity, variant) => set((state) => {
+        // Don't add out-of-stock items
+        if (variant?.stock === 0) return state
         const items = [...state.cart.items]
         const existing = items.find(i => i.productId === product.id && i.variantId === variant?.id)
         if (existing) {
-          existing.quantity += quantity
+          const maxQty = variant?.stock ?? Infinity
+          existing.quantity = Math.min(existing.quantity + quantity, maxQty)
         } else {
           items.push({
             id: Math.random().toString(),

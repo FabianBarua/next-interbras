@@ -2,6 +2,7 @@
 
 import { useCartStore } from "@/store/cart-store"
 import { useDictionary } from "@/i18n/context"
+import { getVariantMainImage } from "@/lib/variant-images"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { QuantitySelector } from "./quantity-selector"
 import { PriceDisplay } from "./price-display"
@@ -11,7 +12,7 @@ import React, { useState } from "react"
 
 export function CartDrawer({ children }: { children: React.ReactNode }) {
   const { cart, removeItem } = useCartStore()
-  const { locale } = useDictionary()
+  const { dict, locale } = useDictionary()
   const [open, setOpen] = useState(false)
 
   return (
@@ -21,7 +22,7 @@ export function CartDrawer({ children }: { children: React.ReactNode }) {
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-md flex flex-col h-full bg-background">
         <SheetHeader>
-          <SheetTitle>Mi Carrito ({cart.totalItems})</SheetTitle>
+          <SheetTitle>{dict.cart.myCart} ({cart.totalItems})</SheetTitle>
         </SheetHeader>
         
         <div className="flex-1 overflow-y-auto py-6">
@@ -30,21 +31,21 @@ export function CartDrawer({ children }: { children: React.ReactNode }) {
               <div className="w-20 h-20 rounded-full bg-accent flex items-center justify-center text-muted-foreground">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
               </div>
-              <h3 className="font-semibold text-lg">Tu carrito está vacío</h3>
+              <h3 className="font-semibold text-lg">{dict.cart.emptyTitle}</h3>
               <p className="text-muted-foreground text-sm max-w-[250px]">
-                Agrega productos a tu carrito para continuar con la compra.
+                {dict.cart.emptyMsg}
               </p>
               <button 
                 onClick={() => setOpen(false)}
                 className="mt-4 px-6 py-2 bg-primary text-primary-foreground font-medium rounded-md hover:bg-primary/90 transition-colors"
               >
-                Volver a la tienda
+                {dict.cart.backToStore}
               </button>
             </div>
           ) : (
             <div className="flex flex-col gap-6 pr-2">
               {cart.items.map((item) => {
-                const img = item.product.images.find(i => i.isMain) || item.product.images[0]
+                const img = getVariantMainImage(item.variant)
                 const name = item.product.name[locale] || item.product.name.es || "Producto"
                 const variantName = item.variant?.name?.[locale] || item.variant?.name?.es
                 
@@ -79,7 +80,7 @@ export function CartDrawer({ children }: { children: React.ReactNode }) {
                     </div>
                     
                     <button 
-                      title="Eliminar"
+                      title={dict.cart.deleteItem}
                       onClick={() => removeItem(item.id)}
                       className="absolute top-0 right-0 p-1 rounded-sm opacity-50 hover:opacity-100 hover:bg-accent transition-all text-destructive"
                     >
@@ -95,12 +96,12 @@ export function CartDrawer({ children }: { children: React.ReactNode }) {
         {cart.items.length > 0 && (
           <div className="border-t pt-6 mt-auto flex flex-col gap-4">
             <div className="flex items-center justify-between font-semibold text-lg">
-              <span>Subtotal</span>
+              <span>{dict.common.subtotal}</span>
               <span>US$ {cart.items.reduce((acc, curr) => acc + ((curr.variant?.externalCode?.priceUsd || 0) * curr.quantity), 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
             </div>
             
             <p className="text-xs text-muted-foreground text-center">
-              Impuestos y envío calculados en el checkout.
+              {dict.cart.taxNotice}
             </p>
             
             <Link 
@@ -108,7 +109,7 @@ export function CartDrawer({ children }: { children: React.ReactNode }) {
               className="w-full text-center px-4 py-3 border border-border rounded-md hover:bg-accent transition-colors font-medium text-sm"
               onClick={() => setOpen(false)}
             >
-              Ver Carrito
+              {dict.cart.viewCart}
             </Link>
             
             <Link 
@@ -116,7 +117,7 @@ export function CartDrawer({ children }: { children: React.ReactNode }) {
               className="w-full text-center px-4 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium text-sm"
               onClick={() => setOpen(false)}
             >
-              Procesar Pedido
+              {dict.cart.processOrder}
             </Link>
           </div>
         )}

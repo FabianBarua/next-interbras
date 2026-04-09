@@ -17,11 +17,13 @@ const meta: Record<Locale, { flag: string; label: string }> = {
 }
 
 function useSwitchLocale() {
-  const router = useRouter()
   const canonical = useCanonicalPathname()
+  const router = useRouter()
   return (target: Locale) => {
     document.cookie = `NEXT_LOCALE=${target};path=/;max-age=${365 * 24 * 60 * 60};samesite=lax`
-    router.push(localePath(canonical, target))
+    const href = localePath(canonical, target)
+    router.push(href)
+    router.refresh()
   }
 }
 

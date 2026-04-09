@@ -4,6 +4,7 @@ import Link from "@/i18n/link"
 import Image from "next/image"
 import { useCartStore } from "@/store/cart-store"
 import { useDictionary } from "@/i18n/context"
+import { getVariantMainImage } from "@/lib/variant-images"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { QuantitySelector } from "@/components/store/quantity-selector"
 import { useState, useEffect } from "react"
@@ -66,7 +67,7 @@ export default function CartPage() {
           {/* Items */}
           <div className="space-y-0">
             {cart.items.map((item, idx) => {
-              const img = item.product.images.find((i) => i.isMain) || item.product.images[0]
+              const img = getVariantMainImage(item.variant)
               const name = item.product.name[locale] || item.product.name.es || "Producto"
               const variantName = item.variant?.name?.[locale] || item.variant?.name?.es
               const priceUsd = item.variant?.externalCode?.priceUsd || 0

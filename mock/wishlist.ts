@@ -137,32 +137,6 @@ export const wishlistMock: Wishlist = {
           "createdAt": "2026-04-08T18:03:53.151Z",
           "updatedAt": "2026-04-08T18:03:53.151Z"
         },
-        "images": [
-          {
-            "id": "9879a11b-373f-482e-a9ff-9b35b77bfa86",
-            "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
-            "url": "/productos/tvs/IN3200TV-1.webp",
-            "alt": null,
-            "isMain": true,
-            "sortOrder": 0
-          },
-          {
-            "id": "f19419ea-f400-4ded-a45b-3b6f65079bbc",
-            "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
-            "url": "/productos/tvs/IN3200TV-2.webp",
-            "alt": null,
-            "isMain": false,
-            "sortOrder": 1
-          },
-          {
-            "id": "60eb8e2b-e96f-4d19-99f6-765a739d0943",
-            "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
-            "url": "/productos/tvs/IN3200TV-3.webp",
-            "alt": null,
-            "isMain": false,
-            "sortOrder": 2
-          }
-        ],
         "variants": [
           {
             "id": "6902daf6-9aae-4974-9d0d-6c46d2d88717",
@@ -181,7 +155,37 @@ export const wishlistMock: Wishlist = {
               "priceGs": null,
               "priceBrl": null,
               "metadata": null
-            }
+            },
+            "images": [
+              {
+                "id": "9879a11b-373f-482e-a9ff-9b35b77bfa86",
+                "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+                "url": "/productos/tvs/IN3200TV-1.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": true,
+                "sortOrder": 0
+              },
+              {
+                "id": "f19419ea-f400-4ded-a45b-3b6f65079bbc",
+                "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+                "url": "/productos/tvs/IN3200TV-2.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": false,
+                "sortOrder": 1
+              },
+              {
+                "id": "60eb8e2b-e96f-4d19-99f6-765a739d0943",
+                "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+                "url": "/productos/tvs/IN3200TV-3.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": false,
+                "sortOrder": 2
+              }
+            ],
+            "stock": null
           }
         ]
       },
@@ -190,7 +194,9 @@ export const wishlistMock: Wishlist = {
         "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
         "sku": "IN3200TV-NEGRO",
         "name": null,
-        "attributes": { "color": "Negro" },
+        "attributes": {
+          "color": "Negro"
+        },
         "externalCode": {
           "id": "5d092948-55c0-462b-8c20-d682f12b5ee6",
           "system": "cec",
@@ -200,7 +206,37 @@ export const wishlistMock: Wishlist = {
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "stock": null,
+        "images": [
+          {
+            "id": "9879a11b-373f-482e-a9ff-9b35b77bfa86",
+            "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+            "url": "/productos/tvs/IN3200TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "f19419ea-f400-4ded-a45b-3b6f65079bbc",
+            "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+            "url": "/productos/tvs/IN3200TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "60eb8e2b-e96f-4d19-99f6-765a739d0943",
+            "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+            "url": "/productos/tvs/IN3200TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ]
       },
       "addedAt": "2026-04-09T01:10:41.714Z"
     },
@@ -339,40 +375,6 @@ export const wishlistMock: Wishlist = {
           "createdAt": "2026-04-08T18:03:53.151Z",
           "updatedAt": "2026-04-08T18:03:53.151Z"
         },
-        "images": [
-          {
-            "id": "0d484048-e1b9-4bc2-8519-4cd1d7b4c5d8",
-            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
-            "url": "/productos/tvs/IN4300TV-1.webp",
-            "alt": null,
-            "isMain": true,
-            "sortOrder": 0
-          },
-          {
-            "id": "abfe9afe-236a-4f81-987e-2dc3757cea2e",
-            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
-            "url": "/productos/tvs/IN4300TV-2.webp",
-            "alt": null,
-            "isMain": false,
-            "sortOrder": 1
-          },
-          {
-            "id": "5ffaa533-0579-42f9-88c7-d9c11d021311",
-            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
-            "url": "/productos/tvs/IN4300TV-3.webp",
-            "alt": null,
-            "isMain": false,
-            "sortOrder": 2
-          },
-          {
-            "id": "4258b0a7-386b-42f6-b1ce-604064f212e9",
-            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
-            "url": "/productos/tvs/IN4300TV-4.webp",
-            "alt": null,
-            "isMain": false,
-            "sortOrder": 3
-          }
-        ],
         "variants": [
           {
             "id": "86360c42-1cc5-40b7-b1e3-02dd657c6c00",
@@ -391,7 +393,46 @@ export const wishlistMock: Wishlist = {
               "priceGs": null,
               "priceBrl": null,
               "metadata": null
-            }
+            },
+            "images": [
+              {
+                "id": "0d484048-e1b9-4bc2-8519-4cd1d7b4c5d8",
+                "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+                "url": "/productos/tvs/IN4300TV-1.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": true,
+                "sortOrder": 0
+              },
+              {
+                "id": "abfe9afe-236a-4f81-987e-2dc3757cea2e",
+                "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+                "url": "/productos/tvs/IN4300TV-2.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": false,
+                "sortOrder": 1
+              },
+              {
+                "id": "5ffaa533-0579-42f9-88c7-d9c11d021311",
+                "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+                "url": "/productos/tvs/IN4300TV-3.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": false,
+                "sortOrder": 2
+              },
+              {
+                "id": "4258b0a7-386b-42f6-b1ce-604064f212e9",
+                "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+                "url": "/productos/tvs/IN4300TV-4.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": false,
+                "sortOrder": 3
+              }
+            ],
+            "stock": null
           }
         ]
       },
@@ -400,7 +441,9 @@ export const wishlistMock: Wishlist = {
         "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
         "sku": "IN4300TV-NEGRO",
         "name": null,
-        "attributes": { "color": "Negro" },
+        "attributes": {
+          "color": "Negro"
+        },
         "externalCode": {
           "id": "18bef282-f70c-4778-8007-efe516ea6b32",
           "system": "cec",
@@ -410,7 +453,46 @@ export const wishlistMock: Wishlist = {
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "stock": null,
+        "images": [
+          {
+            "id": "0d484048-e1b9-4bc2-8519-4cd1d7b4c5d8",
+            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+            "url": "/productos/tvs/IN4300TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "abfe9afe-236a-4f81-987e-2dc3757cea2e",
+            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+            "url": "/productos/tvs/IN4300TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "5ffaa533-0579-42f9-88c7-d9c11d021311",
+            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+            "url": "/productos/tvs/IN4300TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          },
+          {
+            "id": "4258b0a7-386b-42f6-b1ce-604064f212e9",
+            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+            "url": "/productos/tvs/IN4300TV-4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 3
+          }
+        ]
       },
       "addedAt": "2026-04-08T01:10:41.714Z"
     },
@@ -549,40 +631,6 @@ export const wishlistMock: Wishlist = {
           "createdAt": "2026-04-08T18:03:53.151Z",
           "updatedAt": "2026-04-08T18:03:53.151Z"
         },
-        "images": [
-          {
-            "id": "8e7f166e-2a0c-4f90-84fa-eb72f6ee37ed",
-            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
-            "url": "/productos/tvs/IN5000TV-1.webp",
-            "alt": null,
-            "isMain": true,
-            "sortOrder": 0
-          },
-          {
-            "id": "c392dfff-dbf5-4797-b3f2-268759d1935c",
-            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
-            "url": "/productos/tvs/IN5000TV-2.webp",
-            "alt": null,
-            "isMain": false,
-            "sortOrder": 1
-          },
-          {
-            "id": "fa8e5548-92b5-40a4-9574-3dcdf9011418",
-            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
-            "url": "/productos/tvs/IN5000TV-3.webp",
-            "alt": null,
-            "isMain": false,
-            "sortOrder": 2
-          },
-          {
-            "id": "059a2118-4563-485c-948c-970ff947d3ca",
-            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
-            "url": "/productos/tvs/IN5000TV-4.webp",
-            "alt": null,
-            "isMain": false,
-            "sortOrder": 3
-          }
-        ],
         "variants": [
           {
             "id": "056584ab-1667-49f4-9ba1-284e4d02c0af",
@@ -601,7 +649,46 @@ export const wishlistMock: Wishlist = {
               "priceGs": null,
               "priceBrl": null,
               "metadata": null
-            }
+            },
+            "images": [
+              {
+                "id": "8e7f166e-2a0c-4f90-84fa-eb72f6ee37ed",
+                "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+                "url": "/productos/tvs/IN5000TV-1.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": true,
+                "sortOrder": 0
+              },
+              {
+                "id": "c392dfff-dbf5-4797-b3f2-268759d1935c",
+                "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+                "url": "/productos/tvs/IN5000TV-2.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": false,
+                "sortOrder": 1
+              },
+              {
+                "id": "fa8e5548-92b5-40a4-9574-3dcdf9011418",
+                "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+                "url": "/productos/tvs/IN5000TV-3.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": false,
+                "sortOrder": 2
+              },
+              {
+                "id": "059a2118-4563-485c-948c-970ff947d3ca",
+                "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+                "url": "/productos/tvs/IN5000TV-4.webp",
+                "alt": null,
+                "variantId": null,
+                "isMain": false,
+                "sortOrder": 3
+              }
+            ],
+            "stock": null
           }
         ]
       },
@@ -610,7 +697,9 @@ export const wishlistMock: Wishlist = {
         "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
         "sku": "IN5000TV-NEGRO",
         "name": null,
-        "attributes": { "color": "Negro" },
+        "attributes": {
+          "color": "Negro"
+        },
         "externalCode": {
           "id": "ba919d17-cc14-4459-8254-113e7c709be1",
           "system": "cec",
@@ -620,7 +709,46 @@ export const wishlistMock: Wishlist = {
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "stock": null,
+        "images": [
+          {
+            "id": "8e7f166e-2a0c-4f90-84fa-eb72f6ee37ed",
+            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+            "url": "/productos/tvs/IN5000TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "c392dfff-dbf5-4797-b3f2-268759d1935c",
+            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+            "url": "/productos/tvs/IN5000TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "fa8e5548-92b5-40a4-9574-3dcdf9011418",
+            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+            "url": "/productos/tvs/IN5000TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          },
+          {
+            "id": "059a2118-4563-485c-948c-970ff947d3ca",
+            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+            "url": "/productos/tvs/IN5000TV-4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 3
+          }
+        ]
       },
       "addedAt": "2026-04-07T01:10:41.714Z"
     }

@@ -5,9 +5,12 @@ import Link from "@/i18n/link"
 import Image from "next/image"
 import { InterbrasLogo } from "@/components/store/interbras-logo"
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 export default async function PublicTrackingPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
   const { id } = resolvedParams
+  if (!UUID_RE.test(id)) return notFound()
   const order = await getOrderByIdPublic(id)
 
   if (!order) return notFound()

@@ -11,5 +11,10 @@ export async function getLocale(): Promise<Locale> {
 
 export async function getDictionary() {
   const locale = await getLocale()
-  return (await import(`./dictionaries/${locale}`)).default
+  switch (locale) {
+    case "pt":
+      return (await import("./dictionaries/pt")).default
+    default:
+      return (await import("./dictionaries/es")).default
+  }
 }

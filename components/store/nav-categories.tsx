@@ -12,6 +12,7 @@ import {
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
 import { categoriesMock } from "@/mock/categories"
+import { useDictionary } from "@/i18n/context"
 
 // Map category slugs to lucide-style SVG icons
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -37,6 +38,7 @@ const categoryIcons: Record<string, React.ReactNode> = {
 const defaultIcon = <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
 
 export function NavCategories() {
+  const { dict, locale } = useDictionary()
   const categories = categoriesMock.filter(c => c.active)
 
   return (
@@ -45,14 +47,14 @@ export function NavCategories() {
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link href="/" className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold tracking-wide text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
-              Inicio
+              {dict.nav.home}
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
           <NavigationMenuTrigger className="text-sm font-semibold tracking-wide text-muted-foreground">
-            Productos
+            {dict.nav.products}
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <div className="grid w-135 grid-cols-3 gap-1 p-3 lg:w-160">
@@ -63,10 +65,10 @@ export function NavCategories() {
               >
                 <InterbrasLogo className="h-3 sm:h-3 w-auto text-brand-700 dark:text-brand-400 mb-3 mr-auto" />
                 <div className="text-sm font-semibold leading-tight">
-                  Todos los productos
+                  {dict.nav.allProducts}
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground leading-snug">
-                  Explora todo nuestro catálogo de electrónica y electrodomésticos.
+                  {dict.nav.allProductsDesc}
                 </p>
               </Link>
 
@@ -80,7 +82,7 @@ export function NavCategories() {
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border bg-background text-muted-foreground group-hover/cat:text-primary group-hover/cat:border-primary/30 transition-colors">
                       {categoryIcons[cat.slug] || defaultIcon}
                     </span>
-                    <span className="font-medium leading-none">{cat.name.es}</span>
+                    <span className="font-medium leading-none">{cat.name[locale] || cat.name.es}</span>
                   </Link>
                 </NavigationMenuLink>
               ))}
@@ -91,7 +93,7 @@ export function NavCategories() {
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link href="/downloads" className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold tracking-wide text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
-              Downloads
+              {dict.nav.downloads}
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -99,7 +101,7 @@ export function NavCategories() {
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link href="/soporte" className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold tracking-wide text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
-              Soporte
+              {dict.nav.support}
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -107,7 +109,7 @@ export function NavCategories() {
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link href="/donde-estamos" className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold tracking-wide text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
-              Sucursales
+              {dict.nav.stores}
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>

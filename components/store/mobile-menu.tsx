@@ -25,6 +25,25 @@ export function MobileMenu() {
         <div className="fixed inset-0 z-40 bg-background/80 backdrop-blur-sm">
           <div className="fixed inset-y-0 left-0 w-3/4 max-w-sm bg-background border-r p-6 shadow-lg animate-in slide-in-from-left">
             <div className="flex flex-col gap-6 pt-10">
+              {/* Search trigger */}
+              <button
+                onClick={() => {
+                  setIsOpen(false)
+                  // Small delay so the menu closes first
+                  setTimeout(() => {
+                    document.dispatchEvent(
+                      new KeyboardEvent("keydown", { key: "k", metaKey: true }),
+                    )
+                  }, 150)
+                }}
+                className="flex items-center gap-3 text-lg font-medium text-muted-foreground"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                {dict.search.searchProducts}
+              </button>
+
+              <div className="h-px bg-border" />
+
               <Link href="/" onClick={() => setIsOpen(false)} className="text-lg font-medium">{t.home}</Link>
               <Link href="/productos" onClick={() => setIsOpen(false)} className="text-lg font-medium">{t.products}</Link>
               <Link href="/downloads" onClick={() => setIsOpen(false)} className="text-lg font-medium">{t.downloads}</Link>

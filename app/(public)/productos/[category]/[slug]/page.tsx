@@ -2,8 +2,9 @@ import { getProductByVariantSlug, getProductsByCategory } from "@/services/produ
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { notFound } from "next/navigation"
 import { ProductCarousel } from "@/components/store/product-carousel"
-import { ProductGallery } from "@/components/store/product-gallery"
-import { ProductInfo } from "@/components/store/product-info"
+import { ProductDetailView } from "@/components/store/product-detail-view"
+import { ProductCTA } from "@/components/store/product-cta"
+import { getDictionary, getLocale } from "@/i18n/get-dictionary"
 
 export default async function ProductDetailPage(
   { params }: {
@@ -15,40 +16,36 @@ export default async function ProductDetailPage(
   if (!entry) notFound()
 
   const { product, variant } = entry
+  const dict = await getDictionary()
+  const locale = await getLocale()
 
   const relatedProducts = (await getProductsByCategory(product.category?.slug || catSlug))
     .filter((p) => p.id !== product.id)
 
-  const name = product.name.es
+  const name = product.name[locale] || product.name.es
 
   return (
     <div className="container px-4 py-6 max-w-5xl mx-auto">
       <Breadcrumbs items={[
-        { label: "Productos", href: "/productos" },
-        { label: product.category?.name?.es || catSlug, href: `/productos/${catSlug}` },
+        { label: dict.nav.products, href: "/productos" },
+        { label: product.category?.name?.[locale] || product.category?.name?.es || catSlug, href: `/productos/${catSlug}` },
         { label: name },
       ]} />
 
       {/* Main grid — centered */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 mt-6">
-        {/* Gallery */}
-        <ProductGallery images={product.images} alt={name} />
-
-        {/* Info */}
-        <div className="md:sticky md:top-24 h-fit">
-          <ProductInfo product={product} initialVariantId={variant?.id} categorySlug={catSlug} />
-        </div>
+      <div className="mt-6">
+        <ProductDetailView product={product} initialVariantId={variant?.id} categorySlug={catSlug} />
       </div>
 
       {/* Specs + Included */}
-      {(product.specs?.["es"] || product.included?.["es"]) && (
+      {(product.specs?.[locale] || product.specs?.["es"] || product.included?.[locale] || product.included?.["es"]) && (
         <div className="mt-10 pt-6 border-t">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {product.specs?.["es"] && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {(product.specs?.[locale] || product.specs?.["es"]) && (
               <div>
-                <h3 className="text-sm font-bold mb-3 uppercase text-muted-foreground">Especificaciones</h3>
+                <h3 className="text-sm font-bold mb-3 uppercase text-muted-foreground">{dict.products.specs}</h3>
                 <div className="divide-y text-sm">
-                  {product.specs["es"].map((spec, i) => (
+                  {(product.specs[locale] || product.specs["es"])!.map((spec, i) => (
                     <div key={i} className="flex py-2 gap-4">
                       <span className="w-2/5 text-muted-foreground text-xs">{spec.label}</span>
                       <span className="w-3/5 font-medium text-xs">{spec.value}</span>
@@ -57,11 +54,11 @@ export default async function ProductDetailPage(
                 </div>
               </div>
             )}
-            {product.included?.["es"] && (
+            {(product.included?.[locale] || product.included?.["es"]) && (
               <div>
-                <h3 className="text-sm font-bold mb-3 uppercase text-muted-foreground">Contenido de la Caja</h3>
+                <h3 className="text-sm font-bold mb-3 uppercase text-muted-foreground">{dict.products.boxContents}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  {product.included["es"]}
+                  {product.included[locale] || product.included["es"]}
                 </p>
               </div>
             )}
@@ -72,10 +69,13 @@ export default async function ProductDetailPage(
       {/* Related */}
       {relatedProducts.length > 0 && (
         <div className="mt-12">
-          <h2 className="text-xs font-bold tracking-tight mb-4 uppercase text-muted-foreground">Productos Relacionados</h2>
+          <h2 className="text-xs font-bold tracking-tight mb-4 uppercase text-muted-foreground">{dict.products.relatedProducts}</h2>
           <ProductCarousel products={relatedProducts} compact />
         </div>
       )}
+
+      {/* CTA */}
+      <ProductCTA />
     </div>
   )
 }

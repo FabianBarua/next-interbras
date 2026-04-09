@@ -44,32 +44,81 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
       .orderBy(asc(variants.sortOrder)),
   ])
 
-  // Group by product
-  const imgMap = new Map<string, FrontendImage[]>()
-  for (const img of imgRows) {
-    const list = imgMap.get(img.productId) ?? []
-    list.push({
-      id: img.id,
-      productId: img.productId,
-      url: img.url,
-      alt: (img.alt as any)?.es ?? (img.alt as any)?.pt ?? null,
-      isMain: img.sortOrder === 0,
-      sortOrder: img.sortOrder,
-    })
-    imgMap.set(img.productId, list)
+  // ---- Build FrontendImage objects ----
+  const allImages: FrontendImage[] = imgRows.map(img => ({
+    id: img.id,
+    productId: img.productId,
+    variantId: img.variantId ?? null,
+    url: img.url,
+    alt: (img.alt as any)?.es ?? (img.alt as any)?.pt ?? null,
+    isMain: img.sortOrder === 0,
+    sortOrder: img.sortOrder,
+  }))
+
+  // Group images: variant-specific (by variantId) and product-level (variantId=null, by productId)
+  const imgByVariant = new Map<string, FrontendImage[]>()
+  const imgByProduct = new Map<string, FrontendImage[]>()
+  for (const img of allImages) {
+    if (img.variantId) {
+      const list = imgByVariant.get(img.variantId) ?? []
+      list.push(img)
+      imgByVariant.set(img.variantId, list)
+    } else {
+      const list = imgByProduct.get(img.productId) ?? []
+      list.push(img)
+      imgByProduct.set(img.productId, list)
+    }
   }
 
+  // ---- Build variants: skip CEC-less, add stock + images ----
+  // First pass: collect all CEC-linked variants per product (need full list for sibling fallback)
   const varMap = new Map<string, Variant[]>()
   for (const { v, ec } of varRows) {
     if (!v.active) continue
-    const list = varMap.get(v.productId) ?? []
+    if (!ec) continue // CEC required for visibility
+
+    const attrs = (v.options ?? {}) as Record<string, any>
+
+    // Resolve images: direct → sibling with most matching attrs → product-level
+    let images = imgByVariant.get(v.id) ?? []
+    if (images.length === 0) {
+      // Sibling fallback: find variant images sharing the most attributes (e.g. same color)
+      const attrEntries = Object.entries(attrs)
+      if (attrEntries.length > 0) {
+        let bestImages: FrontendImage[] = []
+        let bestScore = 0
+        for (const [sibId, sibImgs] of imgByVariant) {
+          if (sibId === v.id) continue
+          // Find sibling variant data from varRows
+          const sibRow = varRows.find(r => r.v.id === sibId)
+          if (!sibRow || sibRow.v.productId !== v.productId) continue
+          const sibAttrs = (sibRow.v.options ?? {}) as Record<string, any>
+          let score = 0
+          for (const [key, val] of attrEntries) {
+            if (sibAttrs[key] === val) score++
+          }
+          if (score > bestScore) {
+            bestScore = score
+            bestImages = sibImgs
+          }
+        }
+        if (bestImages.length > 0) images = bestImages
+      }
+    }
+    if (images.length === 0) {
+      // Fallback to product-level images
+      images = imgByProduct.get(v.productId) ?? []
+    }
+
     const mapped: Variant = {
       id: v.id,
       productId: v.productId,
       sku: v.sku,
       name: null,
-      attributes: (v.options ?? {}) as Record<string, any>,
-      externalCode: ec ? {
+      attributes: attrs,
+      stock: v.stock ?? null,
+      images,
+      externalCode: {
         id: ec.id,
         system: ec.system,
         code: ec.code,
@@ -78,8 +127,10 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
         priceGs: ec.priceGs ? Number(ec.priceGs) : null,
         priceBrl: ec.priceBrl ? Number(ec.priceBrl) : null,
         metadata: ec.metadata ?? null,
-      } satisfies ExternalCEC : undefined,
+      } satisfies ExternalCEC,
     }
+
+    const list = varMap.get(v.productId) ?? []
     list.push(mapped)
     varMap.set(v.productId, list)
   }
@@ -112,10 +163,9 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
       createdAt: p.createdAt.toISOString(),
       updatedAt: p.updatedAt.toISOString(),
       category: cat,
-      images: imgMap.get(p.id) ?? [],
       variants: varMap.get(p.id) ?? [],
     } satisfies Product
-  })
+  }).filter(p => p.variants.length > 0)
 }
 
 // ---------------------------------------------------------------------------
@@ -131,12 +181,8 @@ export async function getVariantEntries(): Promise<VariantEntry[]> {
     const prods = await loadProductRows()
     const entries: VariantEntry[] = []
     for (const product of prods) {
-      if (product.variants.length === 0) {
-        entries.push({ product, variant: undefined as any })
-      } else {
-        for (const variant of product.variants) {
-          entries.push({ product, variant })
-        }
+      for (const variant of product.variants) {
+        entries.push({ product, variant })
       }
     }
     return entries
@@ -151,12 +197,8 @@ export async function getVariantEntriesByCategory(categorySlug: string): Promise
     const prods = await loadProductRows(eq(products.categoryId, catRow[0].id))
     const entries: VariantEntry[] = []
     for (const product of prods) {
-      if (product.variants.length === 0) {
-        entries.push({ product, variant: undefined as any })
-      } else {
-        for (const variant of product.variants) {
-          entries.push({ product, variant })
-        }
+      for (const variant of product.variants) {
+        entries.push({ product, variant })
       }
     }
     return entries
@@ -178,9 +220,6 @@ export async function getProductByVariantSlug(variantSlug: string): Promise<Vari
       if (toVariantSlug(product, variant) === variantSlug) {
         return { product, variant }
       }
-    }
-    if (product.slug === variantSlug) {
-      return { product, variant: product.variants[0] }
     }
   }
   return null

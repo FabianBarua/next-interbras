@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useCartStore } from "@/store/cart-store"
 import { useDictionary, useLocalePath } from "@/i18n/context"
+import { getVariantMainImage } from "@/lib/variant-images"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
@@ -406,7 +407,7 @@ export default function CheckoutPage() {
 
               <div className="max-h-60 overflow-y-auto space-y-3">
                 {cart.items.map((item) => {
-                  const img = item.product.images.find((i) => i.isMain) || item.product.images[0]
+                  const img = getVariantMainImage(item.variant)
                   const name = item.product.name[locale] || item.product.name.es || "Producto"
                   const priceUsd = item.variant?.externalCode?.priceUsd || 0
 

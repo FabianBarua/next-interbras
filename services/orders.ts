@@ -151,6 +151,9 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
     for (const item of input.items) {
       const v = variantMap.get(item.variantId)!
       if (v.stock !== null) {
+        if (v.stock < item.quantity) {
+          throw new Error(`Stock insuficiente para ${v.sku}. Disponible: ${v.stock}, solicitado: ${item.quantity}`)
+        }
         await tx.update(variantsTable)
           .set({ stock: sql`${variantsTable.stock} - ${item.quantity}` })
           .where(and(eq(variantsTable.id, item.variantId), sql`${variantsTable.stock} >= ${item.quantity}`))

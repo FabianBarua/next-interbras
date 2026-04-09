@@ -5,9 +5,11 @@ import type { Product, Variant } from "@/types/product"
 import { useEffect, useState, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
+import { useDictionary } from "@/i18n/context"
 
 export function WishlistButton({ product, variant, className = "" }: { product: Product; variant: Variant; className?: string }) {
   const { wishlist, toggle } = useWishlistStore()
+  const { dict } = useDictionary()
   const [isMounted, setIsMounted] = useState(false)
   const { data: session } = useSession()
   const [, startTransition] = useTransition()
@@ -22,7 +24,7 @@ export function WishlistButton({ product, variant, className = "" }: { product: 
     e.preventDefault()
     e.stopPropagation()
     toggle(product, variant)
-    toast(isFav ? "Removido de favoritos" : "Añadido a favoritos")
+    toast(isFav ? dict.wishlist.removed : dict.wishlist.added)
 
     // Sync with server if logged in (fire-and-forget)
     if (session?.user?.id) {

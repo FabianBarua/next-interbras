@@ -133,32 +133,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.151Z",
       "updatedAt": "2026-04-08T18:03:53.151Z"
     },
-    "images": [
-      {
-        "id": "9879a11b-373f-482e-a9ff-9b35b77bfa86",
-        "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
-        "url": "/productos/tvs/IN3200TV-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "f19419ea-f400-4ded-a45b-3b6f65079bbc",
-        "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
-        "url": "/productos/tvs/IN3200TV-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "60eb8e2b-e96f-4d19-99f6-765a739d0943",
-        "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
-        "url": "/productos/tvs/IN3200TV-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "6902daf6-9aae-4974-9d0d-6c46d2d88717",
@@ -177,7 +151,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "9879a11b-373f-482e-a9ff-9b35b77bfa86",
+            "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+            "url": "/productos/tvs/IN3200TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "f19419ea-f400-4ded-a45b-3b6f65079bbc",
+            "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+            "url": "/productos/tvs/IN3200TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "60eb8e2b-e96f-4d19-99f6-765a739d0943",
+            "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+            "url": "/productos/tvs/IN3200TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -313,40 +317,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.151Z",
       "updatedAt": "2026-04-08T18:03:53.151Z"
     },
-    "images": [
-      {
-        "id": "0d484048-e1b9-4bc2-8519-4cd1d7b4c5d8",
-        "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
-        "url": "/productos/tvs/IN4300TV-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "abfe9afe-236a-4f81-987e-2dc3757cea2e",
-        "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
-        "url": "/productos/tvs/IN4300TV-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "5ffaa533-0579-42f9-88c7-d9c11d021311",
-        "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
-        "url": "/productos/tvs/IN4300TV-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      },
-      {
-        "id": "4258b0a7-386b-42f6-b1ce-604064f212e9",
-        "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
-        "url": "/productos/tvs/IN4300TV-4.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 3
-      }
-    ],
     "variants": [
       {
         "id": "86360c42-1cc5-40b7-b1e3-02dd657c6c00",
@@ -365,7 +335,46 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "0d484048-e1b9-4bc2-8519-4cd1d7b4c5d8",
+            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+            "url": "/productos/tvs/IN4300TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "abfe9afe-236a-4f81-987e-2dc3757cea2e",
+            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+            "url": "/productos/tvs/IN4300TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "5ffaa533-0579-42f9-88c7-d9c11d021311",
+            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+            "url": "/productos/tvs/IN4300TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          },
+          {
+            "id": "4258b0a7-386b-42f6-b1ce-604064f212e9",
+            "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+            "url": "/productos/tvs/IN4300TV-4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 3
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -501,40 +510,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.151Z",
       "updatedAt": "2026-04-08T18:03:53.151Z"
     },
-    "images": [
-      {
-        "id": "8e7f166e-2a0c-4f90-84fa-eb72f6ee37ed",
-        "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
-        "url": "/productos/tvs/IN5000TV-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "c392dfff-dbf5-4797-b3f2-268759d1935c",
-        "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
-        "url": "/productos/tvs/IN5000TV-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "fa8e5548-92b5-40a4-9574-3dcdf9011418",
-        "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
-        "url": "/productos/tvs/IN5000TV-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      },
-      {
-        "id": "059a2118-4563-485c-948c-970ff947d3ca",
-        "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
-        "url": "/productos/tvs/IN5000TV-4.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 3
-      }
-    ],
     "variants": [
       {
         "id": "056584ab-1667-49f4-9ba1-284e4d02c0af",
@@ -553,7 +528,46 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8e7f166e-2a0c-4f90-84fa-eb72f6ee37ed",
+            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+            "url": "/productos/tvs/IN5000TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "c392dfff-dbf5-4797-b3f2-268759d1935c",
+            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+            "url": "/productos/tvs/IN5000TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "fa8e5548-92b5-40a4-9574-3dcdf9011418",
+            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+            "url": "/productos/tvs/IN5000TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          },
+          {
+            "id": "059a2118-4563-485c-948c-970ff947d3ca",
+            "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+            "url": "/productos/tvs/IN5000TV-4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 3
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -685,40 +699,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.151Z",
       "updatedAt": "2026-04-08T18:03:53.151Z"
     },
-    "images": [
-      {
-        "id": "144d8bf3-4a2e-42e3-9ff0-a53a980c3566",
-        "productId": "4e0b2879-d798-4336-991e-5322c83480a4",
-        "url": "/productos/tvs/IN5500TV-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "d6c20956-5449-46a6-8999-79dc274f918c",
-        "productId": "4e0b2879-d798-4336-991e-5322c83480a4",
-        "url": "/productos/tvs/IN5500TV-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "588669b5-4a4d-4065-812f-a163989208af",
-        "productId": "4e0b2879-d798-4336-991e-5322c83480a4",
-        "url": "/productos/tvs/IN5500TV-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      },
-      {
-        "id": "1a724a8c-3944-4f35-abf5-3d317814a96d",
-        "productId": "4e0b2879-d798-4336-991e-5322c83480a4",
-        "url": "/productos/tvs/IN5500TV-4.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 3
-      }
-    ],
     "variants": [
       {
         "id": "b3871499-5ba1-42ce-8b35-2ad6991b7681",
@@ -737,7 +717,46 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "144d8bf3-4a2e-42e3-9ff0-a53a980c3566",
+            "productId": "4e0b2879-d798-4336-991e-5322c83480a4",
+            "url": "/productos/tvs/IN5500TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "d6c20956-5449-46a6-8999-79dc274f918c",
+            "productId": "4e0b2879-d798-4336-991e-5322c83480a4",
+            "url": "/productos/tvs/IN5500TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "588669b5-4a4d-4065-812f-a163989208af",
+            "productId": "4e0b2879-d798-4336-991e-5322c83480a4",
+            "url": "/productos/tvs/IN5500TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          },
+          {
+            "id": "1a724a8c-3944-4f35-abf5-3d317814a96d",
+            "productId": "4e0b2879-d798-4336-991e-5322c83480a4",
+            "url": "/productos/tvs/IN5500TV-4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 3
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -869,40 +888,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.151Z",
       "updatedAt": "2026-04-08T18:03:53.151Z"
     },
-    "images": [
-      {
-        "id": "57d0e37f-e51b-49f0-815f-730f714fbab3",
-        "productId": "58acdb18-e6b9-48a1-b462-1f6016138cd4",
-        "url": "/productos/tvs/IN6500TV-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "55cbd2cd-a24a-4bfc-bf91-927d87ab537f",
-        "productId": "58acdb18-e6b9-48a1-b462-1f6016138cd4",
-        "url": "/productos/tvs/IN6500TV-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "0afa3aeb-971a-4cd8-80fa-88ffa2a399ba",
-        "productId": "58acdb18-e6b9-48a1-b462-1f6016138cd4",
-        "url": "/productos/tvs/IN6500TV-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      },
-      {
-        "id": "4d5317c7-23c2-4637-9e77-c87ea130f254",
-        "productId": "58acdb18-e6b9-48a1-b462-1f6016138cd4",
-        "url": "/productos/tvs/IN6500TV-4.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 3
-      }
-    ],
     "variants": [
       {
         "id": "b20908ed-c0d0-4ddf-8d2e-f52419c60a32",
@@ -921,7 +906,46 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "57d0e37f-e51b-49f0-815f-730f714fbab3",
+            "productId": "58acdb18-e6b9-48a1-b462-1f6016138cd4",
+            "url": "/productos/tvs/IN6500TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "55cbd2cd-a24a-4bfc-bf91-927d87ab537f",
+            "productId": "58acdb18-e6b9-48a1-b462-1f6016138cd4",
+            "url": "/productos/tvs/IN6500TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "0afa3aeb-971a-4cd8-80fa-88ffa2a399ba",
+            "productId": "58acdb18-e6b9-48a1-b462-1f6016138cd4",
+            "url": "/productos/tvs/IN6500TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          },
+          {
+            "id": "4d5317c7-23c2-4637-9e77-c87ea130f254",
+            "productId": "58acdb18-e6b9-48a1-b462-1f6016138cd4",
+            "url": "/productos/tvs/IN6500TV-4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 3
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -1053,40 +1077,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.151Z",
       "updatedAt": "2026-04-08T18:03:53.151Z"
     },
-    "images": [
-      {
-        "id": "73da0dd2-099e-4cfe-8497-ed293dcbad39",
-        "productId": "0368ceb1-13fe-45cb-a907-efc85ff7fc86",
-        "url": "/productos/tvs/IN7500TV-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "3e2a9141-a519-46ca-9c0e-2953e30cd7a0",
-        "productId": "0368ceb1-13fe-45cb-a907-efc85ff7fc86",
-        "url": "/productos/tvs/IN7500TV-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "15ec2dff-9a2b-4860-af49-177cc9a7faff",
-        "productId": "0368ceb1-13fe-45cb-a907-efc85ff7fc86",
-        "url": "/productos/tvs/IN7500TV-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      },
-      {
-        "id": "dcf6ed2f-f00e-4737-98ad-33315e228026",
-        "productId": "0368ceb1-13fe-45cb-a907-efc85ff7fc86",
-        "url": "/productos/tvs/IN7500TV-4.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 3
-      }
-    ],
     "variants": [
       {
         "id": "323acc5c-04f7-423d-a8f8-43462b345b9b",
@@ -1105,7 +1095,46 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "73da0dd2-099e-4cfe-8497-ed293dcbad39",
+            "productId": "0368ceb1-13fe-45cb-a907-efc85ff7fc86",
+            "url": "/productos/tvs/IN7500TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "3e2a9141-a519-46ca-9c0e-2953e30cd7a0",
+            "productId": "0368ceb1-13fe-45cb-a907-efc85ff7fc86",
+            "url": "/productos/tvs/IN7500TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "15ec2dff-9a2b-4860-af49-177cc9a7faff",
+            "productId": "0368ceb1-13fe-45cb-a907-efc85ff7fc86",
+            "url": "/productos/tvs/IN7500TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          },
+          {
+            "id": "dcf6ed2f-f00e-4737-98ad-33315e228026",
+            "productId": "0368ceb1-13fe-45cb-a907-efc85ff7fc86",
+            "url": "/productos/tvs/IN7500TV-4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 3
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -1237,40 +1266,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.151Z",
       "updatedAt": "2026-04-08T18:03:53.151Z"
     },
-    "images": [
-      {
-        "id": "18b2368a-db3b-4d7b-adda-dcddfefda707",
-        "productId": "e8046c10-e07a-4718-a1fd-d5f37f557a80",
-        "url": "/productos/tvs/IN8500TV-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "41ffa618-af14-44e1-a9b3-dd7dbc39f2a4",
-        "productId": "e8046c10-e07a-4718-a1fd-d5f37f557a80",
-        "url": "/productos/tvs/IN8500TV-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "de4bedfa-f260-4aeb-aeb6-f54c2bff8c38",
-        "productId": "e8046c10-e07a-4718-a1fd-d5f37f557a80",
-        "url": "/productos/tvs/IN8500TV-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      },
-      {
-        "id": "1a55ed46-0276-4b6d-a084-32cf6ab2323c",
-        "productId": "e8046c10-e07a-4718-a1fd-d5f37f557a80",
-        "url": "/productos/tvs/IN8500TV-4.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 3
-      }
-    ],
     "variants": [
       {
         "id": "a2cfcbff-0b2d-4ac4-8dec-cb72c12e88f5",
@@ -1289,7 +1284,46 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "18b2368a-db3b-4d7b-adda-dcddfefda707",
+            "productId": "e8046c10-e07a-4718-a1fd-d5f37f557a80",
+            "url": "/productos/tvs/IN8500TV-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "41ffa618-af14-44e1-a9b3-dd7dbc39f2a4",
+            "productId": "e8046c10-e07a-4718-a1fd-d5f37f557a80",
+            "url": "/productos/tvs/IN8500TV-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "de4bedfa-f260-4aeb-aeb6-f54c2bff8c38",
+            "productId": "e8046c10-e07a-4718-a1fd-d5f37f557a80",
+            "url": "/productos/tvs/IN8500TV-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          },
+          {
+            "id": "1a55ed46-0276-4b6d-a084-32cf6ab2323c",
+            "productId": "e8046c10-e07a-4718-a1fd-d5f37f557a80",
+            "url": "/productos/tvs/IN8500TV-4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 3
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -1397,24 +1431,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "efa41e5a-060b-49d2-a693-8e64747816b1",
-        "productId": "d469033a-5677-437c-9cf0-879e17ac7dc8",
-        "url": "/productos/scooters/8.5-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "4915dfab-a615-49a2-b803-54738ace7a69",
-        "productId": "d469033a-5677-437c-9cf0-879e17ac7dc8",
-        "url": "/productos/scooters/8.5-v2-1.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      }
-    ],
     "variants": [
       {
         "id": "b92e3543-9b46-42bb-a26a-8610a350a0e8",
@@ -1433,7 +1449,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "efa41e5a-060b-49d2-a693-8e64747816b1",
+            "productId": "d469033a-5677-437c-9cf0-879e17ac7dc8",
+            "url": "/productos/scooters/8.5-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "4915dfab-a615-49a2-b803-54738ace7a69",
+            "productId": "d469033a-5677-437c-9cf0-879e17ac7dc8",
+            "url": "/productos/scooters/8.5-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -1557,16 +1594,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "328b242b-7f9d-43ac-9d4f-0b3aa0c73c01",
-        "productId": "dab73690-d685-4e81-be23-a1d9d3de3452",
-        "url": "/productos/scooters/10.5pro-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "6a70d28e-f593-44c4-a4b0-d66253aec425",
@@ -1585,7 +1612,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "328b242b-7f9d-43ac-9d4f-0b3aa0c73c01",
+            "productId": "dab73690-d685-4e81-be23-a1d9d3de3452",
+            "url": "/productos/scooters/10.5pro-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -1709,16 +1748,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "8370d255-7223-4edf-ba09-4cd72c1d6509",
-        "productId": "48a30305-a9b3-464d-bbe1-10d5fbecec26",
-        "url": "/productos/scooters/cross-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "3639ce90-c1a9-49c8-b9b8-4b6ea5dd0d82",
@@ -1737,7 +1766,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8370d255-7223-4edf-ba09-4cd72c1d6509",
+            "productId": "48a30305-a9b3-464d-bbe1-10d5fbecec26",
+            "url": "/productos/scooters/cross-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -1861,16 +1902,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "15c4276e-4997-4c45-bff4-6457039b8b40",
-        "productId": "516f1b72-2f63-49bb-85f6-cb4fc1744868",
-        "url": "/productos/scooters/crosspro-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "9b7b9eba-1f07-48f4-b572-13831bf3915e",
@@ -1889,7 +1920,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "15c4276e-4997-4c45-bff4-6457039b8b40",
+            "productId": "516f1b72-2f63-49bb-85f6-cb4fc1744868",
+            "url": "/productos/scooters/crosspro-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -2133,16 +2176,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "b240d298-50d9-448c-b574-c80193e1418e",
-        "productId": "2770dc9b-892a-4159-9313-35d0a3cfd597",
-        "url": "/productos/aires/general.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "45808ee5-f008-4ac8-9639-655bd886f983",
@@ -2162,7 +2195,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "b240d298-50d9-448c-b574-c80193e1418e",
+            "productId": "2770dc9b-892a-4159-9313-35d0a3cfd597",
+            "url": "/productos/aires/general.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -2406,16 +2451,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "02eb859f-37ae-4e21-9dc8-0ff69de43582",
-        "productId": "24887fc5-1388-4fdc-8abe-4677cbce143e",
-        "url": "/productos/aires/general.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "9c1c5c1e-df65-4563-b53e-ca642d51f8de",
@@ -2435,7 +2470,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "02eb859f-37ae-4e21-9dc8-0ff69de43582",
+            "productId": "24887fc5-1388-4fdc-8abe-4677cbce143e",
+            "url": "/productos/aires/general.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -2679,16 +2726,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "962c0737-376a-48ca-87ed-4c85d24eb012",
-        "productId": "5f4612a6-87b4-48e8-8a34-5b16a31f13f2",
-        "url": "/productos/aires/general.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "721556c1-f7be-4dcc-a97c-f19dd950f2ad",
@@ -2708,7 +2745,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "962c0737-376a-48ca-87ed-4c85d24eb012",
+            "productId": "5f4612a6-87b4-48e8-8a34-5b16a31f13f2",
+            "url": "/productos/aires/general.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -2944,16 +2993,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "70d8a756-0099-4d89-b92e-4806d86a3a53",
-        "productId": "1d494ffb-8867-4ab6-8d56-c435e8ed53d3",
-        "url": "/productos/aires/general.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "cf6cba62-7aff-4abe-ba78-62b167ef17cc",
@@ -2973,7 +3012,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "70d8a756-0099-4d89-b92e-4806d86a3a53",
+            "productId": "1d494ffb-8867-4ab6-8d56-c435e8ed53d3",
+            "url": "/productos/aires/general.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -3107,16 +3158,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "d67a2526-4bc8-4f59-93eb-bcbc691269be",
-        "productId": "a2538299-0dc3-4d9f-8e1a-c4720646ba03",
-        "url": "/productos/aires/general.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "8a4dc631-3e4a-46db-831e-3466a841c8b4",
@@ -3126,7 +3167,19 @@ export const productsMock: Product[] = [
         "attributes": {
           "color": "Blanco",
           "voltage": "110V"
-        }
+        },
+        "images": [
+          {
+            "id": "d67a2526-4bc8-4f59-93eb-bcbc691269be",
+            "productId": "a2538299-0dc3-4d9f-8e1a-c4720646ba03",
+            "url": "/productos/aires/general.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -3362,16 +3415,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "01a616af-9e0b-49f7-8112-5ee9741e542b",
-        "productId": "bb7390b5-84f6-4812-ae6c-8c1da31fe714",
-        "url": "/productos/aires/general.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "e5b901d2-4a06-4636-84ff-35642dd7949a",
@@ -3391,7 +3434,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "01a616af-9e0b-49f7-8112-5ee9741e542b",
+            "productId": "bb7390b5-84f6-4812-ae6c-8c1da31fe714",
+            "url": "/productos/aires/general.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -3539,32 +3594,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "b2c48d3f-1d2a-40a6-bc96-cf77098d9005",
-        "productId": "a8fd23f4-fe96-427c-a19d-5bbc8ce57edc",
-        "url": "/productos/hoverboards/hoverboards1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "23337f9f-3991-4eb0-9300-462a220414d4",
-        "productId": "a8fd23f4-fe96-427c-a19d-5bbc8ce57edc",
-        "url": "/productos/hoverboards/hoverboards1-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "33812f38-a730-430d-a61d-fa63757b5006",
-        "productId": "a8fd23f4-fe96-427c-a19d-5bbc8ce57edc",
-        "url": "/productos/hoverboards/hoverboards1-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "0d08b61b-5989-46ca-accd-86ae9111c2c2",
@@ -3583,7 +3612,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "b2c48d3f-1d2a-40a6-bc96-cf77098d9005",
+            "productId": "a8fd23f4-fe96-427c-a19d-5bbc8ce57edc",
+            "url": "/productos/hoverboards/hoverboards1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "23337f9f-3991-4eb0-9300-462a220414d4",
+            "productId": "a8fd23f4-fe96-427c-a19d-5bbc8ce57edc",
+            "url": "/productos/hoverboards/hoverboards1-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "33812f38-a730-430d-a61d-fa63757b5006",
+            "productId": "a8fd23f4-fe96-427c-a19d-5bbc8ce57edc",
+            "url": "/productos/hoverboards/hoverboards1-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -3731,32 +3790,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "d7caee5b-52d9-44dc-b685-58adbcd50d8f",
-        "productId": "9f7aff85-2d3d-4d9c-8bbf-48f5dbc7667c",
-        "url": "/productos/hoverboards/hoverboards2-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "cd5c5af4-4921-4469-a885-b79283cff221",
-        "productId": "9f7aff85-2d3d-4d9c-8bbf-48f5dbc7667c",
-        "url": "/productos/hoverboards/hoverboards2-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "48f4a110-f560-4800-95bb-0e21f9757080",
-        "productId": "9f7aff85-2d3d-4d9c-8bbf-48f5dbc7667c",
-        "url": "/productos/hoverboards/hoverboards2-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "d54c7fee-45c2-4a07-b802-11453fca2e13",
@@ -3775,7 +3808,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "d7caee5b-52d9-44dc-b685-58adbcd50d8f",
+            "productId": "9f7aff85-2d3d-4d9c-8bbf-48f5dbc7667c",
+            "url": "/productos/hoverboards/hoverboards2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "cd5c5af4-4921-4469-a885-b79283cff221",
+            "productId": "9f7aff85-2d3d-4d9c-8bbf-48f5dbc7667c",
+            "url": "/productos/hoverboards/hoverboards2-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "48f4a110-f560-4800-95bb-0e21f9757080",
+            "productId": "9f7aff85-2d3d-4d9c-8bbf-48f5dbc7667c",
+            "url": "/productos/hoverboards/hoverboards2-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -3923,32 +3986,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "a761816b-0b43-4981-aace-88a7cca5567b",
-        "productId": "d772c4db-c001-47eb-b544-a9c1e6275402",
-        "url": "/productos/hoverboards/hoverboards3-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "8db5f624-a4f0-4909-bda4-9e7455f5d534",
-        "productId": "d772c4db-c001-47eb-b544-a9c1e6275402",
-        "url": "/productos/hoverboards/hoverboards3-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "0a491806-1117-49ee-9032-035c5cef82e4",
-        "productId": "d772c4db-c001-47eb-b544-a9c1e6275402",
-        "url": "/productos/hoverboards/hoverboards3-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "75686234-2f52-4080-95ef-068217310e4e",
@@ -3967,7 +4004,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "a761816b-0b43-4981-aace-88a7cca5567b",
+            "productId": "d772c4db-c001-47eb-b544-a9c1e6275402",
+            "url": "/productos/hoverboards/hoverboards3-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "8db5f624-a4f0-4909-bda4-9e7455f5d534",
+            "productId": "d772c4db-c001-47eb-b544-a9c1e6275402",
+            "url": "/productos/hoverboards/hoverboards3-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "0a491806-1117-49ee-9032-035c5cef82e4",
+            "productId": "d772c4db-c001-47eb-b544-a9c1e6275402",
+            "url": "/productos/hoverboards/hoverboards3-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -4115,32 +4182,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "ce17ddc6-3896-43c7-aa57-23fd0ad61e3e",
-        "productId": "dc451d3a-a478-4ca3-8bcd-94a751dc85e0",
-        "url": "/productos/hoverboards/hoverboards4-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "b75aa436-f6d7-4a9d-903c-1401bdd38e5c",
-        "productId": "dc451d3a-a478-4ca3-8bcd-94a751dc85e0",
-        "url": "/productos/hoverboards/hoverboards4-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "f73060d6-c14e-4350-8cee-7faf37983488",
-        "productId": "dc451d3a-a478-4ca3-8bcd-94a751dc85e0",
-        "url": "/productos/hoverboards/hoverboards4-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "62d2a2a8-922c-469c-a220-76a7a47d3b56",
@@ -4159,7 +4200,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "ce17ddc6-3896-43c7-aa57-23fd0ad61e3e",
+            "productId": "dc451d3a-a478-4ca3-8bcd-94a751dc85e0",
+            "url": "/productos/hoverboards/hoverboards4-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "b75aa436-f6d7-4a9d-903c-1401bdd38e5c",
+            "productId": "dc451d3a-a478-4ca3-8bcd-94a751dc85e0",
+            "url": "/productos/hoverboards/hoverboards4-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "f73060d6-c14e-4350-8cee-7faf37983488",
+            "productId": "dc451d3a-a478-4ca3-8bcd-94a751dc85e0",
+            "url": "/productos/hoverboards/hoverboards4-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -4307,32 +4378,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "be5b6f22-9c1a-4aa6-ab23-a32f7d64bfed",
-        "productId": "fe4b6d39-1ac0-4284-8235-395668c1e918",
-        "url": "/productos/hoverboards/hoverboards5-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "ff1b3edd-b3b2-446d-aaeb-18ff695ea651",
-        "productId": "fe4b6d39-1ac0-4284-8235-395668c1e918",
-        "url": "/productos/hoverboards/hoverboards5-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "88d4dc1a-2281-4630-808e-869b814cf104",
-        "productId": "fe4b6d39-1ac0-4284-8235-395668c1e918",
-        "url": "/productos/hoverboards/hoverboards5-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "a3f82d2c-9055-42a2-bf6a-5abf633755bb",
@@ -4351,7 +4396,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "be5b6f22-9c1a-4aa6-ab23-a32f7d64bfed",
+            "productId": "fe4b6d39-1ac0-4284-8235-395668c1e918",
+            "url": "/productos/hoverboards/hoverboards5-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "ff1b3edd-b3b2-446d-aaeb-18ff695ea651",
+            "productId": "fe4b6d39-1ac0-4284-8235-395668c1e918",
+            "url": "/productos/hoverboards/hoverboards5-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "88d4dc1a-2281-4630-808e-869b814cf104",
+            "productId": "fe4b6d39-1ac0-4284-8235-395668c1e918",
+            "url": "/productos/hoverboards/hoverboards5-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -4499,32 +4574,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "a46e8b41-313e-4683-93ef-fbd81990aa93",
-        "productId": "c70a04fe-3093-485f-ab2a-1190f5d21265",
-        "url": "/productos/hoverboards/hoverboards6-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "990bd6d9-9443-4e16-8569-43b58a0a41ba",
-        "productId": "c70a04fe-3093-485f-ab2a-1190f5d21265",
-        "url": "/productos/hoverboards/hoverboards6-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "0292f1cc-ab2b-49d4-888b-f3f4ffc00e5d",
-        "productId": "c70a04fe-3093-485f-ab2a-1190f5d21265",
-        "url": "/productos/hoverboards/hoverboards6-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "a9b13661-fa32-4959-8c0b-8cf31ef83700",
@@ -4543,7 +4592,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "a46e8b41-313e-4683-93ef-fbd81990aa93",
+            "productId": "c70a04fe-3093-485f-ab2a-1190f5d21265",
+            "url": "/productos/hoverboards/hoverboards6-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "990bd6d9-9443-4e16-8569-43b58a0a41ba",
+            "productId": "c70a04fe-3093-485f-ab2a-1190f5d21265",
+            "url": "/productos/hoverboards/hoverboards6-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "0292f1cc-ab2b-49d4-888b-f3f4ffc00e5d",
+            "productId": "c70a04fe-3093-485f-ab2a-1190f5d21265",
+            "url": "/productos/hoverboards/hoverboards6-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -4691,32 +4770,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "3c89f993-2311-40a7-8f79-19d7ac568788",
-        "productId": "fd6afcc4-c59c-47a9-9746-bade787bd1d5",
-        "url": "/productos/hoverboards/hoverboards7-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "571002d0-a2f7-469a-9f2b-e0b3354690cc",
-        "productId": "fd6afcc4-c59c-47a9-9746-bade787bd1d5",
-        "url": "/productos/hoverboards/hoverboards7-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "cef89130-40de-4146-94b9-2148fd53f9b3",
-        "productId": "fd6afcc4-c59c-47a9-9746-bade787bd1d5",
-        "url": "/productos/hoverboards/hoverboards7-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "f04c1fe1-ea71-4a28-b985-cf821578a419",
@@ -4735,7 +4788,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "3c89f993-2311-40a7-8f79-19d7ac568788",
+            "productId": "fd6afcc4-c59c-47a9-9746-bade787bd1d5",
+            "url": "/productos/hoverboards/hoverboards7-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "571002d0-a2f7-469a-9f2b-e0b3354690cc",
+            "productId": "fd6afcc4-c59c-47a9-9746-bade787bd1d5",
+            "url": "/productos/hoverboards/hoverboards7-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "cef89130-40de-4146-94b9-2148fd53f9b3",
+            "productId": "fd6afcc4-c59c-47a9-9746-bade787bd1d5",
+            "url": "/productos/hoverboards/hoverboards7-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -4883,32 +4966,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "4a476c8d-fabd-44bf-845f-df44e694b5b7",
-        "productId": "660c44e8-f8b1-4cfb-9011-3ae35cd66995",
-        "url": "/productos/hoverboards/hoverboards8-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "cfd396d4-a3ff-4f32-ae06-da18fbbadbce",
-        "productId": "660c44e8-f8b1-4cfb-9011-3ae35cd66995",
-        "url": "/productos/hoverboards/hoverboards8-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "a4666a62-d17e-43bf-9b1a-5b81a941a1e9",
-        "productId": "660c44e8-f8b1-4cfb-9011-3ae35cd66995",
-        "url": "/productos/hoverboards/hoverboards8-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "cfbb9ef9-fa33-4b5d-bfc6-0d9db7078bd5",
@@ -4927,7 +4984,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "4a476c8d-fabd-44bf-845f-df44e694b5b7",
+            "productId": "660c44e8-f8b1-4cfb-9011-3ae35cd66995",
+            "url": "/productos/hoverboards/hoverboards8-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "cfd396d4-a3ff-4f32-ae06-da18fbbadbce",
+            "productId": "660c44e8-f8b1-4cfb-9011-3ae35cd66995",
+            "url": "/productos/hoverboards/hoverboards8-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "a4666a62-d17e-43bf-9b1a-5b81a941a1e9",
+            "productId": "660c44e8-f8b1-4cfb-9011-3ae35cd66995",
+            "url": "/productos/hoverboards/hoverboards8-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -5075,32 +5162,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "85178b69-f83a-4464-aa3e-468eff13af87",
-        "productId": "257a534c-4ca5-46f0-a08f-0d32780f8fc5",
-        "url": "/productos/hoverboards/hoverboards9-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "407a245c-c0b5-480c-9c00-ce965a254aac",
-        "productId": "257a534c-4ca5-46f0-a08f-0d32780f8fc5",
-        "url": "/productos/hoverboards/hoverboards9-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "f73b03cc-7d9d-4956-be51-f61e81902005",
-        "productId": "257a534c-4ca5-46f0-a08f-0d32780f8fc5",
-        "url": "/productos/hoverboards/hoverboards9-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "208d350c-3e14-4d55-a54c-c255d40a296a",
@@ -5119,7 +5180,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "85178b69-f83a-4464-aa3e-468eff13af87",
+            "productId": "257a534c-4ca5-46f0-a08f-0d32780f8fc5",
+            "url": "/productos/hoverboards/hoverboards9-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "407a245c-c0b5-480c-9c00-ce965a254aac",
+            "productId": "257a534c-4ca5-46f0-a08f-0d32780f8fc5",
+            "url": "/productos/hoverboards/hoverboards9-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "f73b03cc-7d9d-4956-be51-f61e81902005",
+            "productId": "257a534c-4ca5-46f0-a08f-0d32780f8fc5",
+            "url": "/productos/hoverboards/hoverboards9-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -5243,24 +5334,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "8ee38056-b006-47ce-bc8e-b724eafde21f",
-        "productId": "952f386f-5042-4d37-b122-f98a76e91858",
-        "url": "/productos/airfryer/s10-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "a4df9e88-08f3-48d2-95e7-ab9a5d4ca098",
-        "productId": "952f386f-5042-4d37-b122-f98a76e91858",
-        "url": "/productos/airfryer/s10-v2-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "45390785-d8b6-4535-a255-7503304e8eb8",
@@ -5280,7 +5353,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8ee38056-b006-47ce-bc8e-b724eafde21f",
+            "productId": "952f386f-5042-4d37-b122-f98a76e91858",
+            "url": "/productos/airfryer/s10-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "a4df9e88-08f3-48d2-95e7-ab9a5d4ca098",
+            "productId": "952f386f-5042-4d37-b122-f98a76e91858",
+            "url": "/productos/airfryer/s10-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "49439c79-0cb7-4f23-b5ae-e8e8cd714ebd",
@@ -5300,7 +5394,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8ee38056-b006-47ce-bc8e-b724eafde21f",
+            "productId": "952f386f-5042-4d37-b122-f98a76e91858",
+            "url": "/productos/airfryer/s10-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "a4df9e88-08f3-48d2-95e7-ab9a5d4ca098",
+            "productId": "952f386f-5042-4d37-b122-f98a76e91858",
+            "url": "/productos/airfryer/s10-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "ecbede24-47d4-4142-bd43-4f06a74299a1",
@@ -5320,7 +5435,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8ee38056-b006-47ce-bc8e-b724eafde21f",
+            "productId": "952f386f-5042-4d37-b122-f98a76e91858",
+            "url": "/productos/airfryer/s10-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "a4df9e88-08f3-48d2-95e7-ab9a5d4ca098",
+            "productId": "952f386f-5042-4d37-b122-f98a76e91858",
+            "url": "/productos/airfryer/s10-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "7ca8dff5-e558-47c5-94d2-0587dfbc6ff0",
@@ -5340,7 +5476,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8ee38056-b006-47ce-bc8e-b724eafde21f",
+            "productId": "952f386f-5042-4d37-b122-f98a76e91858",
+            "url": "/productos/airfryer/s10-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "a4df9e88-08f3-48d2-95e7-ab9a5d4ca098",
+            "productId": "952f386f-5042-4d37-b122-f98a76e91858",
+            "url": "/productos/airfryer/s10-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -5424,24 +5581,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "bc530227-cfce-4e7e-8806-f6f93f5e41eb",
-        "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
-        "url": "/productos/airfryer/s20-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "47ac138f-c3e3-4651-92d4-785012c6f232",
-        "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
-        "url": "/productos/airfryer/s20-v2-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "dd45fa1d-cbcb-4e37-b394-a08ff6292338",
@@ -5461,7 +5600,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "bc530227-cfce-4e7e-8806-f6f93f5e41eb",
+            "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
+            "url": "/productos/airfryer/s20-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "47ac138f-c3e3-4651-92d4-785012c6f232",
+            "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
+            "url": "/productos/airfryer/s20-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "2635d1a3-c4ab-4538-bb1a-43d29857586d",
@@ -5481,7 +5641,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "bc530227-cfce-4e7e-8806-f6f93f5e41eb",
+            "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
+            "url": "/productos/airfryer/s20-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "47ac138f-c3e3-4651-92d4-785012c6f232",
+            "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
+            "url": "/productos/airfryer/s20-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "99f9ee9c-e990-401c-bd70-a7193bd6b4d0",
@@ -5501,7 +5682,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "bc530227-cfce-4e7e-8806-f6f93f5e41eb",
+            "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
+            "url": "/productos/airfryer/s20-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "47ac138f-c3e3-4651-92d4-785012c6f232",
+            "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
+            "url": "/productos/airfryer/s20-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "89ba7178-68b2-43e6-a8a3-14930f83cbb0",
@@ -5521,7 +5723,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "bc530227-cfce-4e7e-8806-f6f93f5e41eb",
+            "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
+            "url": "/productos/airfryer/s20-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "47ac138f-c3e3-4651-92d4-785012c6f232",
+            "productId": "5f113255-83ed-4f20-913c-54faed3dd63b",
+            "url": "/productos/airfryer/s20-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -5613,16 +5836,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "8d1540fc-a9e8-4acb-bcc2-024bbab367a3",
-        "productId": "1391b501-a91d-48df-ab5f-9db7c238d1d8",
-        "url": "/productos/airfryer/s30-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "422dd7b6-553b-43d7-a17d-290d6417b1fa",
@@ -5642,7 +5855,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8d1540fc-a9e8-4acb-bcc2-024bbab367a3",
+            "productId": "1391b501-a91d-48df-ab5f-9db7c238d1d8",
+            "url": "/productos/airfryer/s30-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "01477e3a-c86b-4275-a6dd-dbba3dcaa5f6",
@@ -5662,7 +5887,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8d1540fc-a9e8-4acb-bcc2-024bbab367a3",
+            "productId": "1391b501-a91d-48df-ab5f-9db7c238d1d8",
+            "url": "/productos/airfryer/s30-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -5754,16 +5991,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "b26ab3f1-231c-42e9-a79e-6d01dc8c4efe",
-        "productId": "4392e9ce-fd69-45ea-be79-13ff617f1a7a",
-        "url": "/productos/airfryer/s40-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "de43db5b-5d6a-4575-bd19-e906282e047a",
@@ -5783,7 +6010,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "b26ab3f1-231c-42e9-a79e-6d01dc8c4efe",
+            "productId": "4392e9ce-fd69-45ea-be79-13ff617f1a7a",
+            "url": "/productos/airfryer/s40-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "7931c537-9a7f-4600-b486-9d0907dffaed",
@@ -5803,7 +6042,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "b26ab3f1-231c-42e9-a79e-6d01dc8c4efe",
+            "productId": "4392e9ce-fd69-45ea-be79-13ff617f1a7a",
+            "url": "/productos/airfryer/s40-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -5887,16 +6138,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "0256cded-f2f8-43bb-9bb9-c3cce115a086",
-        "productId": "ee95730b-3382-4ba5-95e8-2c75f5de5c1d",
-        "url": "/productos/mixteras/G10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "537030a5-3924-4170-8006-7982a8d1cb96",
@@ -5916,7 +6157,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "0256cded-f2f8-43bb-9bb9-c3cce115a086",
+            "productId": "ee95730b-3382-4ba5-95e8-2c75f5de5c1d",
+            "url": "/productos/mixteras/G10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "bcea5fd1-c6f3-440e-9a55-e7d2b35a515d",
@@ -5936,7 +6189,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "0256cded-f2f8-43bb-9bb9-c3cce115a086",
+            "productId": "ee95730b-3382-4ba5-95e8-2c75f5de5c1d",
+            "url": "/productos/mixteras/G10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -6020,16 +6285,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "5dd0096e-b5a7-4d9e-a322-ca9a13ca7968",
-        "productId": "cb0e0816-250a-4a1d-b93a-8ce0dd7d67af",
-        "url": "/productos/mixteras/G20-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "0598c59e-c41e-44b4-8cdd-b5fb7f2315d4",
@@ -6049,7 +6304,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "5dd0096e-b5a7-4d9e-a322-ca9a13ca7968",
+            "productId": "cb0e0816-250a-4a1d-b93a-8ce0dd7d67af",
+            "url": "/productos/mixteras/G20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "03344a59-8a53-47d1-b8e0-e96af74fdf60",
@@ -6069,7 +6336,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "5dd0096e-b5a7-4d9e-a322-ca9a13ca7968",
+            "productId": "cb0e0816-250a-4a1d-b93a-8ce0dd7d67af",
+            "url": "/productos/mixteras/G20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -6153,16 +6432,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "e603cc96-f047-44ce-83d6-9ffab3b95159",
-        "productId": "918b1511-9f7c-4c8b-97e1-4dde3a0d49be",
-        "url": "/productos/mixteras/G30-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "e80ee04a-d903-4953-855e-2e24e9301b4b",
@@ -6182,7 +6451,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "e603cc96-f047-44ce-83d6-9ffab3b95159",
+            "productId": "918b1511-9f7c-4c8b-97e1-4dde3a0d49be",
+            "url": "/productos/mixteras/G30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "4c3e2d3f-4fa6-45c2-bbce-67398d0ff798",
@@ -6202,7 +6483,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "e603cc96-f047-44ce-83d6-9ffab3b95159",
+            "productId": "918b1511-9f7c-4c8b-97e1-4dde3a0d49be",
+            "url": "/productos/mixteras/G30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -6286,16 +6579,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "ea9b2919-7873-47fe-9bed-6ab7b797c6b0",
-        "productId": "46eedd51-61f7-4467-a59a-fa9248b950ff",
-        "url": "/productos/mixteras/G40-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "5d492ebc-03eb-424f-a46b-f4421a6185ba",
@@ -6315,7 +6598,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "ea9b2919-7873-47fe-9bed-6ab7b797c6b0",
+            "productId": "46eedd51-61f7-4467-a59a-fa9248b950ff",
+            "url": "/productos/mixteras/G40-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "0fd279d6-cf03-4bf0-82bc-fc8662fb89d7",
@@ -6335,7 +6630,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "ea9b2919-7873-47fe-9bed-6ab7b797c6b0",
+            "productId": "46eedd51-61f7-4467-a59a-fa9248b950ff",
+            "url": "/productos/mixteras/G40-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -6419,16 +6726,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "ffaea3d9-b6c3-4cbf-941e-4af37cf18e66",
-        "productId": "88155c3c-6b62-45b1-ac7b-9c4a35d0074b",
-        "url": "/productos/mixteras/G50-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "d993f3b1-931a-4f84-b806-f61b9002bcf9",
@@ -6448,7 +6745,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "ffaea3d9-b6c3-4cbf-941e-4af37cf18e66",
+            "productId": "88155c3c-6b62-45b1-ac7b-9c4a35d0074b",
+            "url": "/productos/mixteras/G50-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "b5039a48-bb6a-4a3a-bfad-ed6650984fe8",
@@ -6468,7 +6777,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "ffaea3d9-b6c3-4cbf-941e-4af37cf18e66",
+            "productId": "88155c3c-6b62-45b1-ac7b-9c4a35d0074b",
+            "url": "/productos/mixteras/G50-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -6560,16 +6881,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.158Z",
       "updatedAt": "2026-04-08T18:03:53.158Z"
     },
-    "images": [
-      {
-        "id": "84c2ac85-5345-474c-8595-be18e03229e1",
-        "productId": "cf8e4db7-670a-4617-a81d-16a0c598889b",
-        "url": "/productos/cocinas/C10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "90126254-621f-4547-94c3-65c615e2ac7b",
@@ -6589,7 +6900,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "84c2ac85-5345-474c-8595-be18e03229e1",
+            "productId": "cf8e4db7-670a-4617-a81d-16a0c598889b",
+            "url": "/productos/cocinas/C10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "13918a4a-455d-4660-9478-dbc41ae3a81c",
@@ -6609,7 +6932,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "84c2ac85-5345-474c-8595-be18e03229e1",
+            "productId": "cf8e4db7-670a-4617-a81d-16a0c598889b",
+            "url": "/productos/cocinas/C10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -6701,16 +7036,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.158Z",
       "updatedAt": "2026-04-08T18:03:53.158Z"
     },
-    "images": [
-      {
-        "id": "ba295fd2-4d7a-4297-a93f-7b8c5ff35810",
-        "productId": "30faf820-57db-4073-8af8-8d5913481d5e",
-        "url": "/productos/cocinas/C20-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "a5f94371-b404-4ac9-b7b9-c79c2b2f3ba2",
@@ -6730,7 +7055,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "ba295fd2-4d7a-4297-a93f-7b8c5ff35810",
+            "productId": "30faf820-57db-4073-8af8-8d5913481d5e",
+            "url": "/productos/cocinas/C20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "cb68b623-8e69-4d7e-9bcd-d31512a7e803",
@@ -6750,7 +7087,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "ba295fd2-4d7a-4297-a93f-7b8c5ff35810",
+            "productId": "30faf820-57db-4073-8af8-8d5913481d5e",
+            "url": "/productos/cocinas/C20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -6842,16 +7191,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.158Z",
       "updatedAt": "2026-04-08T18:03:53.158Z"
     },
-    "images": [
-      {
-        "id": "7857e1b1-8eca-494a-b7bc-a968d837efc5",
-        "productId": "d5125d95-f909-455b-a68b-4476628ede82",
-        "url": "/productos/cocinas/C30-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "1959f65c-8e85-4273-8381-3a467953134c",
@@ -6871,7 +7210,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "7857e1b1-8eca-494a-b7bc-a968d837efc5",
+            "productId": "d5125d95-f909-455b-a68b-4476628ede82",
+            "url": "/productos/cocinas/C30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "5f71b671-e712-4814-8bde-5b2d8ec349a1",
@@ -6891,7 +7242,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "7857e1b1-8eca-494a-b7bc-a968d837efc5",
+            "productId": "d5125d95-f909-455b-a68b-4476628ede82",
+            "url": "/productos/cocinas/C30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -6983,16 +7346,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.159Z",
       "updatedAt": "2026-04-08T18:03:53.159Z"
     },
-    "images": [
-      {
-        "id": "11df59c7-fdd1-4270-9332-5f8a8835b0cf",
-        "productId": "0e076ac2-0466-4785-a15a-149e538eb218",
-        "url": "/productos/hervidoras/T10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "2d4e7987-713d-43ff-a64a-87bfda022e21",
@@ -7012,7 +7365,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "11df59c7-fdd1-4270-9332-5f8a8835b0cf",
+            "productId": "0e076ac2-0466-4785-a15a-149e538eb218",
+            "url": "/productos/hervidoras/T10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "5a4d5e3d-f853-4dd4-8ede-991bb6d4ee92",
@@ -7032,7 +7397,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "11df59c7-fdd1-4270-9332-5f8a8835b0cf",
+            "productId": "0e076ac2-0466-4785-a15a-149e538eb218",
+            "url": "/productos/hervidoras/T10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -7132,16 +7509,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.159Z",
       "updatedAt": "2026-04-08T18:03:53.159Z"
     },
-    "images": [
-      {
-        "id": "2324a66f-59fa-4ae2-a779-3ef7fe9cf98b",
-        "productId": "fdcd9d6f-bbb6-44ea-8449-0d2694f96a95",
-        "url": "/productos/hervidoras/T20-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "e99057c7-d975-4e96-8405-e41979ae8600",
@@ -7161,7 +7528,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "2324a66f-59fa-4ae2-a779-3ef7fe9cf98b",
+            "productId": "fdcd9d6f-bbb6-44ea-8449-0d2694f96a95",
+            "url": "/productos/hervidoras/T20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "eef8c8bd-80a9-4c34-8138-d6274727f619",
@@ -7181,7 +7560,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "2324a66f-59fa-4ae2-a779-3ef7fe9cf98b",
+            "productId": "fdcd9d6f-bbb6-44ea-8449-0d2694f96a95",
+            "url": "/productos/hervidoras/T20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -7281,16 +7672,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.159Z",
       "updatedAt": "2026-04-08T18:03:53.159Z"
     },
-    "images": [
-      {
-        "id": "923a4bd3-2035-4e13-bb3e-5cb5b3b20e3a",
-        "productId": "ed80a569-4b51-4072-b007-8c4e95e4813e",
-        "url": "/productos/hervidoras/T30-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "94f83441-7d45-4932-9a24-3738b458b1a5",
@@ -7310,7 +7691,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "923a4bd3-2035-4e13-bb3e-5cb5b3b20e3a",
+            "productId": "ed80a569-4b51-4072-b007-8c4e95e4813e",
+            "url": "/productos/hervidoras/T30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "d28c6330-af19-43bf-99cf-023e3eb47564",
@@ -7330,7 +7723,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "923a4bd3-2035-4e13-bb3e-5cb5b3b20e3a",
+            "productId": "ed80a569-4b51-4072-b007-8c4e95e4813e",
+            "url": "/productos/hervidoras/T30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -7462,16 +7867,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.159Z",
       "updatedAt": "2026-04-08T18:03:53.159Z"
     },
-    "images": [
-      {
-        "id": "8903bc73-2b6f-4bf1-8fa5-7a01c837de23",
-        "productId": "6e174d56-d8d3-4694-8dce-f1aae29048f3",
-        "url": "/productos/cafeteras/E10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "3c8be6d2-bbee-40c6-9a39-a3a5c5be5130",
@@ -7491,7 +7886,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8903bc73-2b6f-4bf1-8fa5-7a01c837de23",
+            "productId": "6e174d56-d8d3-4694-8dce-f1aae29048f3",
+            "url": "/productos/cafeteras/E10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "3a8a9dba-6696-4722-ae05-29ad5668600b",
@@ -7511,7 +7918,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8903bc73-2b6f-4bf1-8fa5-7a01c837de23",
+            "productId": "6e174d56-d8d3-4694-8dce-f1aae29048f3",
+            "url": "/productos/cafeteras/E10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -7595,16 +8014,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.160Z",
       "updatedAt": "2026-04-08T18:03:53.160Z"
     },
-    "images": [
-      {
-        "id": "9df80ce3-025b-4789-a614-722fb52b54d6",
-        "productId": "042a9e22-6d23-4a6a-999c-a27603c10e5f",
-        "url": "/productos/planchas/F10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "8c202155-6f4a-4b1d-9d32-dcab0c473fbd",
@@ -7624,7 +8033,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "9df80ce3-025b-4789-a614-722fb52b54d6",
+            "productId": "042a9e22-6d23-4a6a-999c-a27603c10e5f",
+            "url": "/productos/planchas/F10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "6fc8e140-c2dc-4f1a-8df2-6d2320519f08",
@@ -7644,7 +8065,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "9df80ce3-025b-4789-a614-722fb52b54d6",
+            "productId": "042a9e22-6d23-4a6a-999c-a27603c10e5f",
+            "url": "/productos/planchas/F10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -7728,16 +8161,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.160Z",
       "updatedAt": "2026-04-08T18:03:53.160Z"
     },
-    "images": [
-      {
-        "id": "f9c55652-b9f8-4faa-a7cf-c56ec46a5f28",
-        "productId": "a2fd0a7d-d2e8-4bbf-a5c1-18bdb03d0d2e",
-        "url": "/productos/planchas/F20-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "34024f6f-1352-412e-b22d-633e77c57110",
@@ -7757,7 +8180,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "f9c55652-b9f8-4faa-a7cf-c56ec46a5f28",
+            "productId": "a2fd0a7d-d2e8-4bbf-a5c1-18bdb03d0d2e",
+            "url": "/productos/planchas/F20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "490a353b-118c-4a47-bc5c-67e11cbafd58",
@@ -7777,7 +8212,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "f9c55652-b9f8-4faa-a7cf-c56ec46a5f28",
+            "productId": "a2fd0a7d-d2e8-4bbf-a5c1-18bdb03d0d2e",
+            "url": "/productos/planchas/F20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -7865,16 +8312,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.160Z",
       "updatedAt": "2026-04-08T18:03:53.160Z"
     },
-    "images": [
-      {
-        "id": "83024355-1b28-431b-a03c-2b421f7e743f",
-        "productId": "b0b812c8-6074-4500-861f-52296d9399ab",
-        "url": "/productos/planchas/F30-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "360ae933-00bf-4568-8d93-05c26352c210",
@@ -7894,7 +8331,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "83024355-1b28-431b-a03c-2b421f7e743f",
+            "productId": "b0b812c8-6074-4500-861f-52296d9399ab",
+            "url": "/productos/planchas/F30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "36d00235-416f-42d4-b70d-3badd75deba3",
@@ -7914,7 +8363,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "83024355-1b28-431b-a03c-2b421f7e743f",
+            "productId": "b0b812c8-6074-4500-861f-52296d9399ab",
+            "url": "/productos/planchas/F30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -8002,16 +8463,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.160Z",
       "updatedAt": "2026-04-08T18:03:53.160Z"
     },
-    "images": [
-      {
-        "id": "6c898b33-d3e4-4bf6-bce3-0e8ed4337af1",
-        "productId": "adbf5f35-49fd-4ee1-a579-1421ff17b8d0",
-        "url": "/productos/planchas/F40-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "723a0589-c41f-423c-b603-ebd1f12dd533",
@@ -8031,7 +8482,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "6c898b33-d3e4-4bf6-bce3-0e8ed4337af1",
+            "productId": "adbf5f35-49fd-4ee1-a579-1421ff17b8d0",
+            "url": "/productos/planchas/F40-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "551dd085-0433-4169-9def-f4fa93d41395",
@@ -8051,7 +8514,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "6c898b33-d3e4-4bf6-bce3-0e8ed4337af1",
+            "productId": "adbf5f35-49fd-4ee1-a579-1421ff17b8d0",
+            "url": "/productos/planchas/F40-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -8139,16 +8614,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.160Z",
       "updatedAt": "2026-04-08T18:03:53.160Z"
     },
-    "images": [
-      {
-        "id": "4ce97b77-5ada-43ef-b585-b550cb9be882",
-        "productId": "2d889942-ad01-4994-bde4-3c6ebe5b49d0",
-        "url": "/productos/planchas/F50-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "244f3ff1-2724-49db-95a4-b88d3cc1fc2c",
@@ -8168,7 +8633,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "4ce97b77-5ada-43ef-b585-b550cb9be882",
+            "productId": "2d889942-ad01-4994-bde4-3c6ebe5b49d0",
+            "url": "/productos/planchas/F50-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "072ed3bd-6b6b-4d64-84ff-bc659310594e",
@@ -8188,7 +8665,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "4ce97b77-5ada-43ef-b585-b550cb9be882",
+            "productId": "2d889942-ad01-4994-bde4-3c6ebe5b49d0",
+            "url": "/productos/planchas/F50-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -8275,16 +8764,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.161Z",
       "updatedAt": "2026-04-08T18:03:53.161Z"
     },
-    "images": [
-      {
-        "id": "383b6cf6-db23-4ffd-9221-100a2ee0e84c",
-        "productId": "52da98d3-c560-4b4b-b975-097f270a7ccb",
-        "url": "/productos/licuadoras/L10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "4ba59c5c-40ba-4cad-ba05-12e87cc95bc9",
@@ -8304,7 +8783,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "383b6cf6-db23-4ffd-9221-100a2ee0e84c",
+            "productId": "52da98d3-c560-4b4b-b975-097f270a7ccb",
+            "url": "/productos/licuadoras/L10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "53324424-31c9-448a-84ec-ca4fe4cebc18",
@@ -8324,7 +8815,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "383b6cf6-db23-4ffd-9221-100a2ee0e84c",
+            "productId": "52da98d3-c560-4b4b-b975-097f270a7ccb",
+            "url": "/productos/licuadoras/L10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -8411,32 +8914,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.161Z",
       "updatedAt": "2026-04-08T18:03:53.161Z"
     },
-    "images": [
-      {
-        "id": "971bfe36-243a-44b6-8b9c-30f29a62aa52",
-        "productId": "8d6e50fb-20a0-45aa-bd42-19903021d8b1",
-        "url": "/productos/licuadoras/L20-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "d0e01af6-9a50-4bd1-a579-26335d349ed8",
-        "productId": "8d6e50fb-20a0-45aa-bd42-19903021d8b1",
-        "url": "/productos/licuadoras/L20-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "360def6d-7950-4486-b0fb-7cdc5d14f749",
-        "productId": "8d6e50fb-20a0-45aa-bd42-19903021d8b1",
-        "url": "/productos/licuadoras/L20-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "f0ab480c-ac80-4bfb-bf21-1a82ae6a1a97",
@@ -8456,7 +8933,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "971bfe36-243a-44b6-8b9c-30f29a62aa52",
+            "productId": "8d6e50fb-20a0-45aa-bd42-19903021d8b1",
+            "url": "/productos/licuadoras/L20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "d0e01af6-9a50-4bd1-a579-26335d349ed8",
+            "productId": "8d6e50fb-20a0-45aa-bd42-19903021d8b1",
+            "url": "/productos/licuadoras/L20-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "360def6d-7950-4486-b0fb-7cdc5d14f749",
+            "productId": "8d6e50fb-20a0-45aa-bd42-19903021d8b1",
+            "url": "/productos/licuadoras/L20-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       },
       {
         "id": "f79dee2c-7fb8-4b94-8033-70c568db2371",
@@ -8476,7 +8983,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "971bfe36-243a-44b6-8b9c-30f29a62aa52",
+            "productId": "8d6e50fb-20a0-45aa-bd42-19903021d8b1",
+            "url": "/productos/licuadoras/L20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "d0e01af6-9a50-4bd1-a579-26335d349ed8",
+            "productId": "8d6e50fb-20a0-45aa-bd42-19903021d8b1",
+            "url": "/productos/licuadoras/L20-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "360def6d-7950-4486-b0fb-7cdc5d14f749",
+            "productId": "8d6e50fb-20a0-45aa-bd42-19903021d8b1",
+            "url": "/productos/licuadoras/L20-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -8563,16 +9100,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.161Z",
       "updatedAt": "2026-04-08T18:03:53.161Z"
     },
-    "images": [
-      {
-        "id": "8ccec0a2-d5d2-4f3e-a0a3-8640aca40f4a",
-        "productId": "ae006dbf-e003-4b12-a27b-d20bd159d6ab",
-        "url": "/productos/licuadoras/L30-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "c2d0ab1d-641a-4a71-a0da-91ddc0296f48",
@@ -8592,7 +9119,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8ccec0a2-d5d2-4f3e-a0a3-8640aca40f4a",
+            "productId": "ae006dbf-e003-4b12-a27b-d20bd159d6ab",
+            "url": "/productos/licuadoras/L30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "3c83e196-ba99-4250-89b8-95b790b1742e",
@@ -8612,7 +9151,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8ccec0a2-d5d2-4f3e-a0a3-8640aca40f4a",
+            "productId": "ae006dbf-e003-4b12-a27b-d20bd159d6ab",
+            "url": "/productos/licuadoras/L30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -8715,32 +9266,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.161Z",
       "updatedAt": "2026-04-08T18:03:53.161Z"
     },
-    "images": [
-      {
-        "id": "4b3672d1-ee7e-4cd9-8019-555026edf963",
-        "productId": "fe5fa469-0b75-4e4c-811f-362d817a6399",
-        "url": "/productos/licuadoras/L40-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "1d6b180e-25eb-4251-8d79-c4f8d732e1a8",
-        "productId": "fe5fa469-0b75-4e4c-811f-362d817a6399",
-        "url": "/productos/licuadoras/L40-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "56ab05dc-3b8b-4d6d-958d-dbea625a8614",
-        "productId": "fe5fa469-0b75-4e4c-811f-362d817a6399",
-        "url": "/productos/licuadoras/L40-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "da6f1bf0-5de1-4d5b-8e15-8501d7e788a1",
@@ -8760,7 +9285,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "4b3672d1-ee7e-4cd9-8019-555026edf963",
+            "productId": "fe5fa469-0b75-4e4c-811f-362d817a6399",
+            "url": "/productos/licuadoras/L40-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "1d6b180e-25eb-4251-8d79-c4f8d732e1a8",
+            "productId": "fe5fa469-0b75-4e4c-811f-362d817a6399",
+            "url": "/productos/licuadoras/L40-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "56ab05dc-3b8b-4d6d-958d-dbea625a8614",
+            "productId": "fe5fa469-0b75-4e4c-811f-362d817a6399",
+            "url": "/productos/licuadoras/L40-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       },
       {
         "id": "4f22897a-a5e6-4915-88f2-1e7900ed877c",
@@ -8780,7 +9335,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "4b3672d1-ee7e-4cd9-8019-555026edf963",
+            "productId": "fe5fa469-0b75-4e4c-811f-362d817a6399",
+            "url": "/productos/licuadoras/L40-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "1d6b180e-25eb-4251-8d79-c4f8d732e1a8",
+            "productId": "fe5fa469-0b75-4e4c-811f-362d817a6399",
+            "url": "/productos/licuadoras/L40-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "56ab05dc-3b8b-4d6d-958d-dbea625a8614",
+            "productId": "fe5fa469-0b75-4e4c-811f-362d817a6399",
+            "url": "/productos/licuadoras/L40-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -8896,16 +9481,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.161Z",
       "updatedAt": "2026-04-08T18:03:53.161Z"
     },
-    "images": [
-      {
-        "id": "14c7899b-1f02-4cce-be7c-855bce028d30",
-        "productId": "683f04d7-1dce-494f-a447-fef81e26ad9c",
-        "url": "/productos/beauty/603D-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "26c6f8b7-6b19-421f-a386-0f2ac7424ad1",
@@ -8925,7 +9500,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "14c7899b-1f02-4cce-be7c-855bce028d30",
+            "productId": "683f04d7-1dce-494f-a447-fef81e26ad9c",
+            "url": "/productos/beauty/603D-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -9041,16 +9628,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.161Z",
       "updatedAt": "2026-04-08T18:03:53.161Z"
     },
-    "images": [
-      {
-        "id": "04513c3a-59de-4afb-a51d-2af464ada8fe",
-        "productId": "1f2a33dd-2300-4c94-8886-34be6e18fab6",
-        "url": "/productos/beauty/HB40-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "dfdf8d75-2f15-4f1b-963e-6e7619509936",
@@ -9070,7 +9647,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "04513c3a-59de-4afb-a51d-2af464ada8fe",
+            "productId": "1f2a33dd-2300-4c94-8886-34be6e18fab6",
+            "url": "/productos/beauty/HB40-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -9162,16 +9751,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.161Z",
       "updatedAt": "2026-04-08T18:03:53.161Z"
     },
-    "images": [
-      {
-        "id": "8bcc17d4-7f1e-4c02-8078-596b44556e6c",
-        "productId": "bdf9046a-a65b-4711-ae88-2dac787b36c7",
-        "url": "/productos/beauty/HD008-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "ecc71ce0-ff2a-45b2-9a0b-263fdcb13fc4",
@@ -9191,7 +9770,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8bcc17d4-7f1e-4c02-8078-596b44556e6c",
+            "productId": "bdf9046a-a65b-4711-ae88-2dac787b36c7",
+            "url": "/productos/beauty/HD008-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -9283,16 +9874,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.161Z",
       "updatedAt": "2026-04-08T18:03:53.161Z"
     },
-    "images": [
-      {
-        "id": "d96dda4a-1bac-4d36-ad47-7d933815c653",
-        "productId": "757a469d-c549-416c-99fa-8d4903b00afa",
-        "url": "/productos/beauty/RFCD865-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "39ebebc7-3634-4486-9c47-9ddae2a2d3f8",
@@ -9312,7 +9893,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "d96dda4a-1bac-4d36-ad47-7d933815c653",
+            "productId": "757a469d-c549-416c-99fa-8d4903b00afa",
+            "url": "/productos/beauty/RFCD865-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -9404,16 +9997,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.162Z",
       "updatedAt": "2026-04-08T18:03:53.162Z"
     },
-    "images": [
-      {
-        "id": "9ae4569d-6dc7-477e-8d9d-7560a0ce6233",
-        "productId": "e927099e-5c08-496b-8429-ce49113e905d",
-        "url": "/productos/batidoras/B10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "e1cec242-a549-455a-83a8-5752a2a6e767",
@@ -9433,7 +10016,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "9ae4569d-6dc7-477e-8d9d-7560a0ce6233",
+            "productId": "e927099e-5c08-496b-8429-ce49113e905d",
+            "url": "/productos/batidoras/B10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "6cfb3f35-fc24-4010-9a0b-ca6a7c63b1b3",
@@ -9453,7 +10048,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "9ae4569d-6dc7-477e-8d9d-7560a0ce6233",
+            "productId": "e927099e-5c08-496b-8429-ce49113e905d",
+            "url": "/productos/batidoras/B10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -9545,16 +10152,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.162Z",
       "updatedAt": "2026-04-08T18:03:53.162Z"
     },
-    "images": [
-      {
-        "id": "e28626b6-69e7-4094-a2dd-97244bccd91f",
-        "productId": "124e373b-b8d1-4999-8cf7-71d12a4a7cf6",
-        "url": "/productos/batidoras/B20-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "eb2c1e33-da5c-4672-bde1-f5a6f91b0f23",
@@ -9574,7 +10171,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "e28626b6-69e7-4094-a2dd-97244bccd91f",
+            "productId": "124e373b-b8d1-4999-8cf7-71d12a4a7cf6",
+            "url": "/productos/batidoras/B20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "4e79a2cb-ea6b-4343-acb2-6fa87211c149",
@@ -9594,7 +10203,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "e28626b6-69e7-4094-a2dd-97244bccd91f",
+            "productId": "124e373b-b8d1-4999-8cf7-71d12a4a7cf6",
+            "url": "/productos/batidoras/B20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -9686,16 +10307,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.162Z",
       "updatedAt": "2026-04-08T18:03:53.162Z"
     },
-    "images": [
-      {
-        "id": "eadd5e17-4666-4cf1-8598-d745e84d5921",
-        "productId": "31fb96af-ef73-4926-9d7d-e20983e154ec",
-        "url": "/productos/batidoras/B30-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "68dc7f2b-07dc-4470-9584-cc7c36efcca8",
@@ -9715,7 +10326,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "eadd5e17-4666-4cf1-8598-d745e84d5921",
+            "productId": "31fb96af-ef73-4926-9d7d-e20983e154ec",
+            "url": "/productos/batidoras/B30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "f3c91c51-2cfa-4860-80f0-f9614227d827",
@@ -9735,7 +10358,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "eadd5e17-4666-4cf1-8598-d745e84d5921",
+            "productId": "31fb96af-ef73-4926-9d7d-e20983e154ec",
+            "url": "/productos/batidoras/B30-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -9830,16 +10465,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.162Z",
       "updatedAt": "2026-04-08T18:03:53.162Z"
     },
-    "images": [
-      {
-        "id": "28f9c7a0-04e2-42e1-aa02-0396bff00bdb",
-        "productId": "66804b1a-8b63-4fae-8355-e34454ed1227",
-        "url": "/productos/arroceras/A10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "aa7eb9b3-7f99-414c-af84-803c4c643173",
@@ -9859,7 +10484,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "28f9c7a0-04e2-42e1-aa02-0396bff00bdb",
+            "productId": "66804b1a-8b63-4fae-8355-e34454ed1227",
+            "url": "/productos/arroceras/A10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "2774c26c-14c1-41a4-a177-7baa408ae43b",
@@ -9879,7 +10516,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "28f9c7a0-04e2-42e1-aa02-0396bff00bdb",
+            "productId": "66804b1a-8b63-4fae-8355-e34454ed1227",
+            "url": "/productos/arroceras/A10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -9971,16 +10620,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.162Z",
       "updatedAt": "2026-04-08T18:03:53.162Z"
     },
-    "images": [
-      {
-        "id": "892692e3-0849-4bb5-b6a9-e61be0bd8f12",
-        "productId": "f6786507-ee8e-4432-8c09-11677840c7bd",
-        "url": "/productos/arroceras/P10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "9d1c7469-e764-4ef6-8816-1b12b0e19fd2",
@@ -10000,7 +10639,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "892692e3-0849-4bb5-b6a9-e61be0bd8f12",
+            "productId": "f6786507-ee8e-4432-8c09-11677840c7bd",
+            "url": "/productos/arroceras/P10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "122ee22f-e429-4278-b899-659eb8700429",
@@ -10020,7 +10671,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "892692e3-0849-4bb5-b6a9-e61be0bd8f12",
+            "productId": "f6786507-ee8e-4432-8c09-11677840c7bd",
+            "url": "/productos/arroceras/P10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -10112,16 +10775,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "492363c0-adcf-47a0-bea0-462af5be445c",
-        "productId": "9f388620-7ea5-42fa-8f28-e6ddef4e5282",
-        "url": "/productos/bebederos/W10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "5c670ee2-5ed2-408b-90ac-d1f9723ae237",
@@ -10141,7 +10794,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "492363c0-adcf-47a0-bea0-462af5be445c",
+            "productId": "9f388620-7ea5-42fa-8f28-e6ddef4e5282",
+            "url": "/productos/bebederos/W10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "113dcc9e-405a-419b-aac0-2f80fa5657c7",
@@ -10161,7 +10826,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "492363c0-adcf-47a0-bea0-462af5be445c",
+            "productId": "9f388620-7ea5-42fa-8f28-e6ddef4e5282",
+            "url": "/productos/bebederos/W10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -10261,16 +10938,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "f8ad97da-861a-4cc3-be9d-e040234268a4",
-        "productId": "fb0eaa8c-23e5-4c92-9785-6fcb3dde3b3e",
-        "url": "/productos/triciclos/65-N1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "e1e2cc1c-a84d-4cff-8c29-c3bc831d3cd9",
@@ -10290,7 +10957,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "f8ad97da-861a-4cc3-be9d-e040234268a4",
+            "productId": "fb0eaa8c-23e5-4c92-9785-6fcb3dde3b3e",
+            "url": "/productos/triciclos/65-N1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -10390,16 +11069,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "1b58b284-4798-4340-aa54-2c1f1a57569a",
-        "productId": "5de6d616-9695-4087-9f99-c17148c8f4cb",
-        "url": "/productos/triciclos/65-N2.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "809510e9-89c4-40da-875e-974384c0325c",
@@ -10419,7 +11088,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "1b58b284-4798-4340-aa54-2c1f1a57569a",
+            "productId": "5de6d616-9695-4087-9f99-c17148c8f4cb",
+            "url": "/productos/triciclos/65-N2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -10519,16 +11200,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "7265528b-a043-4fd2-92ef-78874a36568d",
-        "productId": "ff0f3cb1-608f-4e9c-8956-26e476cfb135",
-        "url": "/productos/triciclos/65-N4.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "358a55d2-d946-4a6c-85ae-aef0d7a06bd7",
@@ -10548,7 +11219,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "7265528b-a043-4fd2-92ef-78874a36568d",
+            "productId": "ff0f3cb1-608f-4e9c-8956-26e476cfb135",
+            "url": "/productos/triciclos/65-N4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -10648,16 +11331,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "6655ccea-47ff-4684-9488-d9c4d11933e0",
-        "productId": "d022c319-3614-4f13-aabc-6b38291cc378",
-        "url": "/productos/triciclos/65-N8.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "4eb79ebd-01c8-48df-bae3-dd142b34837f",
@@ -10677,7 +11350,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "6655ccea-47ff-4684-9488-d9c4d11933e0",
+            "productId": "d022c319-3614-4f13-aabc-6b38291cc378",
+            "url": "/productos/triciclos/65-N8.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -10777,16 +11462,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "ce958dc6-c9cd-4c17-92a8-c77967fc93be",
-        "productId": "8bf70f27-02e2-4a43-b047-3acc0502d0ba",
-        "url": "/productos/triciclos/65-N11.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "2c85144e-ef0e-4b33-98d8-e54d6ed26c0c",
@@ -10806,7 +11481,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "ce958dc6-c9cd-4c17-92a8-c77967fc93be",
+            "productId": "8bf70f27-02e2-4a43-b047-3acc0502d0ba",
+            "url": "/productos/triciclos/65-N11.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -10906,16 +11593,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "aa825f1f-8823-4d23-9023-bc445f7cadd1",
-        "productId": "f6adb7fc-b5ac-4790-8a68-aec3b20e0390",
-        "url": "/productos/triciclos/65-N13.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "987b12d6-66eb-4f02-8596-b98475a14cdd",
@@ -10935,7 +11612,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "aa825f1f-8823-4d23-9023-bc445f7cadd1",
+            "productId": "f6adb7fc-b5ac-4790-8a68-aec3b20e0390",
+            "url": "/productos/triciclos/65-N13.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -11035,16 +11724,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "9720ed33-620e-49b0-85f3-e0c4577d971f",
-        "productId": "b44f70f0-60ee-4c6f-990e-3a56192758cf",
-        "url": "/productos/triciclos/65-N14.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "dcf422c2-5ead-4b6c-9658-43ad2311a220",
@@ -11064,7 +11743,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "9720ed33-620e-49b0-85f3-e0c4577d971f",
+            "productId": "b44f70f0-60ee-4c6f-990e-3a56192758cf",
+            "url": "/productos/triciclos/65-N14.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -11164,16 +11855,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "a6bf4625-8344-41dd-8a0b-2ca06ae08717",
-        "productId": "aad6dede-db83-4b02-bebc-fc0bc42ad335",
-        "url": "/productos/triciclos/80-N29.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "8cd607a0-d9d9-4ec1-9c9e-ef096c60280c",
@@ -11193,7 +11874,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "a6bf4625-8344-41dd-8a0b-2ca06ae08717",
+            "productId": "aad6dede-db83-4b02-bebc-fc0bc42ad335",
+            "url": "/productos/triciclos/80-N29.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -11293,16 +11986,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "df77feea-c113-41cc-a6b3-66e4442bcf28",
-        "productId": "d6d2d1e4-922d-44a1-acd9-92b9358904a6",
-        "url": "/productos/triciclos/65-N30.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "2552ba0d-b26f-4966-93de-5b79284c15ce",
@@ -11322,7 +12005,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "df77feea-c113-41cc-a6b3-66e4442bcf28",
+            "productId": "d6d2d1e4-922d-44a1-acd9-92b9358904a6",
+            "url": "/productos/triciclos/65-N30.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -11422,16 +12117,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "443935ef-72ed-43ca-b0ba-2a7a0b20cdec",
-        "productId": "97b0cfe7-381c-4c58-a5ca-3542993f5244",
-        "url": "/productos/triciclos/65-N40.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "cf70d6d9-da1d-4923-8fc6-b47988828e92",
@@ -11451,7 +12136,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "443935ef-72ed-43ca-b0ba-2a7a0b20cdec",
+            "productId": "97b0cfe7-381c-4c58-a5ca-3542993f5244",
+            "url": "/productos/triciclos/65-N40.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -11551,16 +12248,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "830ac148-ae8e-456e-9a2b-e055ba597f94",
-        "productId": "d4ec01d5-7d9a-4a86-848d-63b0334c9f81",
-        "url": "/productos/triciclos/65-N9.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "08bb1906-f342-4b60-b1ec-b0c2a4458e15",
@@ -11580,7 +12267,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "830ac148-ae8e-456e-9a2b-e055ba597f94",
+            "productId": "d4ec01d5-7d9a-4a86-848d-63b0334c9f81",
+            "url": "/productos/triciclos/65-N9.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -11680,16 +12379,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "5a70d5ed-d270-4c92-b361-58f652d0494f",
-        "productId": "dd48a5e1-1d5c-453e-bbae-97f752c4923e",
-        "url": "/productos/triciclos/65-N10.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "c30cd1bb-3fff-407e-8b08-81c9455eac7f",
@@ -11709,7 +12398,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "5a70d5ed-d270-4c92-b361-58f652d0494f",
+            "productId": "dd48a5e1-1d5c-453e-bbae-97f752c4923e",
+            "url": "/productos/triciclos/65-N10.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -11809,16 +12510,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "9a20746a-44ae-4e47-9a9a-e013bfe4eafa",
-        "productId": "c0af30b3-caa7-4325-ab5c-3786509fc73e",
-        "url": "/productos/triciclos/65-N12.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "c815fce9-d0d0-4049-a09e-2d2e42341a64",
@@ -11838,7 +12529,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "9a20746a-44ae-4e47-9a9a-e013bfe4eafa",
+            "productId": "c0af30b3-caa7-4325-ab5c-3786509fc73e",
+            "url": "/productos/triciclos/65-N12.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -11938,16 +12641,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "84a2a235-2d2d-42fa-a5cb-68d74337aceb",
-        "productId": "746e41ac-86f0-40f5-b931-0f3b473f7ca6",
-        "url": "/productos/triciclos/65-N36.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "4f299168-15fe-4ef7-9844-d228932b93c9",
@@ -11967,7 +12660,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "84a2a235-2d2d-42fa-a5cb-68d74337aceb",
+            "productId": "746e41ac-86f0-40f5-b931-0f3b473f7ca6",
+            "url": "/productos/triciclos/65-N36.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -12067,16 +12772,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "10f92219-813d-4f04-9e66-e1e4e2d2f347",
-        "productId": "05109c65-8f04-46fe-b82d-43ece7913f6c",
-        "url": "/productos/triciclos/80-N1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "ab493ace-9d61-4e54-89bc-0c3d825871d8",
@@ -12096,7 +12791,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "10f92219-813d-4f04-9e66-e1e4e2d2f347",
+            "productId": "05109c65-8f04-46fe-b82d-43ece7913f6c",
+            "url": "/productos/triciclos/80-N1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -12196,16 +12903,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "1b4e7cb5-9cc4-4eed-a65f-889f95137f80",
-        "productId": "d1db7459-687a-412e-b4a8-6c8197e8d36b",
-        "url": "/productos/triciclos/80-N2.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "fae47e43-9ef4-409e-a1e5-8d99728f3fea",
@@ -12225,7 +12922,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "1b4e7cb5-9cc4-4eed-a65f-889f95137f80",
+            "productId": "d1db7459-687a-412e-b4a8-6c8197e8d36b",
+            "url": "/productos/triciclos/80-N2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -12325,16 +13034,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "f0393312-1ae2-42db-aae1-054eb8f722d9",
-        "productId": "27ff050f-faf7-49f6-ac40-75c019f59557",
-        "url": "/productos/triciclos/80-N4.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "435207fc-93b6-4e6f-bb99-1817f0227e7c",
@@ -12354,7 +13053,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "f0393312-1ae2-42db-aae1-054eb8f722d9",
+            "productId": "27ff050f-faf7-49f6-ac40-75c019f59557",
+            "url": "/productos/triciclos/80-N4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -12454,16 +13165,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "a00006de-d6a0-4011-a961-09e0e47fcf8a",
-        "productId": "d75c5c6e-5372-4d04-8a44-320b56fccc1c",
-        "url": "/productos/triciclos/80-N8.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "aab0b361-2139-4956-8f16-95bd81028b71",
@@ -12483,7 +13184,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "a00006de-d6a0-4011-a961-09e0e47fcf8a",
+            "productId": "d75c5c6e-5372-4d04-8a44-320b56fccc1c",
+            "url": "/productos/triciclos/80-N8.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -12583,16 +13296,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "5aa59e66-e950-4030-805f-fbb38843dfe3",
-        "productId": "f675a02b-b990-4781-9223-c7d68c7586ae",
-        "url": "/productos/triciclos/80-N11.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "1847c5cd-8f83-40bd-b4a9-d911077c54f3",
@@ -12612,7 +13315,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "5aa59e66-e950-4030-805f-fbb38843dfe3",
+            "productId": "f675a02b-b990-4781-9223-c7d68c7586ae",
+            "url": "/productos/triciclos/80-N11.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -12712,16 +13427,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "0786c523-fbfd-4331-8ec7-889ea25a8507",
-        "productId": "007d372b-b3f6-4894-99b3-37c38f27566b",
-        "url": "/productos/triciclos/80-N13.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "f15276b4-6ce8-429e-85ec-48074fc5545e",
@@ -12741,7 +13446,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "0786c523-fbfd-4331-8ec7-889ea25a8507",
+            "productId": "007d372b-b3f6-4894-99b3-37c38f27566b",
+            "url": "/productos/triciclos/80-N13.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -12841,16 +13558,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "6b826cb8-1139-4896-b97e-bc9045b1cf08",
-        "productId": "00f9294e-8c87-409e-b0a7-9dba4b3472ae",
-        "url": "/productos/triciclos/80-N14.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "c3cb2c80-7758-474d-bad6-2a62da48febd",
@@ -12870,7 +13577,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "6b826cb8-1139-4896-b97e-bc9045b1cf08",
+            "productId": "00f9294e-8c87-409e-b0a7-9dba4b3472ae",
+            "url": "/productos/triciclos/80-N14.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -12970,16 +13689,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "fbecd61b-dfbd-445c-a2c3-9026fa568fda",
-        "productId": "f784bfb7-f985-48bd-9a95-b74faca773eb",
-        "url": "/productos/triciclos/80-N29.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "9847505f-fd16-4b6f-967d-8ed05f2f26f0",
@@ -12999,7 +13708,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "fbecd61b-dfbd-445c-a2c3-9026fa568fda",
+            "productId": "f784bfb7-f985-48bd-9a95-b74faca773eb",
+            "url": "/productos/triciclos/80-N29.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -13099,16 +13820,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "fa798196-cdaf-4aad-89da-0fd929b7c5f1",
-        "productId": "9d8f1ecb-dd92-415e-aba1-e9a88e39f0b5",
-        "url": "/productos/triciclos/80-N30.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "d66c392d-e32d-454b-97a4-ea8134f8ba9c",
@@ -13128,7 +13839,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "fa798196-cdaf-4aad-89da-0fd929b7c5f1",
+            "productId": "9d8f1ecb-dd92-415e-aba1-e9a88e39f0b5",
+            "url": "/productos/triciclos/80-N30.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -13228,16 +13951,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "0d2e5a22-7c0a-475a-a6b7-1d2ad2c6ab54",
-        "productId": "40f921d7-4004-4fe7-bd36-668382d40d0f",
-        "url": "/productos/triciclos/80-N40.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "7be9c122-63bf-41e5-b187-814959095a7a",
@@ -13257,7 +13970,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "0d2e5a22-7c0a-475a-a6b7-1d2ad2c6ab54",
+            "productId": "40f921d7-4004-4fe7-bd36-668382d40d0f",
+            "url": "/productos/triciclos/80-N40.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -13357,16 +14082,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "7e0a76c3-f157-4d0b-a21a-e690c790bb28",
-        "productId": "7b0979c9-eba9-4741-b92c-28eb0286e111",
-        "url": "/productos/triciclos/80-N9.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "e60285e1-efdf-4897-9acd-199a27c81f09",
@@ -13386,7 +14101,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "7e0a76c3-f157-4d0b-a21a-e690c790bb28",
+            "productId": "7b0979c9-eba9-4741-b92c-28eb0286e111",
+            "url": "/productos/triciclos/80-N9.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -13486,16 +14213,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "3657aea4-89ad-4733-aec7-1ee0dae26771",
-        "productId": "f4d3f812-b323-45c4-8262-022fbc81f169",
-        "url": "/productos/triciclos/80-N10.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "a79d4907-62c6-465c-b5bd-2f5f5a1aa020",
@@ -13515,7 +14232,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "3657aea4-89ad-4733-aec7-1ee0dae26771",
+            "productId": "f4d3f812-b323-45c4-8262-022fbc81f169",
+            "url": "/productos/triciclos/80-N10.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -13615,16 +14344,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "1c2d1ed1-0d19-471f-8e38-1e233f1e7e84",
-        "productId": "bf9dc638-b093-4e86-a34b-0b8f1ac72ba8",
-        "url": "/productos/triciclos/80-N12.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "3d5b2e51-7bed-4ef8-a14c-2ab763749c36",
@@ -13644,7 +14363,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "1c2d1ed1-0d19-471f-8e38-1e233f1e7e84",
+            "productId": "bf9dc638-b093-4e86-a34b-0b8f1ac72ba8",
+            "url": "/productos/triciclos/80-N12.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -13744,16 +14475,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.163Z",
       "updatedAt": "2026-04-08T18:03:53.163Z"
     },
-    "images": [
-      {
-        "id": "14c82c60-78d8-48e3-8124-176f9d9bf981",
-        "productId": "f6955a20-7842-4b59-a858-f17e5fa1226c",
-        "url": "/productos/triciclos/80-N36.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "dae99e9f-2fef-4615-99d3-5435a19b2bed",
@@ -13773,7 +14494,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "14c82c60-78d8-48e3-8124-176f9d9bf981",
+            "productId": "f6955a20-7842-4b59-a858-f17e5fa1226c",
+            "url": "/productos/triciclos/80-N36.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -13881,16 +14614,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "c91ab568-5ea4-4019-b6b7-60a5bf09589a",
-        "productId": "a559272b-50a9-40a1-aeb1-80e82546cb09",
-        "url": "/productos/scooters/GT.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "b465f603-615b-42b0-aee1-e9bf5cf86f84",
@@ -13909,7 +14632,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "c91ab568-5ea4-4019-b6b7-60a5bf09589a",
+            "productId": "a559272b-50a9-40a1-aeb1-80e82546cb09",
+            "url": "/productos/scooters/GT.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -14025,16 +14760,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "a1177d26-1dbf-4a97-b22f-955ac5240482",
-        "productId": "f24b4c13-ff5e-483c-8112-860355880b4e",
-        "url": "/productos/scooters/GT-S.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "365b47a5-06ae-442b-9d6c-44bca7c546e9",
@@ -14053,7 +14778,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "a1177d26-1dbf-4a97-b22f-955ac5240482",
+            "productId": "f24b4c13-ff5e-483c-8112-860355880b4e",
+            "url": "/productos/scooters/GT-S.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -14169,16 +14906,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "7b5d9210-f2bb-48df-b12d-6a7e920a2d26",
-        "productId": "e151c09d-139b-4407-be22-6f5400dc5280",
-        "url": "/productos/scooters/TITAN.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "92922dd5-d88b-43f5-8c10-0a81f26f970a",
@@ -14197,7 +14924,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "7b5d9210-f2bb-48df-b12d-6a7e920a2d26",
+            "productId": "e151c09d-139b-4407-be22-6f5400dc5280",
+            "url": "/productos/scooters/TITAN.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -14329,16 +15068,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "273d3e55-3906-4fae-a924-897a071255a1",
-        "productId": "378d6e72-ad34-4cb9-8420-21a3ac40b961",
-        "url": "/productos/scooters/XTREME.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "e1df1f35-2db7-4473-967a-0865b3fe24e9",
@@ -14357,7 +15086,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "273d3e55-3906-4fae-a924-897a071255a1",
+            "productId": "378d6e72-ad34-4cb9-8420-21a3ac40b961",
+            "url": "/productos/scooters/XTREME.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -14433,24 +15174,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "d718562b-2e09-4138-bd32-942147a80713",
-        "productId": "ab0f04e4-6374-447d-b81e-33faa026154b",
-        "url": "/productos/mixteras/H10-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "26bd49de-c87f-4c49-b15a-072410cf9fbf",
-        "productId": "ab0f04e4-6374-447d-b81e-33faa026154b",
-        "url": "/productos/mixteras/H10-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      }
-    ],
     "variants": [
       {
         "id": "54f8ad70-f082-463f-9281-711688598252",
@@ -14470,7 +15193,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "d718562b-2e09-4138-bd32-942147a80713",
+            "productId": "ab0f04e4-6374-447d-b81e-33faa026154b",
+            "url": "/productos/mixteras/H10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "26bd49de-c87f-4c49-b15a-072410cf9fbf",
+            "productId": "ab0f04e4-6374-447d-b81e-33faa026154b",
+            "url": "/productos/mixteras/H10-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          }
+        ],
+        "stock": null
       },
       {
         "id": "ef533901-8c21-4f41-9a67-32303732b00e",
@@ -14490,7 +15234,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "d718562b-2e09-4138-bd32-942147a80713",
+            "productId": "ab0f04e4-6374-447d-b81e-33faa026154b",
+            "url": "/productos/mixteras/H10-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "26bd49de-c87f-4c49-b15a-072410cf9fbf",
+            "productId": "ab0f04e4-6374-447d-b81e-33faa026154b",
+            "url": "/productos/mixteras/H10-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -14566,24 +15331,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.157Z",
       "updatedAt": "2026-04-08T18:03:53.157Z"
     },
-    "images": [
-      {
-        "id": "732c923d-0306-4d57-a334-2499c4f83c07",
-        "productId": "3c568f93-2a0a-4519-bafd-4f32d9f523d7",
-        "url": "/productos/mixteras/H20-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "bee26ba6-394d-415d-a990-c4173c071027",
-        "productId": "3c568f93-2a0a-4519-bafd-4f32d9f523d7",
-        "url": "/productos/mixteras/H20-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      }
-    ],
     "variants": [
       {
         "id": "eb195937-33da-42f4-a9bd-b255d23cc170",
@@ -14603,7 +15350,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "732c923d-0306-4d57-a334-2499c4f83c07",
+            "productId": "3c568f93-2a0a-4519-bafd-4f32d9f523d7",
+            "url": "/productos/mixteras/H20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "bee26ba6-394d-415d-a990-c4173c071027",
+            "productId": "3c568f93-2a0a-4519-bafd-4f32d9f523d7",
+            "url": "/productos/mixteras/H20-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          }
+        ],
+        "stock": null
       },
       {
         "id": "97e2714a-4743-4591-80f6-d270577d23a8",
@@ -14623,7 +15391,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "732c923d-0306-4d57-a334-2499c4f83c07",
+            "productId": "3c568f93-2a0a-4519-bafd-4f32d9f523d7",
+            "url": "/productos/mixteras/H20-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "bee26ba6-394d-415d-a990-c4173c071027",
+            "productId": "3c568f93-2a0a-4519-bafd-4f32d9f523d7",
+            "url": "/productos/mixteras/H20-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -14763,40 +15552,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "996fe272-9a8f-4435-b28f-b2c48d020ce3",
-        "productId": "1e08a569-d903-4700-a9c4-12f7deb28d8a",
-        "url": "/productos/scooters/10.5pro-max-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "b6661aab-4476-4678-a854-d5a5e577f7fd",
-        "productId": "1e08a569-d903-4700-a9c4-12f7deb28d8a",
-        "url": "/productos/scooters/10.5pro-max-v1-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "a0cfb5b9-c206-45cd-a886-410eae623be5",
-        "productId": "1e08a569-d903-4700-a9c4-12f7deb28d8a",
-        "url": "/productos/scooters/10.5pro-max-v1-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      },
-      {
-        "id": "4d75c109-143e-4138-87ce-7f1e5f4ccfb8",
-        "productId": "1e08a569-d903-4700-a9c4-12f7deb28d8a",
-        "url": "/productos/scooters/10.5pro-max-v1-4.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 3
-      }
-    ],
     "variants": [
       {
         "id": "6a27d73b-f801-4d78-b1b4-24e087a10daa",
@@ -14815,7 +15570,46 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "996fe272-9a8f-4435-b28f-b2c48d020ce3",
+            "productId": "1e08a569-d903-4700-a9c4-12f7deb28d8a",
+            "url": "/productos/scooters/10.5pro-max-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "b6661aab-4476-4678-a854-d5a5e577f7fd",
+            "productId": "1e08a569-d903-4700-a9c4-12f7deb28d8a",
+            "url": "/productos/scooters/10.5pro-max-v1-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "a0cfb5b9-c206-45cd-a886-410eae623be5",
+            "productId": "1e08a569-d903-4700-a9c4-12f7deb28d8a",
+            "url": "/productos/scooters/10.5pro-max-v1-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          },
+          {
+            "id": "4d75c109-143e-4138-87ce-7f1e5f4ccfb8",
+            "productId": "1e08a569-d903-4700-a9c4-12f7deb28d8a",
+            "url": "/productos/scooters/10.5pro-max-v1-4.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 3
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -14907,16 +15701,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.164Z",
       "updatedAt": "2026-04-08T18:03:53.164Z"
     },
-    "images": [
-      {
-        "id": "4759ab77-3da3-4cb1-a434-3c38d00756ee",
-        "productId": "1a8fc60d-ecb1-412e-8c62-5cd22361bca7",
-        "url": "/productos/accesorios/motor85-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "0d81798f-8b30-465b-b570-05dbdfe7f81b",
@@ -14935,7 +15719,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "4759ab77-3da3-4cb1-a434-3c38d00756ee",
+            "productId": "1a8fc60d-ecb1-412e-8c62-5cd22361bca7",
+            "url": "/productos/accesorios/motor85-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -15043,24 +15839,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "d723c54d-484a-4865-bf13-5759a5d20ef7",
-        "productId": "03e994b7-fda6-47df-a07b-3822b012dfb5",
-        "url": "/productos/scooters/escape-v2-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "c21c89e0-8e1a-4323-9b4d-0d46c55e0736",
-        "productId": "03e994b7-fda6-47df-a07b-3822b012dfb5",
-        "url": "/productos/scooters/escape-v1-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "11af5254-2da4-4964-ad98-17c001494dff",
@@ -15069,7 +15847,28 @@ export const productsMock: Product[] = [
         "name": null,
         "attributes": {
           "color": "Gris"
-        }
+        },
+        "images": [
+          {
+            "id": "d723c54d-484a-4865-bf13-5759a5d20ef7",
+            "productId": "03e994b7-fda6-47df-a07b-3822b012dfb5",
+            "url": "/productos/scooters/escape-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "c21c89e0-8e1a-4323-9b4d-0d46c55e0736",
+            "productId": "03e994b7-fda6-47df-a07b-3822b012dfb5",
+            "url": "/productos/scooters/escape-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       },
       {
         "id": "be4b41c1-7bf3-405d-8543-2aa0f9e0d9f0",
@@ -15088,7 +15887,28 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "d723c54d-484a-4865-bf13-5759a5d20ef7",
+            "productId": "03e994b7-fda6-47df-a07b-3822b012dfb5",
+            "url": "/productos/scooters/escape-v2-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "c21c89e0-8e1a-4323-9b4d-0d46c55e0736",
+            "productId": "03e994b7-fda6-47df-a07b-3822b012dfb5",
+            "url": "/productos/scooters/escape-v1-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -15196,32 +16016,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "e1b9732d-2749-4865-9b43-b40d179cfe09",
-        "productId": "bd18646b-65ee-4d9f-8e5e-0a91d508979f",
-        "url": "/productos/scooters/cross_evo-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "381c94b8-91a2-4222-bdcd-e317736e5182",
-        "productId": "bd18646b-65ee-4d9f-8e5e-0a91d508979f",
-        "url": "/productos/scooters/cross_evo-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "f574cfe2-5c58-45bf-8209-414b35809838",
-        "productId": "bd18646b-65ee-4d9f-8e5e-0a91d508979f",
-        "url": "/productos/scooters/cross_evo-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "8fcda848-fb41-47a8-910b-d96f7370685f",
@@ -15240,7 +16034,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "e1b9732d-2749-4865-9b43-b40d179cfe09",
+            "productId": "bd18646b-65ee-4d9f-8e5e-0a91d508979f",
+            "url": "/productos/scooters/cross_evo-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "381c94b8-91a2-4222-bdcd-e317736e5182",
+            "productId": "bd18646b-65ee-4d9f-8e5e-0a91d508979f",
+            "url": "/productos/scooters/cross_evo-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "f574cfe2-5c58-45bf-8209-414b35809838",
+            "productId": "bd18646b-65ee-4d9f-8e5e-0a91d508979f",
+            "url": "/productos/scooters/cross_evo-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -15348,32 +16172,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.155Z",
       "updatedAt": "2026-04-08T18:03:53.155Z"
     },
-    "images": [
-      {
-        "id": "64ae64d1-fced-4d96-a658-9b33c2263cab",
-        "productId": "756258b5-af21-40a0-b69c-8e4e319fabce",
-        "url": "/productos/scooters/10.5-ultra-1.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      },
-      {
-        "id": "a904fad4-6067-45d8-aff9-e3938ea4b8cc",
-        "productId": "756258b5-af21-40a0-b69c-8e4e319fabce",
-        "url": "/productos/scooters/10.5-ultra-2.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 1
-      },
-      {
-        "id": "95749fa1-5215-48c5-9215-3eb3520d5244",
-        "productId": "756258b5-af21-40a0-b69c-8e4e319fabce",
-        "url": "/productos/scooters/10.5-ultra-3.webp",
-        "alt": null,
-        "isMain": false,
-        "sortOrder": 2
-      }
-    ],
     "variants": [
       {
         "id": "c5ad1d6d-fbe3-4ed5-a13a-f8cd089f5fe6",
@@ -15392,7 +16190,37 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "64ae64d1-fced-4d96-a658-9b33c2263cab",
+            "productId": "756258b5-af21-40a0-b69c-8e4e319fabce",
+            "url": "/productos/scooters/10.5-ultra-1.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          },
+          {
+            "id": "a904fad4-6067-45d8-aff9-e3938ea4b8cc",
+            "productId": "756258b5-af21-40a0-b69c-8e4e319fabce",
+            "url": "/productos/scooters/10.5-ultra-2.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 1
+          },
+          {
+            "id": "95749fa1-5215-48c5-9215-3eb3520d5244",
+            "productId": "756258b5-af21-40a0-b69c-8e4e319fabce",
+            "url": "/productos/scooters/10.5-ultra-3.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": false,
+            "sortOrder": 2
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -15612,16 +16440,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "54230af0-033f-4b73-b1f3-f766734a9e84",
-        "productId": "d1216e4c-6f01-48de-8c53-c85d6c8f508a",
-        "url": "/productos/aires/general.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "376c5407-0685-47e0-9e71-8f08f9a2f855",
@@ -15641,7 +16459,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "54230af0-033f-4b73-b1f3-f766734a9e84",
+            "productId": "d1216e4c-6f01-48de-8c53-c85d6c8f508a",
+            "url": "/productos/aires/general.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   },
@@ -15885,16 +16715,6 @@ export const productsMock: Product[] = [
       "createdAt": "2026-04-08T18:03:53.156Z",
       "updatedAt": "2026-04-08T18:03:53.156Z"
     },
-    "images": [
-      {
-        "id": "8de3bcb5-3368-4168-898b-cb170e891795",
-        "productId": "8d38252c-bf4b-4aa7-9d8e-5ad80742b6d1",
-        "url": "/productos/aires/general.webp",
-        "alt": null,
-        "isMain": true,
-        "sortOrder": 0
-      }
-    ],
     "variants": [
       {
         "id": "16ffe96c-ea10-4c55-a970-1b4c82859164",
@@ -15914,7 +16734,19 @@ export const productsMock: Product[] = [
           "priceGs": null,
           "priceBrl": null,
           "metadata": null
-        }
+        },
+        "images": [
+          {
+            "id": "8de3bcb5-3368-4168-898b-cb170e891795",
+            "productId": "8d38252c-bf4b-4aa7-9d8e-5ad80742b6d1",
+            "url": "/productos/aires/general.webp",
+            "alt": null,
+            "variantId": null,
+            "isMain": true,
+            "sortOrder": 0
+          }
+        ],
+        "stock": null
       }
     ]
   }

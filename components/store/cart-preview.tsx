@@ -4,6 +4,7 @@ import Link from "@/i18n/link"
 import Image from "next/image"
 import { useCartStore } from "@/store/cart-store"
 import { useDictionary } from "@/i18n/context"
+import { getVariantMainImage } from "@/lib/variant-images"
 import { useState, useRef, useEffect, useCallback } from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { CartDrawer } from "./cart-drawer"
@@ -146,7 +147,7 @@ export function CartPreview() {
               {/* Items */}
               <div className="max-h-64 overflow-y-auto">
                 {cart.items.slice(0, 4).map((item) => {
-                  const img = item.product.images.find((i) => i.isMain) || item.product.images[0]
+                  const img = getVariantMainImage(item.variant)
                   const name = item.product.name[locale] || item.product.name.es || "Producto"
                   const priceUsd = item.variant?.externalCode?.priceUsd || 0
 
