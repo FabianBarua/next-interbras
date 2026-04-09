@@ -1,7 +1,7 @@
 "use client"
-import type { ExternalCEC } from "@/types/product"
+import type { ExternalCode } from "@/types/product"
 
-export function PriceDisplay({ externalCode, currency = "USD", className = "" }: { externalCode?: ExternalCEC; currency?: "USD" | "GS" | "BRL"; className?: string }) {
+export function PriceDisplay({ externalCode, currency = "USD", className = "" }: { externalCode?: ExternalCode; currency?: "USD" | "GS" | "BRL"; className?: string }) {
   if (!externalCode) return null
 
   const getPriceAndSymbol = () => {

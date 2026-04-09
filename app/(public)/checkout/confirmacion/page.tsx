@@ -51,7 +51,7 @@ function ConfirmacionContent() {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">{dict.confirmation.emailLabel}</span>
-            <span className="font-medium">juan.perez@example.com</span>
+            <span className="font-medium">{searchParams.get("email") ?? "—"}</span>
           </div>
         </div>
 

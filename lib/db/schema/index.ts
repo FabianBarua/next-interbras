@@ -14,6 +14,7 @@ export * from "./categories"
 export * from "./products"
 export * from "./variants"
 export * from "./product-images"
+export * from "./attributes"
 
 // external systems & pricing
 export * from "./external-codes"
@@ -29,3 +30,7 @@ export * from "./orders"
 export * from "./order-items"
 export * from "./wishlists"
 export * from "./addresses"
+
+// checkout config
+export * from "./payment-types"
+export * from "./shipping-methods"

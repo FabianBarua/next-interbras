@@ -22,8 +22,8 @@ export const orderStatusEnum = pgEnum("order_status", [
 
 export const paymentMethodEnum = pgEnum("payment_method", [
   "cash",
-  // "card",
-  // "transfer",
+  "card",
+  "transfer",
 ])
 
 export const orders = pgTable("orders", {

@@ -6,9 +6,9 @@ import {
   products as productsTable,
   externalCodes,
 } from "@/lib/db/schema"
-import { eq, desc, sql, and, inArray } from "drizzle-orm"
+import { eq, desc, sql, and, inArray, count } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
-import type { Order, OrderItem, OrderStatus } from "@/types/order"
+import type { Order, OrderItem, OrderStatus, AdminOrder } from "@/types/order"
 
 // ---------------------------------------------------------------------------
 // Mapping helpers
@@ -84,6 +84,87 @@ export async function getOrderByIdPublic(id: string): Promise<Order | null> {
 }
 
 // ---------------------------------------------------------------------------
+// Admin API
+// ---------------------------------------------------------------------------
+
+function mapAdminOrder(row: typeof orders.$inferSelect, items: OrderItem[]): AdminOrder {
+  return {
+    ...mapOrder(row, items),
+    customerName: row.customerName,
+    customerEmail: row.customerEmail,
+    customerPhone: row.customerPhone,
+    customerDocument: row.customerDocument,
+    paymentMethod: row.paymentMethod,
+    shippingMethod: row.shippingMethod,
+    shippingCost: Number(row.shippingCost),
+    subtotal: Number(row.subtotal),
+    shippingAddress: row.shippingAddress as AdminOrder["shippingAddress"],
+    trackingCode: row.trackingCode,
+    notes: row.notes,
+  }
+}
+
+export async function getAllOrders(opts?: {
+  status?: OrderStatus
+  page?: number
+  perPage?: number
+}): Promise<{ orders: AdminOrder[]; total: number }> {
+  const page = opts?.page ?? 1
+  const perPage = opts?.perPage ?? 50
+  const offset = (page - 1) * perPage
+
+  const conditions = opts?.status ? eq(orders.status, opts.status) : undefined
+
+  const [totalResult] = await db.select({ count: count() }).from(orders).where(conditions)
+  const total = totalResult.count
+
+  const orderRows = await db.select().from(orders)
+    .where(conditions)
+    .orderBy(desc(orders.createdAt))
+    .limit(perPage)
+    .offset(offset)
+
+  if (orderRows.length === 0) return { orders: [], total }
+
+  const orderIds = orderRows.map(o => o.id)
+  const itemRows = await db.select().from(orderItems)
+    .where(inArray(orderItems.orderId, orderIds))
+
+  const itemsMap = new Map<string, OrderItem[]>()
+  for (const item of itemRows) {
+    const list = itemsMap.get(item.orderId) ?? []
+    list.push(mapOrderItem(item))
+    itemsMap.set(item.orderId, list)
+  }
+
+  return {
+    orders: orderRows.map(o => mapAdminOrder(o, itemsMap.get(o.id) ?? [])),
+    total,
+  }
+}
+
+export async function getOrderByIdAdmin(id: string): Promise<AdminOrder | null> {
+  const orderRows = await db.select().from(orders).where(eq(orders.id, id)).limit(1)
+  if (orderRows.length === 0) return null
+
+  const itemRows = await db.select().from(orderItems)
+    .where(eq(orderItems.orderId, id))
+
+  return mapAdminOrder(orderRows[0], itemRows.map(mapOrderItem))
+}
+
+export async function updateOrderStatus(
+  id: string,
+  status: OrderStatus,
+  trackingCode?: string,
+): Promise<void> {
+  const values: Record<string, unknown> = { status }
+  if (trackingCode !== undefined) values.trackingCode = trackingCode
+  await db.update(orders).set(values).where(eq(orders.id, id))
+  await invalidateCache(`order:${id}`, "orders:user:*")
+}
+
+// ---------------------------------------------------------------------------
 // Mutations
 // ---------------------------------------------------------------------------
 
@@ -102,7 +183,7 @@ export interface CreateOrderInput {
   }
   shippingMethod: string
   shippingCost: number
-  paymentMethod: "cash"
+  paymentMethod: "cash" | "card" | "transfer"
   notes?: string
   items: {
     variantId: string

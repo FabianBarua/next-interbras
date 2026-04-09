@@ -3,7 +3,7 @@ import { products, categories, variants, productImages, externalCodes } from "@/
 import { eq, and, desc, asc, ne, sql, inArray } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
 import { toVariantSlug } from "@/lib/variant-slug"
-import type { Product, Variant, ProductImage as FrontendImage, ExternalCEC } from "@/types/product"
+import type { Product, Variant, ProductImage as FrontendImage, ExternalCode } from "@/types/product"
 import type { Category } from "@/types/category"
 
 export interface VariantEntry {
@@ -127,7 +127,7 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
         priceGs: ec.priceGs ? Number(ec.priceGs) : null,
         priceBrl: ec.priceBrl ? Number(ec.priceBrl) : null,
         metadata: ec.metadata ?? null,
-      } satisfies ExternalCEC,
+      } satisfies ExternalCode,
     }
 
     const list = varMap.get(v.productId) ?? []

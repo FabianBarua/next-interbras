@@ -1,6 +1,6 @@
 import type { I18nText } from "./common"
 
-export type OrderStatus = "PENDING" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED"
+export type OrderStatus = "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED"
 
 export interface OrderItem {
   id: string
@@ -21,4 +21,24 @@ export interface Order {
   items: OrderItem[]
   createdAt: string
   updatedAt: string
+}
+
+export interface AdminOrder extends Order {
+  customerName: string
+  customerEmail: string
+  customerPhone: string | null
+  customerDocument: string | null
+  paymentMethod: string
+  shippingMethod: string | null
+  shippingCost: number
+  subtotal: number
+  shippingAddress: {
+    street: string
+    city: string
+    state: string
+    zipCode?: string
+    country: string
+  } | null
+  trackingCode: string | null
+  notes: string | null
 }

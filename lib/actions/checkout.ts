@@ -5,6 +5,8 @@ import { requireAuth } from "@/lib/auth/get-session"
 import { rateLimit } from "@/lib/rate-limit"
 import { headers } from "next/headers"
 import { createOrder, type CreateOrderInput } from "@/services/orders"
+import { getShippingMethodBySlug } from "@/services/shipping-methods"
+import { getPaymentTypeBySlug } from "@/services/payment-types"
 
 const addressSchema = z.object({
   street: z.string().min(3).max(300),
@@ -25,16 +27,11 @@ const checkoutSchema = z.object({
   customerPhone: z.string().max(50).optional(),
   customerDocument: z.string().max(30).optional(),
   shippingAddress: addressSchema,
-  shippingMethod: z.enum(["standard", "express", "pickup"]),
+  shippingMethod: z.string().min(1).max(50),
+  paymentMethod: z.string().min(1).max(50),
   notes: z.string().max(500).optional(),
   items: z.array(checkoutItemSchema).min(1).max(50),
 })
-
-const SHIPPING_COSTS: Record<string, number> = {
-  standard: 8.50,
-  express: 15.00,
-  pickup: 0,
-}
 
 export async function createOrderAction(data: unknown) {
   const user = await requireAuth()
@@ -52,8 +49,21 @@ export async function createOrderAction(data: unknown) {
     return { error: "Datos inválidos. Revisa el formulario." }
   }
 
-  const { shippingMethod, ...rest } = parsed.data
-  const shippingCost = SHIPPING_COSTS[shippingMethod] ?? 0
+  const { shippingMethod, paymentMethod, ...rest } = parsed.data
+
+  const [shippingRecord, paymentRecord] = await Promise.all([
+    getShippingMethodBySlug(shippingMethod),
+    getPaymentTypeBySlug(paymentMethod),
+  ])
+
+  if (!shippingRecord || !shippingRecord.active) {
+    return { error: "Método de envío no válido." }
+  }
+  if (!paymentRecord || !paymentRecord.active) {
+    return { error: "Método de pago no válido." }
+  }
+
+  const shippingCost = shippingRecord.price
 
   try {
     const orderId = await createOrder({
@@ -61,7 +71,7 @@ export async function createOrderAction(data: unknown) {
       ...rest,
       shippingMethod,
       shippingCost,
-      paymentMethod: "cash",
+      paymentMethod: paymentMethod as "cash" | "card" | "transfer",
     })
     return { orderId }
   } catch (err) {

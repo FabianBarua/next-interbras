@@ -1,7 +1,7 @@
 import type { I18nText, I18nRichText, I18nSpecs } from "./common"
 import type { Category } from "./category"
 
-export interface ExternalCEC {
+export interface ExternalCode {
   id: string
   system: string
   code: string
@@ -30,7 +30,7 @@ export interface Variant {
   attributes: Record<string, any>
   stock: number | null
   images: ProductImage[]
-  externalCode?: ExternalCEC
+  externalCode?: ExternalCode
 }
 
 export interface Product {
