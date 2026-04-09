@@ -1,17 +1,26 @@
 "use client"
-import { useEffect, useState } from "react"
-import { SessionProvider } from "next-auth/react"
 
-export function StoreProviders({ children }: { children: React.ReactNode }) {
-  const [isMounted, setIsMounted] = useState(false)
+import { useEffect } from "react"
+import { SessionProvider, useSession } from "next-auth/react"
+import { usePathname } from "next/navigation"
+
+/** Re-fetches the session whenever the route changes (e.g. after login redirect). */
+function SessionSync() {
+  const pathname = usePathname()
+  const { update } = useSession()
 
   useEffect(() => {
-    setIsMounted(true)
-  }, [])
+    update()
+  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  return null
+}
+
+export function StoreProviders({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
-      <div style={{ opacity: isMounted ? 1 : 0, transition: "opacity 0.2s" }}>{children}</div>
+      <SessionSync />
+      {children}
     </SessionProvider>
   )
 }

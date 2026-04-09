@@ -28,6 +28,7 @@ const es = {
     home: "Inicio",
     products: "Productos",
     downloads: "Downloads",
+    support: "Soporte",
     aboutUs: "Quiénes Somos",
     locations: "Dónde Estamos",
     myAccount: "Mi Cuenta",

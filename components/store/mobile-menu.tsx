@@ -28,6 +28,7 @@ export function MobileMenu() {
               <Link href="/" onClick={() => setIsOpen(false)} className="text-lg font-medium">{t.home}</Link>
               <Link href="/productos" onClick={() => setIsOpen(false)} className="text-lg font-medium">{t.products}</Link>
               <Link href="/downloads" onClick={() => setIsOpen(false)} className="text-lg font-medium">{t.downloads}</Link>
+              <Link href="/soporte" onClick={() => setIsOpen(false)} className="text-lg font-medium">{t.support}</Link>
               <Link href="/quienes-somos" onClick={() => setIsOpen(false)} className="text-lg font-medium">{t.aboutUs}</Link>
               <Link href="/donde-estamos" onClick={() => setIsOpen(false)} className="text-lg font-medium">{t.locations}</Link>
               

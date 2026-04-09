@@ -96,6 +96,14 @@ export function NavCategories() {
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link href="/downloads" className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold tracking-wide text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
+              Downloads
+            </Link>
+          </NavigationMenuLink>
+        </NavigationMenuItem>
+
+        <NavigationMenuItem>
+          <NavigationMenuLink asChild>
+            <Link href="/soporte" className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold tracking-wide text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
               Soporte
             </Link>
           </NavigationMenuLink>

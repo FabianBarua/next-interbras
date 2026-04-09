@@ -30,6 +30,7 @@ const pt: Dictionary = {
     home: "Início",
     products: "Produtos",
     downloads: "Downloads",
+    support: "Suporte",
     aboutUs: "Quem Somos",
     locations: "Onde Estamos",
     myAccount: "Minha Conta",

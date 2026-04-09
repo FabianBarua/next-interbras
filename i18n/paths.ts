@@ -15,6 +15,7 @@ const ptPaths: Record<string, string> = {
   "/cuenta/direcciones": "/conta/enderecos",
   "/quienes-somos": "/quem-somos",
   "/donde-estamos": "/onde-estamos",
+  "/soporte": "/suporte",
 }
 
 // Reverse map: PT path → canonical (ES) path
