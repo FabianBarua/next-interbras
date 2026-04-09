@@ -2,6 +2,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { getFeaturedProducts, getNewProducts } from "@/services/products"
 import { getCategories } from "@/services/categories"
+
+export const dynamic = "force-dynamic"
 import { ProductCarousel } from "@/components/store/product-carousel"
 import { ProductCard } from "@/components/store/product-card"
 import { CategoryCard } from "@/components/store/category-card"

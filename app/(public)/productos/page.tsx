@@ -1,5 +1,7 @@
 import { getVariantEntries } from "@/services/products"
 import { getCategories } from "@/services/categories"
+
+export const dynamic = "force-dynamic"
 import { ProductCard } from "@/components/store/product-card"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 
