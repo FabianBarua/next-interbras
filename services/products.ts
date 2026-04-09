@@ -1,5 +1,6 @@
 import { productsMock } from "../mock/products"
 import type { Product, Variant } from "../types/product"
+import { toVariantSlug } from "@/lib/variant-slug"
 
 const DELAY = 500
 
@@ -51,6 +52,23 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
       resolve(product || null)
     }, DELAY)
   )
+}
+
+/** Resolve a variant-level slug back to a product + variant pair */
+export async function getProductByVariantSlug(variantSlug: string): Promise<VariantEntry | null> {
+  const products = productsMock.filter(p => p.active)
+  for (const product of products) {
+    for (const variant of product.variants) {
+      if (toVariantSlug(product, variant) === variantSlug) {
+        return { product, variant }
+      }
+    }
+    // Fallback: product with no matching variant (single-variant or slug = product slug)
+    if (product.slug === variantSlug) {
+      return { product, variant: product.variants[0] }
+    }
+  }
+  return null
 }
 
 export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {

@@ -3,6 +3,7 @@ import Image from "next/image"
 import type { Product, Variant } from "@/types/product"
 import { PriceDisplay } from "./price-display"
 import { WishlistButton } from "./wishlist-button"
+import { toVariantSlug } from "@/lib/variant-slug"
 
 export function ProductCard({ product, variant }: { product: Product; variant?: Variant }) {
   const mainImage = product.images.find(img => img.isMain) || product.images[0]
@@ -11,9 +12,8 @@ export function ProductCard({ product, variant }: { product: Product; variant?: 
 
   // Build variant attribute tags
   const attrs = v?.attributes ? Object.values(v.attributes) as string[] : []
-  const href = variant
-    ? `/productos/${product.category?.slug || 'other'}/${product.slug}?v=${variant.id}`
-    : `/productos/${product.category?.slug || 'other'}/${product.slug}`
+  const slug = toVariantSlug(product, v)
+  const href = `/productos/${product.category?.slug || 'other'}/${slug}`
 
   return (
     <div className="group relative flex flex-col rounded-xl bg-card border border-border/50 hover:border-border transition-all duration-300 overflow-hidden">

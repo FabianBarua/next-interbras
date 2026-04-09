@@ -1,4 +1,4 @@
-import { getProductBySlug, getProductsByCategory } from "@/services/products"
+import { getProductByVariantSlug, getProductsByCategory } from "@/services/products"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { notFound } from "next/navigation"
 import { ProductCarousel } from "@/components/store/product-carousel"
@@ -6,15 +6,15 @@ import { ProductGallery } from "@/components/store/product-gallery"
 import { ProductInfo } from "@/components/store/product-info"
 
 export default async function ProductDetailPage(
-  { params, searchParams }: {
+  { params }: {
     params: Promise<{ category: string; slug: string }>
-    searchParams: Promise<{ v?: string }>
   }
 ) {
   const { slug, category: catSlug } = await params
-  const { v: variantId } = await searchParams
-  const product = await getProductBySlug(slug)
-  if (!product) notFound()
+  const entry = await getProductByVariantSlug(slug)
+  if (!entry) notFound()
+
+  const { product, variant } = entry
 
   const relatedProducts = (await getProductsByCategory(product.category?.slug || catSlug))
     .filter((p) => p.id !== product.id)
@@ -36,7 +36,7 @@ export default async function ProductDetailPage(
 
         {/* Info */}
         <div className="md:sticky md:top-24 h-fit">
-          <ProductInfo product={product} initialVariantId={variantId} />
+          <ProductInfo product={product} initialVariantId={variant?.id} categorySlug={catSlug} />
         </div>
       </div>
 

@@ -1,19 +1,31 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import type { Product, Variant } from "@/types/product"
 import { PriceDisplay } from "@/components/store/price-display"
 import { AddToCartButton } from "@/components/store/add-to-cart-button"
 import { WishlistButton } from "@/components/store/wishlist-button"
 import { Separator } from "@/components/ui/separator"
+import { toVariantSlug } from "@/lib/variant-slug"
 
-export function ProductInfo({ product, initialVariantId }: { product: Product; initialVariantId?: string }) {
+export function ProductInfo({ product, initialVariantId, categorySlug }: { product: Product; initialVariantId?: string; categorySlug?: string }) {
   const [selectedId, setSelectedId] = useState(
     initialVariantId || product.variants[0]?.id
   )
   const v = product.variants.find((x) => x.id === selectedId) || product.variants[0]
   const name = product.name.es
   const stock = (v?.externalCode?.metadata as any)?.stock
+  const cecCode = v?.externalCode?.code
+
+  // Update URL bar when variant changes (no full navigation)
+  const handleVariantChange = useCallback((variantId: string) => {
+    setSelectedId(variantId)
+    const newVariant = product.variants.find((x) => x.id === variantId)
+    if (newVariant && categorySlug) {
+      const newSlug = toVariantSlug(product, newVariant)
+      window.history.replaceState(null, "", `/productos/${categorySlug}/${newSlug}`)
+    }
+  }, [product, categorySlug])
 
   // Group variant attributes for selector
   const attrKeys = getAttributeKeys(product.variants)
@@ -27,7 +39,10 @@ export function ProductInfo({ product, initialVariantId }: { product: Product; i
         </p>
         <h1 className="text-xl font-bold tracking-tight leading-tight">{name}</h1>
         {v?.sku && (
-          <p className="text-[11px] text-muted-foreground mt-1">SKU: {v.sku}</p>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            SKU: {v.sku}
+            {cecCode && <span className="ml-2">Cód. CEC: {cecCode}</span>}
+          </p>
         )}
       </div>
 
@@ -57,7 +72,7 @@ export function ProductInfo({ product, initialVariantId }: { product: Product; i
               variants={product.variants}
               attrKey={key}
               selectedVariant={v}
-              onSelect={setSelectedId}
+              onSelect={handleVariantChange}
             />
           ))}
         </div>
