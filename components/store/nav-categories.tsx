@@ -2,6 +2,7 @@
 
 import Link from "@/i18n/link"
 import Image from "next/image"
+import { InterbrasLogo } from "./interbras-logo"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -60,13 +61,7 @@ export function NavCategories() {
                 href="/productos"
                 className="col-span-1 row-span-3 flex flex-col justify-end rounded-lg bg-linear-to-b from-primary/10 to-primary/5 p-4 no-underline hover:from-primary/20 hover:to-primary/10 transition-colors"
               >
-                <Image
-                  src="/logo.svg"
-                  alt="Interbras"
-                  width={100}
-                  height={30}
-                  className="mb-3 invert dark:invert-0"
-                />
+                <InterbrasLogo className="h-3 sm:h-3 w-auto text-brand-700 dark:text-brand-400 mb-3 mr-auto" />
                 <div className="text-sm font-semibold leading-tight">
                   Todos los productos
                 </div>

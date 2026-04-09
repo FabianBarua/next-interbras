@@ -4,9 +4,9 @@ import { requireAuth } from "@/lib/auth/get-session"
 import { toggleWishlist } from "@/services/wishlist"
 import { rateLimit } from "@/lib/rate-limit"
 
-export async function toggleWishlistAction(productId: string) {
-  if (!productId || typeof productId !== "string") {
-    return { error: "Invalid product ID" }
+export async function toggleWishlistAction(productId: string, variantId: string) {
+  if (!productId || typeof productId !== "string" || !variantId || typeof variantId !== "string") {
+    return { error: "Invalid product or variant ID" }
   }
 
   const user = await requireAuth()
@@ -17,6 +17,6 @@ export async function toggleWishlistAction(productId: string) {
     return { error: "Too many requests" }
   }
 
-  const isNowInWishlist = await toggleWishlist(userId, productId)
+  const isNowInWishlist = await toggleWishlist(userId, productId, variantId)
   return { inWishlist: isNowInWishlist }
 }

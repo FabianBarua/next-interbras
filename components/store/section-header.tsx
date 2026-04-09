@@ -7,7 +7,7 @@ export async function SectionHeader({ title, subtitle, viewAllLink }: { title: s
   return (
     <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
       <div>
-        <h2 className="text-3xl font-bold tracking-tight text-foreground">{title}</h2>
+        <h2 className="text-3xl font-bold tracking-tight text-foreground">{title}<span className="inline-block w-12 h-1 bg-brand-500 rounded-full ml-3 align-middle" /></h2>
         {subtitle && <p className="text-muted-foreground mt-2">{subtitle}</p>}
       </div>
       {viewAllLink && (

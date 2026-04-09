@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { OrderTracker } from "@/components/store/order-tracker"
 import Link from "@/i18n/link"
 import Image from "next/image"
+import { InterbrasLogo } from "@/components/store/interbras-logo"
 
 export default async function PublicTrackingPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params
@@ -16,7 +17,7 @@ export default async function PublicTrackingPage({ params }: { params: Promise<{
       <div className="w-full bg-card rounded-3xl border shadow-xl overflow-hidden">
         {/* Header Branding */}
         <div className="bg-primary/5 border-b p-6 md:p-8 flex flex-col items-center text-center gap-4">
-           <Image src="/logo.svg" alt="Interbras" width={160} height={45} className="dark:invert" />
+           <InterbrasLogo />
            <h1 className="text-xl md:text-2xl font-black tracking-tight">Seguimiento de Pedido</h1>
            <p className="text-sm text-foreground font-mono bg-background px-4 py-1.5 rounded-full border shadow-sm">
              ID: {order.id}

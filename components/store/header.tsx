@@ -1,10 +1,10 @@
 import Link from "@/i18n/link"
-import Image from "next/image"
 import { MobileMenu } from "./mobile-menu"
 import { LanguageSwitcher } from "./language-switcher"
 import { NavCategories } from "./nav-categories"
 import { CartPreview } from "./cart-preview"
 import { AccountMenu } from "./account-menu"
+import { InterbrasLogo } from "./interbras-logo"
 
 export async function Header() {
   return (
@@ -18,7 +18,7 @@ export async function Header() {
         {/* Logo */}
         <div className="flex flex-1 items-center justify-center md:justify-start">
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.svg" alt="Interbras Logo" width={140} height={40} className="object-contain invert dark:invert-0" priority />
+            <InterbrasLogo className="w-auto text-brand-700 dark:text-brand-400" />
           </Link>
         </div>
 

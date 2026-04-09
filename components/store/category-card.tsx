@@ -12,9 +12,9 @@ export function CategoryCard({ category }: { category: Category }) {
   return (
     <Link 
       href={`/productos/${category.slug}`}
-      className="group flex flex-col items-center justify-center gap-4 p-6 rounded-2xl border border-border bg-card hover:border-primary hover:shadow-md transition-all duration-300 text-center"
+      className="group flex flex-col items-center justify-center gap-4 p-6 rounded-2xl border border-border bg-card hover:border-brand-500 hover:shadow-md hover:shadow-brand-500/10 transition-all duration-300 text-center"
     >
-      <div className="relative w-16 h-16 rounded-full bg-brand-50 flex items-center justify-center text-primary group-hover:scale-110 transition-transform duration-300">
+      <div className="relative w-16 h-16 rounded-full bg-brand-100 dark:bg-brand-500/15 flex items-center justify-center text-brand-600 dark:text-brand-400 group-hover:bg-brand-500 group-hover:text-white group-hover:scale-110 transition-all duration-300">
         {category.image ? (
           <Image 
             src={category.image} 

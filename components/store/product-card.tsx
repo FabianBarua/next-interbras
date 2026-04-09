@@ -28,7 +28,7 @@ export function ProductCard({ product, variant }: { product: Product; variant?: 
       {/* Image area */}
       <div className="relative aspect-[4/3] w-full bg-muted/20 dark:bg-muted/10">
         <div className="absolute top-2 right-2 z-20">
-          <WishlistButton product={product} />
+          <WishlistButton product={product} variant={v} />
         </div>
 
         {mainImage ? (

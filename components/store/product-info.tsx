@@ -83,7 +83,7 @@ export function ProductInfo({ product, initialVariantId, categorySlug }: { produ
       {/* Actions */}
       <div className="flex items-center gap-2.5">
         <AddToCartButton product={product} variant={v} className="flex-1 py-2.5 text-sm" />
-        <WishlistButton product={product} className="border h-10 w-10 shrink-0" />
+        <WishlistButton product={product} variant={v} className="border h-10 w-10 shrink-0" />
       </div>
 
       {/* Description */}

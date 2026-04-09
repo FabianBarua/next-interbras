@@ -4,6 +4,7 @@ export const wishlistMock: Wishlist = {
   "items": [
     {
       "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+      "variantId": "6902daf6-9aae-4974-9d0d-6c46d2d88717",
       "product": {
         "id": "d48e464d-f035-4ea9-968f-c63ee44ae241",
         "categoryId": "029136bf-6c53-4831-91da-4b74cbba2a89",
@@ -184,10 +185,28 @@ export const wishlistMock: Wishlist = {
           }
         ]
       },
+      "variant": {
+        "id": "6902daf6-9aae-4974-9d0d-6c46d2d88717",
+        "productId": "d48e464d-f035-4ea9-968f-c63ee44ae241",
+        "sku": "IN3200TV-NEGRO",
+        "name": null,
+        "attributes": { "color": "Negro" },
+        "externalCode": {
+          "id": "5d092948-55c0-462b-8c20-d682f12b5ee6",
+          "system": "cec",
+          "code": "269",
+          "externalName": "IN 3200TV LED HD- INTERBRAS",
+          "priceUsd": 90,
+          "priceGs": null,
+          "priceBrl": null,
+          "metadata": null
+        }
+      },
       "addedAt": "2026-04-09T01:10:41.714Z"
     },
     {
       "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+      "variantId": "86360c42-1cc5-40b7-b1e3-02dd657c6c00",
       "product": {
         "id": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
         "categoryId": "029136bf-6c53-4831-91da-4b74cbba2a89",
@@ -376,10 +395,28 @@ export const wishlistMock: Wishlist = {
           }
         ]
       },
+      "variant": {
+        "id": "86360c42-1cc5-40b7-b1e3-02dd657c6c00",
+        "productId": "03a273d2-e122-40bc-8765-7c9ed7dc1ee4",
+        "sku": "IN4300TV-NEGRO",
+        "name": null,
+        "attributes": { "color": "Negro" },
+        "externalCode": {
+          "id": "18bef282-f70c-4778-8007-efe516ea6b32",
+          "system": "cec",
+          "code": "270",
+          "externalName": "IN 4300TV LED FHD- INTERBRAS",
+          "priceUsd": 165,
+          "priceGs": null,
+          "priceBrl": null,
+          "metadata": null
+        }
+      },
       "addedAt": "2026-04-08T01:10:41.714Z"
     },
     {
       "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+      "variantId": "056584ab-1667-49f4-9ba1-284e4d02c0af",
       "product": {
         "id": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
         "categoryId": "029136bf-6c53-4831-91da-4b74cbba2a89",
@@ -567,6 +604,23 @@ export const wishlistMock: Wishlist = {
             }
           }
         ]
+      },
+      "variant": {
+        "id": "056584ab-1667-49f4-9ba1-284e4d02c0af",
+        "productId": "6d5f103f-769f-48cc-ac2d-9a68f41e4337",
+        "sku": "IN5000TV-NEGRO",
+        "name": null,
+        "attributes": { "color": "Negro" },
+        "externalCode": {
+          "id": "ba919d17-cc14-4459-8254-113e7c709be1",
+          "system": "cec",
+          "code": "70",
+          "externalName": "IN 5000TV LED HD- INTERBRAS",
+          "priceUsd": 250,
+          "priceGs": null,
+          "priceBrl": null,
+          "metadata": null
+        }
       },
       "addedAt": "2026-04-07T01:10:41.714Z"
     }

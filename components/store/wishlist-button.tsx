@@ -1,12 +1,12 @@
 "use client"
 import { useWishlistStore } from "@/store/wishlist-store"
 import { toggleWishlistAction } from "@/lib/actions/wishlist"
-import type { Product } from "@/types/product"
+import type { Product, Variant } from "@/types/product"
 import { useEffect, useState, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 
-export function WishlistButton({ product, className = "" }: { product: Product; className?: string }) {
+export function WishlistButton({ product, variant, className = "" }: { product: Product; variant: Variant; className?: string }) {
   const { wishlist, toggle } = useWishlistStore()
   const [isMounted, setIsMounted] = useState(false)
   const { data: session } = useSession()
@@ -16,18 +16,18 @@ export function WishlistButton({ product, className = "" }: { product: Product; 
     setIsMounted(true)
   }, [])
 
-  const isFav = isMounted ? wishlist.items.some(i => i.productId === product.id) : false
+  const isFav = isMounted ? wishlist.items.some(i => i.variantId === variant.id) : false
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    toggle(product)
+    toggle(product, variant)
     toast(isFav ? "Removido de favoritos" : "Añadido a favoritos")
 
     // Sync with server if logged in (fire-and-forget)
     if (session?.user?.id) {
       startTransition(() => {
-        toggleWishlistAction(product.id).catch(() => {})
+        toggleWishlistAction(product.id, variant.id).catch(() => {})
       })
     }
   }
