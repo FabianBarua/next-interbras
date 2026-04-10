@@ -63,16 +63,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           token.passwordChangedAt = dbUser.passwordChangedAt?.getTime() ?? 0
         }
       }
-      // Invalidate JWT if password was changed after token was issued
+      // Invalidate JWT if password was changed after token was issued.
+      // Only re-check DB every 5 minutes to avoid per-request DB queries.
       if (token.id && token.passwordChangedAt) {
-        const dbUser = await db.query.users.findFirst({
-          where: eq(users.id, token.id as string),
-        })
-        if (dbUser?.passwordChangedAt) {
-          const changedAt = dbUser.passwordChangedAt.getTime()
-          if (changedAt > (token.passwordChangedAt as number)) {
-            return { ...token, id: undefined, role: undefined }
+        const now = Date.now()
+        const lastChecked = (token._pwCheckAt as number) || 0
+        if (now - lastChecked > 5 * 60 * 1000) {
+          const dbUser = await db.query.users.findFirst({
+            where: eq(users.id, token.id as string),
+            columns: { passwordChangedAt: true },
+          })
+          if (dbUser?.passwordChangedAt) {
+            const changedAt = dbUser.passwordChangedAt.getTime()
+            if (changedAt > (token.passwordChangedAt as number)) {
+              return { ...token, id: undefined, role: undefined, sub: undefined, email: undefined, name: undefined }
+            }
           }
+          token._pwCheckAt = now
         }
       }
       return token

@@ -237,21 +237,13 @@ export async function deleteVariant(id: string): Promise<void> {
 }
 
 export async function bulkDeleteVariants(ids: string[]): Promise<number> {
-  let deleted = 0
-  for (const id of ids) {
-    try {
-      await db.delete(variants).where(eq(variants.id, id))
-      deleted++
-    } catch { /* skip */ }
-  }
+  const result = await db.delete(variants).where(inArray(variants.id, ids))
   await invalidateCache("products:*", "variants:*")
-  return deleted
+  return (result as any).rowCount ?? (result as any).count ?? ids.length
 }
 
 export async function bulkUpdateVariantsActive(ids: string[], active: boolean): Promise<void> {
-  for (const id of ids) {
-    await db.update(variants).set({ active }).where(eq(variants.id, id))
-  }
+  await db.update(variants).set({ active }).where(inArray(variants.id, ids))
   await invalidateCache("products:*", "variants:*")
 }
 

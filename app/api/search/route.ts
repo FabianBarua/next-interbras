@@ -1,16 +1,31 @@
 import { NextResponse, type NextRequest } from "next/server"
-import { getProducts } from "@/services/products"
-import { getVariantMainImage } from "@/lib/variant-images"
+import { db } from "@/lib/db"
+import { products, variants, categories, externalCodes, productImages } from "@/lib/db/schema"
+import { eq, and, or, sql, asc, inArray } from "drizzle-orm"
+import { rateLimit } from "@/lib/rate-limit"
 
 const MAX_RESULTS = 10
 const MAX_QUERY_LENGTH = 100
 
-/** Normalize text for accent-insensitive matching */
-function normalize(text: string): string {
-  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+/** Escape LIKE/ILIKE special characters */
+function escapeLike(str: string): string {
+  return str.replace(/[%_\\]/g, "\\$&")
 }
 
 export async function GET(req: NextRequest) {
+  // Rate limit: 30 requests per minute per IP
+  const forwarded = req.headers.get("x-forwarded-for")
+  const ip = req.headers.get("x-real-ip")
+    || (forwarded ? forwarded.split(",").pop()?.trim() : null)
+    || "unknown"
+  const rl = await rateLimit(`search:${ip}`, 30, 60)
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: "Too many requests" },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfter ?? 60) } },
+    )
+  }
+
   const rawQ = req.nextUrl.searchParams.get("q") ?? ""
   // Sanitize: trim, strip control chars, enforce max length
   // eslint-disable-next-line no-control-regex
@@ -20,62 +35,73 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ results: [] })
   }
 
-  const normalizedQ = normalize(q)
-  const products = await getProducts()
+  const pattern = `%${escapeLike(q)}%`
 
-  const results: {
-    id: string
-    name: string
-    slug: string
-    categorySlug: string
-    image: string | null
-    price: number | null
-    sku: string
-  }[] = []
+  // DB-level search: join products+variants+external_codes+categories, filter with ILIKE
+  const rows = await db
+    .select({
+      variantId: variants.id,
+      productName: products.name,
+      productSlug: products.slug,
+      categorySlug: categories.slug,
+      sku: variants.sku,
+      ecCode: externalCodes.code,
+      priceUsd: externalCodes.priceUsd,
+    })
+    .from(variants)
+    .innerJoin(products, and(eq(variants.productId, products.id), eq(products.active, true)))
+    .innerJoin(externalCodes, eq(externalCodes.variantId, variants.id))
+    .leftJoin(categories, eq(products.categoryId, categories.id))
+    .where(
+      or(
+        sql`${products.name}->>'es' ILIKE ${pattern}`,
+        sql`${products.name}->>'pt' ILIKE ${pattern}`,
+        sql`${categories.name}->>'es' ILIKE ${pattern}`,
+        sql`${variants.sku} ILIKE ${pattern}`,
+      )
+    )
+    .limit(MAX_RESULTS)
 
-  for (const product of products) {
-    if (results.length >= MAX_RESULTS) break
+  if (rows.length === 0) {
+    return NextResponse.json({ results: [] })
+  }
 
-    const nameEs = normalize(product.name?.es ?? "")
-    const namePt = normalize(product.name?.pt ?? "")
-    const catNameEs = normalize(product.category?.name?.es ?? "")
+  // Get first image per matched variant
+  const variantIds = rows.map(r => r.variantId)
+  const imgRows = await db.select()
+    .from(productImages)
+    .where(inArray(productImages.variantId, variantIds))
+    .orderBy(asc(productImages.sortOrder))
 
-    for (const variant of product.variants) {
-      if (results.length >= MAX_RESULTS) break
-
-      const sku = normalize(variant.sku)
-      const matches =
-        nameEs.includes(normalizedQ) ||
-        namePt.includes(normalizedQ) ||
-        catNameEs.includes(normalizedQ) ||
-        sku.includes(normalizedQ)
-
-      if (matches) {
-        // Build the same slug format used by the product detail pages
-        const slugParts = [product.slug]
-        if (variant.sku) slugParts.push(variant.sku)
-        if (variant.externalCode?.code) slugParts.push(variant.externalCode.code)
-        const slug = slugParts
-          .join("-")
-          .toLowerCase()
-          .replace(/[^a-z0-9-]/g, "-")
-          .replace(/-+/g, "-")
-          .replace(/^-|-$/g, "")
-
-        const mainImage = getVariantMainImage(variant)
-
-        results.push({
-          id: variant.id,
-          name: product.name?.es ?? product.slug,
-          slug,
-          categorySlug: product.category?.slug ?? "other",
-          image: mainImage?.url ?? null,
-          price: variant.externalCode?.priceUsd ?? null,
-          sku: variant.sku,
-        })
-      }
+  const imgMap = new Map<string, string>()
+  for (const img of imgRows) {
+    if (img.variantId && !imgMap.has(img.variantId)) {
+      imgMap.set(img.variantId, img.url)
     }
   }
+
+  const results = rows.map(row => {
+    const name = (row.productName as Record<string, string>)?.es ?? row.productSlug
+    const slugParts = [row.productSlug]
+    if (row.sku) slugParts.push(row.sku)
+    if (row.ecCode) slugParts.push(row.ecCode)
+    const slug = slugParts
+      .join("-")
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+
+    return {
+      id: row.variantId,
+      name,
+      slug,
+      categorySlug: row.categorySlug ?? "other",
+      image: imgMap.get(row.variantId) ?? null,
+      price: row.priceUsd ? Number(row.priceUsd) : null,
+      sku: row.sku,
+    }
+  })
 
   return NextResponse.json({ results })
 }

@@ -8,7 +8,9 @@ function createRedisClient() {
     lazyConnect: true,
   })
   // Prevent unhandled error events from crashing the process (e.g. during build)
-  client.on("error", () => {})
+  client.on("error", (err) => {
+    console.error("[Redis] Connection error:", err.message)
+  })
   return client
 }
 

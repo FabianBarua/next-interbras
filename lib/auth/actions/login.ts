@@ -9,7 +9,10 @@ import { logEvent } from "@/lib/logging"
 
 export async function login(formData: FormData) {
   const headersList = await headers()
-  const ip = headersList.get("x-forwarded-for")?.split(",")[0] ?? "unknown"
+  const forwarded = headersList.get("x-forwarded-for")
+  const ip = headersList.get("x-real-ip")
+    || (forwarded ? forwarded.split(",").pop()?.trim() : null)
+    || "unknown"
   const rl = await rateLimit(`login:${ip}`, 5, 300)
   if (!rl.success) {
     return { error: `Muitas tentativas. Tente novamente em ${rl.retryAfter}s.` }

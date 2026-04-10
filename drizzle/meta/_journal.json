@@ -8,6 +8,20 @@
       "when": 1775760520100,
       "tag": "0000_add-attributes",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775785197050,
+      "tag": "0001_heavy_thing",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775785415992,
+      "tag": "0002_mixed_lady_bullseye",
+      "breakpoints": true
     }
   ]
 }

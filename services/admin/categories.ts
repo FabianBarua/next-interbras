@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { categories } from "@/lib/db/schema"
-import { eq, asc, count } from "drizzle-orm"
+import { eq, asc, count, inArray } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
 import type { Category } from "@/types/category"
 import type { I18nText, I18nRichText } from "@/types/common"
@@ -65,20 +65,12 @@ export async function deleteCategory(id: string): Promise<void> {
 }
 
 export async function bulkDeleteCategories(ids: string[]): Promise<number> {
-  let deleted = 0
-  for (const id of ids) {
-    try {
-      await db.delete(categories).where(eq(categories.id, id))
-      deleted++
-    } catch { /* skip FK conflicts */ }
-  }
+  const result = await db.delete(categories).where(inArray(categories.id, ids))
   await invalidateCache("categories:*", "category:*", "products:*", "variants:*")
-  return deleted
+  return (result as any).rowCount ?? (result as any).count ?? ids.length
 }
 
 export async function bulkUpdateCategoriesActive(ids: string[], active: boolean): Promise<void> {
-  for (const id of ids) {
-    await db.update(categories).set({ active }).where(eq(categories.id, id))
-  }
+  await db.update(categories).set({ active }).where(inArray(categories.id, ids))
   await invalidateCache("categories:*", "category:*")
 }

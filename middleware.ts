@@ -9,6 +9,7 @@ const LOCALES = ["es", "pt"]
 const DEFAULT_LOCALE = "es"
 const COOKIE_NAME = "NEXT_LOCALE"
 const COOKIE_MAX_AGE = 365 * 24 * 60 * 60 // 1 year
+const IS_PROD = process.env.NODE_ENV === "production"
 
 const publicAuthRoutes = ["/login", "/register", "/forgot-password", "/reset-password"]
 
@@ -46,20 +47,21 @@ export default auth((req) => {
     const langs = acceptLang.split(",").map((l) => l.split(";")[0].trim().substring(0, 2))
     const detected = cookieLocale || langs.find((l) => LOCALES.includes(l)) || DEFAULT_LOCALE
     const res = NextResponse.redirect(new URL(`/${detected}${pathname === "/" ? "" : pathname}${search}`, req.url))
-    res.cookies.set(COOKIE_NAME, detected, { path: "/", maxAge: COOKIE_MAX_AGE, sameSite: "lax" })
+    res.cookies.set(COOKIE_NAME, detected, { path: "/", maxAge: COOKIE_MAX_AGE, sameSite: "lax", secure: IS_PROD })
     return res
   }
 
   // ── Set locale cookie
   const setCookie = (res: NextResponse) => {
-    res.cookies.set(COOKIE_NAME, locale!, { path: "/", maxAge: COOKIE_MAX_AGE, sameSite: "lax" })
+    res.cookies.set(COOKIE_NAME, locale!, { path: "/", maxAge: COOKIE_MAX_AGE, sameSite: "lax", secure: IS_PROD })
     return res
   }
 
   // ── Auth: Redirect logged-in users away from auth pages
   if (isLoggedIn && publicAuthRoutes.some((r) => restPath.startsWith(r))) {
     const redirectParam = req.nextUrl.searchParams.get("redirect")
-    const target = redirectParam || `/${locale}`
+    // Prevent open redirect — only allow relative paths starting with /
+    const target = (redirectParam && /^\/[^/\\]/.test(redirectParam)) ? redirectParam : `/${locale}`
     return setCookie(NextResponse.redirect(new URL(target, req.url)))
   }
 

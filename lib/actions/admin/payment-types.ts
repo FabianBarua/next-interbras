@@ -7,6 +7,9 @@ import {
   updatePaymentType,
   deletePaymentType,
 } from "@/services/payment-types"
+import { logEvent } from "@/lib/logging"
+
+const uuidSchema = z.string().uuid()
 
 const i18nTextSchema = z.record(z.string(), z.string()).refine(
   (v) => Object.keys(v).length > 0,
@@ -25,12 +28,13 @@ const createSchema = z.object({
 const updateSchema = createSchema.partial()
 
 export async function createPaymentTypeAction(data: unknown) {
-  await requireAdmin()
+  const session = await requireAdmin()
   const parsed = createSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
 
   try {
     const id = await createPaymentType(parsed.data)
+    logEvent({ category: "admin", action: "payment_type.create", entity: "payment_type", entityId: id, userId: session.id })
     return { id }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -39,13 +43,15 @@ export async function createPaymentTypeAction(data: unknown) {
 }
 
 export async function updatePaymentTypeAction(id: string, data: unknown) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   const parsed = updateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
 
   try {
     await updatePaymentType(id, parsed.data)
+    logEvent({ category: "admin", action: "payment_type.update", entity: "payment_type", entityId: id, userId: session.id })
     return { success: true }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -54,8 +60,10 @@ export async function updatePaymentTypeAction(id: string, data: unknown) {
 }
 
 export async function deletePaymentTypeAction(id: string) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   await deletePaymentType(id)
+  logEvent({ category: "admin", action: "payment_type.delete", entity: "payment_type", entityId: id, userId: session.id })
   return { success: true }
 }

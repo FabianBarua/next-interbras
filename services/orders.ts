@@ -78,9 +78,12 @@ export async function getOrderById(id: string): Promise<Order | null> {
   }, 60)
 }
 
-/** Public tracking — returns limited order info (no customer details) */
-export async function getOrderByIdPublic(id: string): Promise<Order | null> {
-  return getOrderById(id)
+/** Public tracking — returns only status/items, no customer identity */
+export async function getOrderByIdPublic(id: string): Promise<Omit<Order, "userId"> | null> {
+  const order = await getOrderById(id)
+  if (!order) return null
+  const { userId, ...safeOrder } = order
+  return safeOrder
 }
 
 // ---------------------------------------------------------------------------
@@ -228,16 +231,26 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
 
   // Insert in transaction
   const orderId = await db.transaction(async (tx) => {
-    // Decrement stock for each variant
+    // Decrement stock for each variant (with atomic check)
     for (const item of input.items) {
       const v = variantMap.get(item.variantId)!
       if (v.stock !== null) {
-        if (v.stock < item.quantity) {
-          throw new Error(`Stock insuficiente para ${v.sku}. Disponible: ${v.stock}, solicitado: ${item.quantity}`)
-        }
-        await tx.update(variantsTable)
+        const result = await tx.update(variantsTable)
           .set({ stock: sql`${variantsTable.stock} - ${item.quantity}` })
           .where(and(eq(variantsTable.id, item.variantId), sql`${variantsTable.stock} >= ${item.quantity}`))
+
+        // Verify the row was actually updated (stock was sufficient)
+        const [check] = await tx.select({ stock: variantsTable.stock })
+          .from(variantsTable)
+          .where(eq(variantsTable.id, item.variantId))
+        if (check && check.stock !== null && check.stock < 0) {
+          throw new Error(`Stock insuficiente para ${v.sku}`)
+        }
+        // If no row was matched by the WHERE clause, stock was insufficient
+        // postgres-js returns count of affected rows
+        if ((result as any)?.rowCount === 0 || (result as any)?.count === 0) {
+          throw new Error(`Stock insuficiente para ${v.sku}. Disponible: ${v.stock}, solicitado: ${item.quantity}`)
+        }
       }
     }
 

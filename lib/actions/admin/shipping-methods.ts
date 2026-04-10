@@ -7,6 +7,9 @@ import {
   updateShippingMethod,
   deleteShippingMethod,
 } from "@/services/shipping-methods"
+import { logEvent } from "@/lib/logging"
+
+const uuidSchema = z.string().uuid()
 
 const i18nTextSchema = z.record(z.string(), z.string()).refine(
   (v) => Object.keys(v).length > 0,
@@ -25,12 +28,13 @@ const createSchema = z.object({
 const updateSchema = createSchema.partial()
 
 export async function createShippingMethodAction(data: unknown) {
-  await requireAdmin()
+  const session = await requireAdmin()
   const parsed = createSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
 
   try {
     const id = await createShippingMethod(parsed.data)
+    logEvent({ category: "admin", action: "shipping_method.create", entity: "shipping_method", entityId: id, userId: session.id })
     return { id }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -39,13 +43,15 @@ export async function createShippingMethodAction(data: unknown) {
 }
 
 export async function updateShippingMethodAction(id: string, data: unknown) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   const parsed = updateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
 
   try {
     await updateShippingMethod(id, parsed.data)
+    logEvent({ category: "admin", action: "shipping_method.update", entity: "shipping_method", entityId: id, userId: session.id })
     return { success: true }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -54,8 +60,10 @@ export async function updateShippingMethodAction(id: string, data: unknown) {
 }
 
 export async function deleteShippingMethodAction(id: string) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   await deleteShippingMethod(id)
+  logEvent({ category: "admin", action: "shipping_method.delete", entity: "shipping_method", entityId: id, userId: session.id })
   return { success: true }
 }

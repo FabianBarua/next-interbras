@@ -10,6 +10,10 @@ import {
   bulkUpdateVariantsActive,
   bulkCreateVariants,
 } from "@/services/admin/variants"
+import { logEvent } from "@/lib/logging"
+
+const uuidSchema = z.string().uuid()
+const uuidArraySchema = z.array(z.string().uuid()).min(1).max(200)
 
 const externalCodeSchema = z.object({
   system: z.string().min(1).max(50),
@@ -35,11 +39,12 @@ const createSchema = z.object({
 const updateSchema = createSchema.omit({ productId: true }).partial()
 
 export async function createVariantAction(data: unknown) {
-  await requireAdmin()
+  const session = await requireAdmin()
   const parsed = createSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos: " + parsed.error.issues.map(i => i.message).join(", ") }
   try {
     const id = await createVariant(parsed.data)
+    logEvent({ category: "admin", action: "variant.create", entity: "variant", entityId: id, userId: session.id })
     return { id }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El SKU o código externo ya existe." }
@@ -48,12 +53,13 @@ export async function createVariantAction(data: unknown) {
 }
 
 export async function updateVariantAction(id: string, productId: string, data: unknown) {
-  await requireAdmin()
-  if (!id || !productId) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  if (!uuidSchema.safeParse(id).success || !uuidSchema.safeParse(productId).success) return { error: "ID inválido." }
   const parsed = updateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos: " + parsed.error.issues.map(i => i.message).join(", ") }
   try {
     await updateVariant(id, productId, parsed.data)
+    logEvent({ category: "admin", action: "variant.update", entity: "variant", entityId: id, userId: session.id })
     return { success: true }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El SKU o código externo ya existe." }
@@ -62,27 +68,33 @@ export async function updateVariantAction(id: string, productId: string, data: u
 }
 
 export async function deleteVariantAction(id: string) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   try {
     await deleteVariant(id)
+    logEvent({ category: "admin", action: "variant.delete", entity: "variant", entityId: id, userId: session.id })
     return { success: true }
   } catch {
     return { error: "Error al eliminar variante." }
   }
 }
 
-export async function bulkDeleteVariantsAction(ids: string[]) {
-  await requireAdmin()
-  if (!ids?.length) return { error: "No se seleccionaron variantes." }
-  const deleted = await bulkDeleteVariants(ids)
+export async function bulkDeleteVariantsAction(ids: unknown) {
+  const session = await requireAdmin()
+  const parsed = uuidArraySchema.safeParse(ids)
+  if (!parsed.success) return { error: "IDs inválidos." }
+  const deleted = await bulkDeleteVariants(parsed.data)
+  logEvent({ category: "admin", action: "variant.bulk_delete", entity: "variant", userId: session.id, meta: { count: deleted } })
   return { deleted }
 }
 
-export async function bulkToggleVariantsAction(ids: string[], active: boolean) {
-  await requireAdmin()
-  if (!ids?.length) return { error: "No se seleccionaron variantes." }
-  await bulkUpdateVariantsActive(ids, active)
+export async function bulkToggleVariantsAction(ids: unknown, active: boolean) {
+  const session = await requireAdmin()
+  const parsed = uuidArraySchema.safeParse(ids)
+  if (!parsed.success) return { error: "IDs inválidos." }
+  await bulkUpdateVariantsActive(parsed.data, active)
+  logEvent({ category: "admin", action: "variant.bulk_toggle", entity: "variant", userId: session.id, meta: { count: parsed.data.length, active } })
   return { success: true }
 }
 

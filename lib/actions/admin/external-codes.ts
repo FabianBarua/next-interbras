@@ -7,6 +7,9 @@ import {
   deleteExternalCode,
   bulkUpdatePrices,
 } from "@/services/admin/external-codes"
+import { logEvent } from "@/lib/logging"
+
+const uuidSchema = z.string().uuid()
 
 const updateSchema = z.object({
   system: z.string().min(1).max(50).optional(),
@@ -18,12 +21,14 @@ const updateSchema = z.object({
 })
 
 export async function updateExternalCodeAction(id: string, data: unknown) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   const parsed = updateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
   try {
     await updateExternalCode(id, parsed.data)
+    logEvent({ category: "admin", action: "external_code.update", entity: "external_code", entityId: id, userId: session.id })
     return { success: true }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El código ya existe." }
@@ -32,10 +37,12 @@ export async function updateExternalCodeAction(id: string, data: unknown) {
 }
 
 export async function deleteExternalCodeAction(id: string) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   try {
     await deleteExternalCode(id)
+    logEvent({ category: "admin", action: "external_code.delete", entity: "external_code", entityId: id, userId: session.id })
     return { success: true }
   } catch {
     return { error: "Error al eliminar." }

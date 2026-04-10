@@ -16,7 +16,10 @@ function hashToken(token: string): string {
 
 export async function forgotPassword(formData: FormData) {
   const headersList = await headers()
-  const ip = headersList.get("x-forwarded-for")?.split(",")[0] ?? "unknown"
+  const forwarded = headersList.get("x-forwarded-for")
+  const ip = headersList.get("x-real-ip")
+    || (forwarded ? forwarded.split(",").pop()?.trim() : null)
+    || "unknown"
   const rl = await rateLimit(`forgot-password:${ip}`, 3, 300)
   if (!rl.success) {
     return { error: `Muitas tentativas. Tente novamente em ${rl.retryAfter}s.` }

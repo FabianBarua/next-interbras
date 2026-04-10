@@ -34,3 +34,19 @@ export * from "./addresses"
 // checkout config
 export * from "./payment-types"
 export * from "./shipping-methods"
+
+// payments & gateway
+export * from "./payments"
+export * from "./order-payment-details"
+
+// seo
+export * from "./seo-pages"
+
+// affiliates
+export * from "./affiliates"
+
+// coupons
+export * from "./coupons"
+
+// support
+export * from "./support"

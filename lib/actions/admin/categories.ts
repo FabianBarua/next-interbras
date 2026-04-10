@@ -9,6 +9,10 @@ import {
   bulkDeleteCategories,
   bulkUpdateCategoriesActive,
 } from "@/services/admin/categories"
+import { logEvent } from "@/lib/logging"
+
+const uuidSchema = z.string().uuid()
+const uuidArraySchema = z.array(z.string().uuid()).min(1).max(200)
 
 const i18nTextSchema = z.record(z.string(), z.string()).refine(
   (v) => Object.keys(v).length > 0,
@@ -28,11 +32,12 @@ const createSchema = z.object({
 const updateSchema = createSchema.partial()
 
 export async function createCategoryAction(data: unknown) {
-  await requireAdmin()
+  const session = await requireAdmin()
   const parsed = createSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
   try {
     const id = await createCategory(parsed.data)
+    logEvent({ category: "admin", action: "category.create", entity: "category", entityId: id, userId: session.id })
     return { id }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -41,12 +46,14 @@ export async function createCategoryAction(data: unknown) {
 }
 
 export async function updateCategoryAction(id: string, data: unknown) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   const parsed = updateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
   try {
     await updateCategory(id, parsed.data)
+    logEvent({ category: "admin", action: "category.update", entity: "category", entityId: id, userId: session.id })
     return { success: true }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -55,26 +62,32 @@ export async function updateCategoryAction(id: string, data: unknown) {
 }
 
 export async function deleteCategoryAction(id: string) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   try {
     await deleteCategory(id)
+    logEvent({ category: "admin", action: "category.delete", entity: "category", entityId: id, userId: session.id })
     return { success: true }
   } catch {
     return { error: "No se puede eliminar: tiene productos asociados." }
   }
 }
 
-export async function bulkDeleteCategoriesAction(ids: string[]) {
-  await requireAdmin()
-  if (!ids?.length) return { error: "No se seleccionaron categorías." }
-  const deleted = await bulkDeleteCategories(ids)
+export async function bulkDeleteCategoriesAction(ids: unknown) {
+  const session = await requireAdmin()
+  const parsed = uuidArraySchema.safeParse(ids)
+  if (!parsed.success) return { error: "IDs inválidos." }
+  const deleted = await bulkDeleteCategories(parsed.data)
+  logEvent({ category: "admin", action: "category.bulk_delete", entity: "category", userId: session.id, meta: { count: deleted } })
   return { deleted }
 }
 
-export async function bulkToggleCategoriesAction(ids: string[], active: boolean) {
-  await requireAdmin()
-  if (!ids?.length) return { error: "No se seleccionaron categorías." }
-  await bulkUpdateCategoriesActive(ids, active)
+export async function bulkToggleCategoriesAction(ids: unknown, active: boolean) {
+  const session = await requireAdmin()
+  const parsed = uuidArraySchema.safeParse(ids)
+  if (!parsed.success) return { error: "IDs inválidos." }
+  await bulkUpdateCategoriesActive(parsed.data, active)
+  logEvent({ category: "admin", action: "category.bulk_toggle", entity: "category", userId: session.id, meta: { count: parsed.data.length, active } })
   return { success: true }
 }

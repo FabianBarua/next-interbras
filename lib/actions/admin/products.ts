@@ -9,6 +9,10 @@ import {
   bulkDeleteProducts,
   bulkUpdateProductsActive,
 } from "@/services/admin/products"
+import { logEvent } from "@/lib/logging"
+
+const uuidSchema = z.string().uuid()
+const uuidArraySchema = z.array(z.string().uuid()).min(1).max(200)
 
 const i18nTextSchema = z.record(z.string(), z.string()).refine(
   (v) => Object.keys(v).length > 0,
@@ -34,11 +38,12 @@ const createSchema = z.object({
 const updateSchema = createSchema.partial()
 
 export async function createProductAction(data: unknown) {
-  await requireAdmin()
+  const session = await requireAdmin()
   const parsed = createSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos: " + parsed.error.issues.map(i => i.message).join(", ") }
   try {
     const id = await createProduct(parsed.data)
+    logEvent({ category: "admin", action: "product.create", entity: "product", entityId: id, userId: session.id })
     return { id }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -47,12 +52,14 @@ export async function createProductAction(data: unknown) {
 }
 
 export async function updateProductAction(id: string, data: unknown) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   const parsed = updateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos: " + parsed.error.issues.map(i => i.message).join(", ") }
   try {
     await updateProduct(id, parsed.data)
+    logEvent({ category: "admin", action: "product.update", entity: "product", entityId: id, userId: session.id })
     return { success: true }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -61,26 +68,32 @@ export async function updateProductAction(id: string, data: unknown) {
 }
 
 export async function deleteProductAction(id: string) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   try {
     await deleteProduct(id)
+    logEvent({ category: "admin", action: "product.delete", entity: "product", entityId: id, userId: session.id })
     return { success: true }
   } catch {
     return { error: "Error al eliminar producto." }
   }
 }
 
-export async function bulkDeleteProductsAction(ids: string[]) {
-  await requireAdmin()
-  if (!ids?.length) return { error: "No se seleccionaron productos." }
-  const deleted = await bulkDeleteProducts(ids)
+export async function bulkDeleteProductsAction(ids: unknown) {
+  const session = await requireAdmin()
+  const parsed = uuidArraySchema.safeParse(ids)
+  if (!parsed.success) return { error: "IDs inválidos." }
+  const deleted = await bulkDeleteProducts(parsed.data)
+  logEvent({ category: "admin", action: "product.bulk_delete", entity: "product", userId: session.id, meta: { count: deleted } })
   return { deleted }
 }
 
-export async function bulkToggleProductsAction(ids: string[], active: boolean) {
-  await requireAdmin()
-  if (!ids?.length) return { error: "No se seleccionaron productos." }
-  await bulkUpdateProductsActive(ids, active)
+export async function bulkToggleProductsAction(ids: unknown, active: boolean) {
+  const session = await requireAdmin()
+  const parsed = uuidArraySchema.safeParse(ids)
+  if (!parsed.success) return { error: "IDs inválidos." }
+  await bulkUpdateProductsActive(parsed.data, active)
+  logEvent({ category: "admin", action: "product.bulk_toggle", entity: "product", userId: session.id, meta: { count: parsed.data.length, active } })
   return { success: true }
 }

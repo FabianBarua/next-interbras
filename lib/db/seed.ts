@@ -15,7 +15,11 @@ async function seed() {
 
   // 1. Create admin user
   const adminEmail = "admin@interbras.com"
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "Admin@2024!Secure"
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD
+  if (!adminPassword) {
+    console.error("❌ SEED_ADMIN_PASSWORD env var is required")
+    process.exit(1)
+  }
   const passwordHash = await bcrypt.hash(adminPassword, 12)
 
   await db

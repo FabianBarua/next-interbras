@@ -12,6 +12,10 @@ import {
   deleteAttributeValue,
   bulkCreateAttributeValues,
 } from "@/services/admin/attributes"
+import { logEvent } from "@/lib/logging"
+
+const uuidSchema = z.string().uuid()
+const uuidArraySchema = z.array(z.string().uuid()).min(1).max(200)
 
 const i18nTextSchema = z.record(z.string(), z.string()).refine(
   (v) => Object.keys(v).length > 0,
@@ -29,11 +33,12 @@ const createSchema = z.object({
 const updateSchema = createSchema.partial()
 
 export async function createAttributeAction(data: unknown) {
-  await requireAdmin()
+  const session = await requireAdmin()
   const parsed = createSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
   try {
     const id = await createAttribute(parsed.data)
+    logEvent({ category: "admin", action: "attribute.create", entity: "attribute", entityId: id, userId: session.id })
     return { id }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -42,12 +47,14 @@ export async function createAttributeAction(data: unknown) {
 }
 
 export async function updateAttributeAction(id: string, data: unknown) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   const parsed = updateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
   try {
     await updateAttribute(id, parsed.data)
+    logEvent({ category: "admin", action: "attribute.update", entity: "attribute", entityId: id, userId: session.id })
     return { success: true }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -56,20 +63,24 @@ export async function updateAttributeAction(id: string, data: unknown) {
 }
 
 export async function deleteAttributeAction(id: string) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+  const session = await requireAdmin()
+  const idParsed = uuidSchema.safeParse(id)
+  if (!idParsed.success) return { error: "ID inválido." }
   try {
     await deleteAttribute(id)
+    logEvent({ category: "admin", action: "attribute.delete", entity: "attribute", entityId: id, userId: session.id })
     return { success: true }
   } catch {
     return { error: "Error al eliminar atributo." }
   }
 }
 
-export async function bulkDeleteAttributesAction(ids: string[]) {
-  await requireAdmin()
-  if (!ids?.length) return { error: "No se seleccionaron atributos." }
-  const deleted = await bulkDeleteAttributes(ids)
+export async function bulkDeleteAttributesAction(ids: unknown) {
+  const session = await requireAdmin()
+  const parsed = uuidArraySchema.safeParse(ids)
+  if (!parsed.success) return { error: "IDs inválidos." }
+  const deleted = await bulkDeleteAttributes(parsed.data)
+  logEvent({ category: "admin", action: "attribute.bulk_delete", entity: "attribute", userId: session.id, meta: { count: deleted } })
   return { deleted }
 }
 
@@ -85,11 +96,12 @@ const valueCreateSchema = z.object({
 const valueUpdateSchema = valueCreateSchema.omit({ attributeId: true }).partial()
 
 export async function createAttributeValueAction(data: unknown) {
-  await requireAdmin()
+  const session = await requireAdmin()
   const parsed = valueCreateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
   try {
     const id = await createAttributeValue(parsed.data)
+    logEvent({ category: "admin", action: "attribute_value.create", entity: "attribute_value", userId: session.id, meta: { attributeId: parsed.data.attributeId } })
     return { id }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -97,13 +109,15 @@ export async function createAttributeValueAction(data: unknown) {
   }
 }
 
-export async function updateAttributeValueAction(id: string, data: unknown) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+export async function updateAttributeValueAction(id: unknown, data: unknown) {
+  const session = await requireAdmin()
+  const parsed_id = uuidSchema.safeParse(id)
+  if (!parsed_id.success) return { error: "ID inválido." }
   const parsed = valueUpdateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
   try {
-    await updateAttributeValue(id, parsed.data)
+    await updateAttributeValue(parsed_id.data, parsed.data)
+    logEvent({ category: "admin", action: "attribute_value.update", entity: "attribute_value", entityId: parsed_id.data, userId: session.id })
     return { success: true }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "El slug ya existe." }
@@ -111,11 +125,13 @@ export async function updateAttributeValueAction(id: string, data: unknown) {
   }
 }
 
-export async function deleteAttributeValueAction(id: string) {
-  await requireAdmin()
-  if (!id) return { error: "ID requerido." }
+export async function deleteAttributeValueAction(id: unknown) {
+  const session = await requireAdmin()
+  const parsed_id = uuidSchema.safeParse(id)
+  if (!parsed_id.success) return { error: "ID inválido." }
   try {
-    await deleteAttributeValue(id)
+    await deleteAttributeValue(parsed_id.data)
+    logEvent({ category: "admin", action: "attribute_value.delete", entity: "attribute_value", entityId: parsed_id.data, userId: session.id })
     return { success: true }
   } catch {
     return { error: "Error al eliminar valor." }
@@ -125,11 +141,12 @@ export async function deleteAttributeValueAction(id: string) {
 const bulkValueSchema = z.array(valueCreateSchema).min(1).max(100)
 
 export async function bulkCreateAttributeValuesAction(data: unknown) {
-  await requireAdmin()
+  const session = await requireAdmin()
   const parsed = bulkValueSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
   try {
     const ids = await bulkCreateAttributeValues(parsed.data)
+    logEvent({ category: "admin", action: "attribute_value.bulk_create", entity: "attribute_value", userId: session.id, meta: { count: parsed.data.length } })
     return { ids }
   } catch (err: any) {
     if (err?.code === "23505") return { error: "Slug duplicado." }

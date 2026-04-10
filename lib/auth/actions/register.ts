@@ -14,7 +14,10 @@ import { logEvent } from "@/lib/logging"
 
 export async function register(formData: FormData) {
   const headersList = await headers()
-  const ip = headersList.get("x-forwarded-for")?.split(",")[0] ?? "unknown"
+  const forwarded = headersList.get("x-forwarded-for")
+  const ip = headersList.get("x-real-ip")
+    || (forwarded ? forwarded.split(",").pop()?.trim() : null)
+    || "unknown"
   const rl = await rateLimit(`register:${ip}`, 5, 300)
   if (!rl.success) {
     return { error: `Muitas tentativas. Tente novamente em ${rl.retryAfter}s.` }
@@ -38,7 +41,9 @@ export async function register(formData: FormData) {
   })
 
   if (existing) {
-    return { error: "Este email já está cadastrado.", loginHint: true }
+    // Don't reveal that the email exists — prevent enumeration
+    logEvent({ category: "auth", action: "register_duplicate_email", meta: { ip, email } })
+    return { error: "Não foi possível criar a conta. Se já possui conta, tente fazer login." }
   }
 
   const passwordHash = await bcrypt.hash(password, 12)

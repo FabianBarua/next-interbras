@@ -177,20 +177,12 @@ export async function deleteProduct(id: string): Promise<void> {
 }
 
 export async function bulkDeleteProducts(ids: string[]): Promise<number> {
-  let deleted = 0
-  for (const id of ids) {
-    try {
-      await db.delete(products).where(eq(products.id, id))
-      deleted++
-    } catch { /* skip */ }
-  }
+  const result = await db.delete(products).where(inArray(products.id, ids))
   await invalidateCache("products:*", "variants:*")
-  return deleted
+  return (result as any).rowCount ?? (result as any).count ?? ids.length
 }
 
 export async function bulkUpdateProductsActive(ids: string[], active: boolean): Promise<void> {
-  for (const id of ids) {
-    await db.update(products).set({ active }).where(eq(products.id, id))
-  }
+  await db.update(products).set({ active }).where(inArray(products.id, ids))
   await invalidateCache("products:*", "variants:*")
 }
