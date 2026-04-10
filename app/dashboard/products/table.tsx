@@ -8,9 +8,7 @@ import type { Category } from "@/types/category"
 import type { AdminProduct } from "@/services/admin/products"
 import {
   deleteProductAction,
-  updateProductAction,
   bulkDeleteProductsAction,
-  bulkToggleProductsAction,
 } from "@/lib/actions/admin/products"
 
 export function ProductsTable({ items, categories }: { items: AdminProduct[]; categories: Category[] }) {
@@ -39,10 +37,6 @@ export function ProductsTable({ items, categories }: { items: AdminProduct[]; ca
       if (bulkAction === "delete") {
         if (!confirm(`¿Eliminar ${ids.length} producto(s)?`)) return
         await bulkDeleteProductsAction(ids)
-      } else if (bulkAction === "activate") {
-        await bulkToggleProductsAction(ids, true)
-      } else if (bulkAction === "deactivate") {
-        await bulkToggleProductsAction(ids, false)
       }
       setSelected(new Set())
       setBulkAction("")
@@ -55,13 +49,6 @@ export function ProductsTable({ items, categories }: { items: AdminProduct[]; ca
     startTransition(async () => {
       const res = await deleteProductAction(id)
       if ("error" in res) setError(res.error!)
-      router.refresh()
-    })
-  }
-
-  const handleToggle = (item: AdminProduct) => {
-    startTransition(async () => {
-      await updateProductAction(item.id, { active: !item.active })
       router.refresh()
     })
   }
@@ -86,8 +73,6 @@ export function ProductsTable({ items, categories }: { items: AdminProduct[]; ca
             <span className="text-sm text-muted-foreground">{selected.size} seleccionado(s)</span>
             <select value={bulkAction} onChange={e => setBulkAction(e.target.value)} className="h-9 rounded-lg border px-2 text-sm">
               <option value="">Acción masiva...</option>
-              <option value="activate">Activar</option>
-              <option value="deactivate">Desactivar</option>
               <option value="delete">Eliminar</option>
             </select>
             <button onClick={handleBulk} disabled={!bulkAction || isPending} className="h-9 px-3 bg-primary text-primary-foreground text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50">
@@ -111,7 +96,6 @@ export function ProductsTable({ items, categories }: { items: AdminProduct[]; ca
               <th className="px-3 py-3 text-left font-medium">Nombre (PT)</th>
               <th className="px-3 py-3 text-left font-medium">Categoría</th>
               <th className="px-3 py-3 text-center font-medium">Variantes</th>
-              <th className="px-3 py-3 text-center font-medium">Activo</th>
               <th className="px-3 py-3 text-right font-medium">Acciones</th>
             </tr>
           </thead>
@@ -135,12 +119,6 @@ export function ProductsTable({ items, categories }: { items: AdminProduct[]; ca
                     {item.variantCount}
                   </Link>
                 </td>
-                <td className="px-3 py-2 text-center">
-                  <button onClick={() => handleToggle(item)} disabled={isPending}
-                    className={`inline-flex h-6 w-10 items-center rounded-full transition-colors ${item.active ? "bg-green-500" : "bg-muted"}`}>
-                    <span className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${item.active ? "translate-x-5" : "translate-x-1"}`} />
-                  </button>
-                </td>
                 <td className="px-3 py-2 text-right space-x-2">
                   <Link href={`/dashboard/products/${item.id}`} className="text-xs text-primary hover:underline">Editar</Link>
                   <Link href={`/dashboard/products/${item.id}/variants`} className="text-xs text-primary hover:underline">Variantes</Link>
@@ -149,7 +127,7 @@ export function ProductsTable({ items, categories }: { items: AdminProduct[]; ca
               </tr>
             ))}
             {filtered.length === 0 && (
-              <tr><td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">No hay productos.</td></tr>
+              <tr><td colSpan={8} className="px-4 py-12 text-center text-muted-foreground">No hay productos.</td></tr>
             )}
           </tbody>
         </table>

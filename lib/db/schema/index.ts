@@ -28,6 +28,7 @@ export * from "./catalog-presets"
 // orders & commerce
 export * from "./orders"
 export * from "./order-items"
+export * from "./order-notes"
 export * from "./wishlists"
 export * from "./addresses"
 

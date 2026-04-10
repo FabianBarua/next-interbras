@@ -58,7 +58,6 @@ const navGroups: NavGroup[] = [
     label: "Comercio",
     items: [
       { href: "/dashboard/orders", label: "Pedidos", icon: ShoppingCart },
-      { href: "/dashboard/payment-types", label: "Tipos de Pago", icon: CreditCard },
       { href: "/dashboard/shipping-methods", label: "Métodos de Envío", icon: Truck },
       { href: "/dashboard/customers", label: "Clientes", icon: Users },
     ],

@@ -14,7 +14,7 @@ export default async function PaymentsPage() {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold">Gateways de Pago</h1>
+          <h1 className="text-xl font-bold">Pagos</h1>
           <p className="text-sm text-muted-foreground">
             Gestione instancias de gateway. Cada instancia puede tener dominios
             específicos o funcionar como fallback.
