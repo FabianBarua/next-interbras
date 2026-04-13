@@ -5,215 +5,149 @@ import Image from "next/image"
 import { useCartStore } from "@/store/cart-store"
 import { useDictionary } from "@/i18n/context"
 import { getVariantMainImage } from "@/lib/variant-images"
-import { useState, useRef, useEffect, useCallback } from "react"
-import { useIsMobile } from "@/hooks/use-mobile"
-import { CartDrawer } from "./cart-drawer"
+import { useState, useEffect } from "react"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { QuantitySelector } from "./quantity-selector"
+import { PriceDisplay } from "./price-display"
+import { ShoppingCart, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 export function CartPreview() {
-  const { cart, removeItem, lastAddedAt } = useCartStore()
+  const { cart, removeItem, isSheetOpen, setSheetOpen } = useCartStore()
   const { dict, locale } = useDictionary()
-  const [open, setOpen] = useState(false)
-  const [visible, setVisible] = useState(false) // controls the actual render for animation
-  const hoverRef = useRef(false)
-  const autoCloseRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [count, setCount] = useState(0)
+
+  // Hydration-safe count
+  useEffect(() => {
+    setCount(useCartStore.getState().cart.totalItems)
+    return useCartStore.subscribe((state) => setCount(state.cart.totalItems))
+  }, [])
 
   const subtotal = cart.items.reduce(
     (acc, item) => acc + (item.variant?.externalCode?.priceUsd || 0) * item.quantity,
     0
   )
 
-  const clearAutoClose = useCallback(() => {
-    if (autoCloseRef.current) {
-      clearTimeout(autoCloseRef.current)
-      autoCloseRef.current = null
-    }
-  }, [])
-
-  const closeDropdown = useCallback(() => {
-    setOpen(false)
-    // wait for fade-out animation
-    setTimeout(() => setVisible(false), 200)
-  }, [])
-
-  const openDropdown = useCallback(() => {
-    setVisible(true)
-    // next frame so the fade-in triggers
-    requestAnimationFrame(() => setOpen(true))
-  }, [])
-
-  // Auto-show after adding to cart
-  useEffect(() => {
-    if (lastAddedAt === 0) return
-    clearAutoClose()
-    openDropdown()
-
-    autoCloseRef.current = setTimeout(() => {
-      if (!hoverRef.current) {
-        closeDropdown()
-      }
-    }, 3000)
-
-    return clearAutoClose
-  }, [lastAddedAt, clearAutoClose, openDropdown, closeDropdown])
-
-  const isMobile = useIsMobile()
-
-  const handleEnter = () => {
-    if (isMobile) return
-    hoverRef.current = true
-    clearAutoClose()
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current)
-    openDropdown()
-  }
-
-  const handleLeave = () => {
-    if (isMobile) return
-    hoverRef.current = false
-    hoverTimeoutRef.current = setTimeout(() => {
-      closeDropdown()
-    }, 250)
-  }
-
-  const cartIcon = (
-    <span className="relative inline-flex items-center justify-center rounded-md h-9 w-9 hover:bg-accent hover:text-accent-foreground transition-colors">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
-        <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-      </svg>
-      <span className="sr-only">{dict.nav.cart}</span>
-      {cart.totalItems > 0 && (
-        <span
-          key={lastAddedAt}
-          className="absolute -top-0.5 -right-0.5 h-4.5 min-w-4.5 rounded-full bg-primary text-[10px] font-bold text-primary-foreground flex items-center justify-center px-1 animate-[badgePop_0.35s_ease-out]"
-        >
-          {cart.totalItems}
-        </span>
-      )}
-    </span>
-  )
-
-  // Mobile: use Sheet via CartDrawer
-  if (isMobile) {
-    return (
-      <CartDrawer>
-        <button className="relative">{cartIcon}</button>
-      </CartDrawer>
-    )
-  }
-
-  // Desktop: hover dropdown
   return (
-    <div
-      className="relative"
-      onMouseEnter={handleEnter}
-      onMouseLeave={handleLeave}
-    >
-      {/* Cart Icon */}
-      <Link
-        href="/carrito"
-        className="relative flex items-center justify-center"
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="relative"
+        aria-label={dict.nav.cart}
+        onClick={() => setSheetOpen(true)}
       >
-        {cartIcon}
-      </Link>
+        <ShoppingCart className="h-5 w-5" />
+        {count > 0 && (
+          <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+            {count}
+          </span>
+        )}
+      </Button>
 
-      {/* Dropdown */}
-      {visible && (
-        <div
-          className={`absolute right-0 top-full mt-2 z-50 w-80 rounded-xl border bg-popover text-popover-foreground shadow-xl transition-all duration-200 ${
-            open
-              ? "opacity-100 translate-y-0 scale-100"
-              : "opacity-0 -translate-y-1 scale-[0.97] pointer-events-none"
-          }`}
-        >
+      <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent className="flex w-full flex-col sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>{dict.cart.myCart} ({cart.totalItems})</SheetTitle>
+          </SheetHeader>
+
           {cart.items.length === 0 ? (
-            <div className="flex flex-col items-center py-8 px-4 text-center">
-              <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/>
-                  <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-                </svg>
+            <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-accent text-muted-foreground">
+                <ShoppingCart className="h-8 w-8" />
               </div>
-              <p className="text-sm font-medium">{dict.nav.emptyCart}</p>
-              <p className="text-xs text-muted-foreground mt-1">{dict.nav.emptyCartHint}</p>
+              <h3 className="text-lg font-semibold">{dict.cart.emptyTitle}</h3>
+              <p className="max-w-[250px] text-sm text-muted-foreground">
+                {dict.cart.emptyMsg}
+              </p>
+              <Button variant="default" onClick={() => setSheetOpen(false)}>
+                {dict.cart.backToStore}
+              </Button>
             </div>
           ) : (
             <>
-              {/* Header */}
-              <div className="px-4 py-3 border-b">
-                <p className="text-sm font-semibold">{dict.cart.title} ({cart.totalItems})</p>
-              </div>
+              <div className="flex-1 overflow-y-auto px-6">
+                <div className="space-y-3">
+                  {cart.items.map((item) => {
+                    const img = getVariantMainImage(item.variant)
+                    const name = item.product.name[locale] || item.product.name.es || "Producto"
+                    const variantName = item.variant?.name?.[locale] || item.variant?.name?.es
 
-              {/* Items */}
-              <div className="max-h-64 overflow-y-auto">
-                {cart.items.slice(0, 4).map((item) => {
-                  const img = getVariantMainImage(item.variant)
-                  const name = item.product.name[locale] || item.product.name.es || "Producto"
-                  const priceUsd = item.variant?.externalCode?.priceUsd || 0
+                    return (
+                      <div key={item.id} className="relative flex gap-3 border-b pb-3">
+                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md bg-muted/20">
+                          {img && (
+                            <Image src={img.url} alt={name} fill className="object-contain p-2" />
+                          )}
+                        </div>
 
-                  return (
-                    <div key={item.id} className="flex items-center gap-3 px-4 py-3 border-b last:border-b-0 group/item">
-                      <div className="relative w-12 h-12 bg-muted/30 rounded-md overflow-hidden shrink-0">
-                        {img && (
-                          <Image src={img.url} alt={name} fill className="object-contain p-1" />
-                        )}
+                        <div className="flex flex-1 flex-col gap-1">
+                          <Link
+                            href={`/productos/${item.product.category?.slug || "cat"}/${item.product.slug}`}
+                            className="pr-6 text-sm font-medium line-clamp-2 hover:text-primary transition-colors"
+                            onClick={() => setSheetOpen(false)}
+                          >
+                            {name}
+                          </Link>
+
+                          {variantName && (
+                            <span className="text-xs text-muted-foreground">{variantName}</span>
+                          )}
+
+                          <div className="mt-auto flex items-end justify-between gap-2 pt-1">
+                            <QuantitySelector itemId={item.id} initialQuantity={item.quantity} />
+                            <PriceDisplay
+                              externalCode={item.variant?.externalCode || item.product.variants[0]?.externalCode}
+                              className="items-end text-sm"
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          title={dict.cart.deleteItem}
+                          onClick={() => removeItem(item.id)}
+                          className="absolute right-0 top-0 rounded-sm p-1 text-destructive opacity-50 transition-all hover:bg-accent hover:opacity-100"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium line-clamp-1">{name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {item.quantity} × US$ {priceUsd.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                        </p>
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault()
-                          e.stopPropagation()
-                          removeItem(item.id)
-                        }}
-                        className="opacity-0 group-hover/item:opacity-100 p-1 rounded-sm hover:bg-destructive/10 text-destructive transition-all shrink-0"
-                        title={dict.common.remove}
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                      </button>
-                    </div>
-                  )
-                })}
-                {cart.items.length > 4 && (
-                  <div className="px-4 py-2 text-center">
-                    <p className="text-xs text-muted-foreground">
-                      +{cart.items.length - 4} {dict.common.products} {dict.common.more}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              {/* Footer */}
-              <div className="border-t px-4 py-3 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">{dict.common.subtotal}</span>
-                  <span className="text-sm font-bold">
-                    US$ {subtotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}
-                  </span>
+                    )
+                  })}
                 </div>
-                <div className="flex gap-2">
+              </div>
+
+              <div className="border-t px-6 py-4">
+                <div className="mb-4 flex items-center justify-between text-lg font-semibold">
+                  <span>{dict.common.subtotal}</span>
+                  <span>US$ {subtotal.toLocaleString("en-US", { minimumFractionDigits: 2 })}</span>
+                </div>
+
+                <p className="mb-3 text-center text-xs text-muted-foreground">
+                  {dict.cart.taxNotice}
+                </p>
+
+                <div className="flex flex-col gap-2">
                   <Link
                     href="/carrito"
-                    className="flex-1 text-center text-xs font-medium py-2 rounded-md border hover:bg-muted transition-colors"
+                    className="w-full rounded-md border border-border px-4 py-2.5 text-center text-sm font-medium transition-colors hover:bg-accent"
+                    onClick={() => setSheetOpen(false)}
                   >
-                    {dict.nav.viewCart}
+                    {dict.cart.viewCart}
                   </Link>
+
                   <Link
                     href="/checkout"
-                    className="flex-1 text-center text-xs font-medium py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                    className="w-full rounded-md bg-primary px-4 py-2.5 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+                    onClick={() => setSheetOpen(false)}
                   >
-                    {dict.nav.checkout}
+                    {dict.cart.processOrder}
                   </Link>
                 </div>
               </div>
             </>
           )}
-        </div>
-      )}
-    </div>
+        </SheetContent>
+      </Sheet>
+    </>
   )
 }

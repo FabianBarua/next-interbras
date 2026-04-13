@@ -3,11 +3,15 @@ import { useCartStore } from "@/store/cart-store"
 import type { Product, Variant } from "@/types/product"
 import { toast } from "sonner"
 import { useState, useCallback } from "react"
-import { useDictionary } from "@/i18n/context"
+import { useDictionary, useLocalePath } from "@/i18n/context"
+import { CheckCircle, ShoppingCart } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export function AddToCartButton({ product, variant, quantity = 1, className = "" }: { product: Product; variant?: Variant; quantity?: number; className?: string }) {
   const { addItem } = useCartStore()
   const { dict, locale } = useDictionary()
+  const localePath = useLocalePath()
+  const router = useRouter()
   const [animating, setAnimating] = useState(false)
   const outOfStock = variant?.stock === 0
 
@@ -16,7 +20,29 @@ export function AddToCartButton({ product, variant, quantity = 1, className = ""
     e.stopPropagation()
     if (outOfStock) return
     addItem(product, quantity, variant)
-    toast.success(`${product.name[locale] || product.name.es} ${dict.products.addedToCart}`)
+    const name = product.name[locale] || product.name.es || "Producto"
+    toast.custom(
+      (id) => (
+        <div className="flex w-full items-center gap-3 rounded-lg border bg-background p-3 shadow-lg">
+          <CheckCircle className="h-5 w-5 shrink-0 text-emerald-500" />
+          <p className="flex-1 text-sm">
+            <span className="font-medium">{name}</span>{" "}
+            <span className="text-muted-foreground">{dict.products.addedToCart}</span>
+          </p>
+          <button
+            onClick={() => {
+              toast.dismiss(id)
+              router.push(localePath("/carrito"))
+            }}
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          >
+            <ShoppingCart className="h-3.5 w-3.5" />
+            {dict.cart.viewCart}
+          </button>
+        </div>
+      ),
+      { duration: 4000 },
+    )
 
     setAnimating(true)
     setTimeout(() => setAnimating(false), 600)

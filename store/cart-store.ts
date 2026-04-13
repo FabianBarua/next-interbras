@@ -7,6 +7,8 @@ interface CartState {
   cart: Cart
   lastAddedAt: number
   _hydrated: boolean
+  isSheetOpen: boolean
+  setSheetOpen: (open: boolean) => void
   addItem: (product: Product, quantity: number, variant?: Variant) => void
   removeItem: (itemId: string) => void
   updateQuantity: (itemId: string, quantity: number) => void
@@ -19,6 +21,8 @@ export const useCartStore = create<CartState>()(
       cart: { items: [], totalItems: 0, subtotal: 0 },
       lastAddedAt: 0,
       _hydrated: false,
+      isSheetOpen: false,
+      setSheetOpen: (open) => set({ isSheetOpen: open }),
       addItem: (product, quantity, variant) => set((state) => {
         // Don't add out-of-stock items
         if (variant?.stock === 0) return state
