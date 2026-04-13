@@ -24,7 +24,7 @@ export function ProductCarousel({ products, compact }: { products: Product[]; co
       >
         <CarouselContent className="-ml-2 md:-ml-3">
           {products.map((product) => (
-            <CarouselItem key={product.id} className={`pl-2 md:pl-3 ${compact ? 'basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5' : 'basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4'}`}>
+            <CarouselItem key={product.id} className={`pl-2 md:pl-3 ${compact ? 'basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5' : 'basis-1/2 sm:basis-1/3 md:basis-1/4 lg:basis-1/5'}`}>
               <ProductCard product={product} />
             </CarouselItem>
           ))}

@@ -22,6 +22,13 @@
       "when": 1775785415992,
       "tag": "0002_mixed_lady_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1776090601238,
+      "tag": "0003_sticky_cyclops",
+      "breakpoints": true
     }
   ]
 }

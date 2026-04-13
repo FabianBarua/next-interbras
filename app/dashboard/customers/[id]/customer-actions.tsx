@@ -18,7 +18,9 @@ type CustomerUser = {
   name: string
   email: string
   phone: string | null
-  cpf: string | null
+  documentType: string | null
+  documentNumber: string | null
+  nationality: string | null
   role: Role
 }
 
@@ -141,12 +143,14 @@ export function CustomerEditForm({ customer }: { customer: CustomerUser }) {
   const [editing, setEditing] = useState(false)
   const [name, setName] = useState(customer.name)
   const [phone, setPhone] = useState(customer.phone ?? "")
-  const [cpf, setCpf] = useState(customer.cpf ?? "")
+  const [documentType, setDocumentType] = useState(customer.documentType ?? "")
+  const [documentNumber, setDocumentNumber] = useState(customer.documentNumber ?? "")
+  const [nationality, setNationality] = useState(customer.nationality ?? "")
   const [pending, startTransition] = useTransition()
 
   function handleSave() {
     startTransition(async () => {
-      const res = await updateCustomerInfo(customer.id, { name, phone, cpf })
+      const res = await updateCustomerInfo(customer.id, { name, phone, documentType, documentNumber, nationality })
       if (res.error) {
         alert(res.error)
       } else {
@@ -180,11 +184,34 @@ export function CustomerEditForm({ customer }: { customer: CustomerUser }) {
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs text-muted-foreground">CPF</label>
+        <label className="mb-1 block text-xs text-muted-foreground">Tipo de documento</label>
+        <select
+          value={documentType}
+          onChange={(e) => setDocumentType(e.target.value)}
+          className="flex h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
+        >
+          <option value="">— Sin documento —</option>
+          <option value="CI">CI</option>
+          <option value="CPF">CPF</option>
+          <option value="RG">RG</option>
+          <option value="OTRO">OTRO</option>
+        </select>
+      </div>
+      <div>
+        <label className="mb-1 block text-xs text-muted-foreground">Nro. documento</label>
         <Input
-          value={cpf}
-          onChange={(e) => setCpf(e.target.value)}
-          placeholder="00000000000"
+          value={documentNumber}
+          onChange={(e) => setDocumentNumber(e.target.value)}
+          placeholder="Número de documento"
+          className="h-8"
+        />
+      </div>
+      <div>
+        <label className="mb-1 block text-xs text-muted-foreground">Nacionalidad</label>
+        <Input
+          value={nationality}
+          onChange={(e) => setNationality(e.target.value)}
+          placeholder="Nacionalidad"
           className="h-8"
         />
       </div>
@@ -199,7 +226,9 @@ export function CustomerEditForm({ customer }: { customer: CustomerUser }) {
             setEditing(false)
             setName(customer.name)
             setPhone(customer.phone ?? "")
-            setCpf(customer.cpf ?? "")
+            setDocumentType(customer.documentType ?? "")
+            setDocumentNumber(customer.documentNumber ?? "")
+            setNationality(customer.nationality ?? "")
           }}
         >
           Cancelar

@@ -3,6 +3,7 @@
 import { useSession, signOut } from "next-auth/react"
 import { useDictionary } from "@/i18n/context"
 import Link from "@/i18n/link"
+import { useEcommerce } from "./ecommerce-context"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,7 @@ import {
 export function AccountMenu() {
   const { data: session } = useSession()
   const { dict } = useDictionary()
+  const ecommerce = useEcommerce()
   const user = session?.user
 
   return (
@@ -43,15 +45,19 @@ export function AccountMenu() {
               <DropdownMenuItem asChild>
                 <Link href="/cuenta">{dict.account.myAccount}</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/cuenta/pedidos">{dict.account.orders}</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/cuenta/wishlist">{dict.account.wishlist}</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/cuenta/direcciones">{dict.account.addresses}</Link>
-              </DropdownMenuItem>
+              {ecommerce && (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link href="/cuenta/pedidos">{dict.account.orders}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/cuenta/wishlist">{dict.account.wishlist}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/cuenta/direcciones">{dict.account.addresses}</Link>
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuGroup>
             {user.role === "admin" && (
               <>

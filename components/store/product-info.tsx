@@ -8,9 +8,11 @@ import { WishlistButton } from "@/components/store/wishlist-button"
 import { Separator } from "@/components/ui/separator"
 import { toVariantSlug } from "@/lib/variant-slug"
 import { useDictionary } from "@/i18n/context"
+import { useEcommerce } from "./ecommerce-context"
 
 export function ProductInfo({ product, initialVariantId, categorySlug, onVariantChange }: { product: Product; initialVariantId?: string; categorySlug?: string; onVariantChange?: (variantId: string) => void }) {
   const { dict, locale } = useDictionary()
+  const ecommerce = useEcommerce()
   const [selectedId, setSelectedId] = useState(
     initialVariantId || product.variants[0]?.id
   )
@@ -50,6 +52,7 @@ export function ProductInfo({ product, initialVariantId, categorySlug, onVariant
       </div>
 
       {/* Price + stock */}
+      {ecommerce && (
       <div className="flex items-end justify-between gap-4">
         <PriceDisplay externalCode={v?.externalCode} className="text-lg" />
         {stock !== null && stock > 0 ? (
@@ -69,6 +72,7 @@ export function ProductInfo({ product, initialVariantId, categorySlug, onVariant
           </span>
         )}
       </div>
+      )}
 
       {/* Variant selectors */}
       {attrKeys.length > 0 && product.variants.length > 1 && (
@@ -90,10 +94,12 @@ export function ProductInfo({ product, initialVariantId, categorySlug, onVariant
       <Separator />
 
       {/* Actions */}
+      {ecommerce && (
       <div className="flex items-center gap-2.5">
         <AddToCartButton product={product} variant={v} className="flex-1 py-2.5 text-sm" />
         <WishlistButton product={product} variant={v} className="border h-10 w-10 shrink-0" />
       </div>
+      )}
 
       {/* Description */}
       {(product.description?.[locale] || product.description?.es) && (

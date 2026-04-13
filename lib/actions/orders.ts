@@ -148,7 +148,7 @@ export async function searchOrders({
       or(
         ilike(users.name, contains(term)),
         ilike(users.email, contains(term)),
-        ilike(users.cpf, contains(term)),
+        ilike(users.documentNumber, contains(term)),
         ilike(users.phone, contains(term)),
         ilike(orders.customerName, contains(term)),
         ilike(orders.customerEmail, contains(term)),
@@ -340,7 +340,7 @@ export async function getOrderStatusCounts(filterParams?: {
       or(
         ilike(users.name, `%${t}%`),
         ilike(users.email, `%${t}%`),
-        ilike(users.cpf, `%${t}%`),
+        ilike(users.documentNumber, `%${t}%`),
         ilike(users.phone, `%${t}%`),
         ilike(orders.customerName, `%${t}%`),
         ilike(orders.customerEmail, `%${t}%`),
@@ -567,7 +567,7 @@ export async function getOrderDetail(orderId: string) {
   const user = order.userId
     ? await db.query.users.findFirst({
         where: eq(users.id, order.userId),
-        columns: { name: true, email: true, cpf: true, phone: true },
+        columns: { name: true, email: true, documentNumber: true, phone: true },
       })
     : null
 

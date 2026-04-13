@@ -2,6 +2,45 @@ import { eq, like } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { settings } from "@/lib/db/schema"
 import { encrypt, decrypt } from "@/lib/crypto"
+import { cacheGet, cacheSet, cacheDel } from "@/lib/redis"
+
+const ECOMMERCE_CACHE_KEY = "setting:site.ecommerce"
+const ECOMMERCE_CACHE_TTL = 300 // 5 minutes
+
+/**
+ * Check if ecommerce is enabled. Uses Redis cache with 5-min TTL.
+ * Defaults to false if no setting exists.
+ */
+export async function isEcommerceEnabled(): Promise<boolean> {
+  try {
+    const cached = await cacheGet(ECOMMERCE_CACHE_KEY)
+    if (cached !== null) return cached === "true"
+  } catch {
+    // Redis down — fall through to DB
+  }
+
+  const value = await getSetting("site.ecommerce")
+  const enabled = value === "true"
+
+  try {
+    await cacheSet(ECOMMERCE_CACHE_KEY, String(enabled), ECOMMERCE_CACHE_TTL)
+  } catch {
+    // Best-effort cache write
+  }
+
+  return enabled
+}
+
+/**
+ * Invalidate the ecommerce cache after toggling.
+ */
+export async function invalidateEcommerceCache(): Promise<void> {
+  try {
+    await cacheDel(ECOMMERCE_CACHE_KEY)
+  } catch {
+    // Best-effort
+  }
+}
 
 /**
  * Get a single setting value by key. Returns null if not found.

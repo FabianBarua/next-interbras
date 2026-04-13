@@ -8,9 +8,11 @@ import { WishlistButton } from "./wishlist-button"
 import { toVariantSlug } from "@/lib/variant-slug"
 import { getVariantMainImage } from "@/lib/variant-images"
 import { useDictionary } from "@/i18n/context"
+import { useEcommerce } from "./ecommerce-context"
 
 export function ProductCard({ product, variant }: { product: Product; variant?: Variant }) {
   const { locale } = useDictionary()
+  const ecommerce = useEcommerce()
   const v = variant || product.variants[0]
   const mainImage = getVariantMainImage(v)
   const productName = product.name?.[locale] || product.name?.es || "Producto"
@@ -28,8 +30,8 @@ export function ProductCard({ product, variant }: { product: Product; variant?: 
 
       {/* Image area */}
       <div className="relative aspect-[4/3] w-full bg-muted/20 dark:bg-muted/10">
-        <div className="absolute top-2 right-2 z-20">
-          <WishlistButton product={product} variant={v} />
+        <div className="absolute top-3 right-3 z-20">
+          {ecommerce && <WishlistButton product={product} variant={v} />}
         </div>
 
         {mainImage ? (
@@ -37,8 +39,8 @@ export function ProductCard({ product, variant }: { product: Product; variant?: 
             src={mainImage.url}
             alt={mainImage.alt || productName}
             fill
-            className="object-contain p-3 group-hover:scale-105 transition-transform duration-500 ease-out"
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            className="object-contain p-8 group-hover:scale-105 transition-transform duration-500 ease-out"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground/40">
@@ -48,8 +50,8 @@ export function ProductCard({ product, variant }: { product: Product; variant?: 
       </div>
 
       {/* Info area */}
-      <div className="flex flex-col flex-1 p-3 gap-1">
-        <h3 className="font-medium text-xs leading-snug text-foreground line-clamp-2">
+      <div className="flex flex-col flex-1 p-4 gap-2">
+        <h3 className="font-medium text-sm leading-snug text-foreground line-clamp-2">
           {productName}
         </h3>
 
@@ -64,8 +66,8 @@ export function ProductCard({ product, variant }: { product: Product; variant?: 
           </div>
         )}
 
-        <div className="mt-auto pt-1.5">
-          <PriceDisplay externalCode={v?.externalCode} />
+        <div className="mt-auto ">
+          {ecommerce && <PriceDisplay externalCode={v?.externalCode} />}
         </div>
       </div>
     </div>

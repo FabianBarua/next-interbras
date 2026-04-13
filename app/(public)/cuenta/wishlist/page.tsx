@@ -1,12 +1,31 @@
 "use client"
 import { useWishlistStore } from "@/store/wishlist-store"
 import { ProductCard } from "@/components/store/product-card"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
+import { useRouter } from "next/navigation"
 import Link from "@/i18n/link"
 import { useDictionary } from "@/i18n/context"
+import { useEcommerce } from "@/components/store/ecommerce-context"
 
 export default function WishlistPage() {
+  const ecommerce = useEcommerce()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!ecommerce) router.replace("/")
+  }, [ecommerce, router])
+
+  if (!ecommerce) return null
+
   const { wishlist } = useWishlistStore()
+  const uniqueItems = useMemo(() => {
+    const seen = new Set<string>()
+    return wishlist.items.filter(item => {
+      if (seen.has(item.variantId)) return false
+      seen.add(item.variantId)
+      return true
+    })
+  }, [wishlist.items])
   const [isMounted, setIsMounted] = useState(false)
   const { dict } = useDictionary()
 
@@ -20,7 +39,7 @@ export default function WishlistPage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold tracking-tight">{dict.account.wishlist}</h1>
       
-      {wishlist.items.length === 0 ? (
+      {uniqueItems.length === 0 ? (
         <div className="text-center py-16 border rounded-2xl bg-card space-y-4">
           <div className="mx-auto w-16 h-16 rounded-full bg-muted flex items-center justify-center text-muted-foreground mb-2">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
@@ -35,7 +54,7 @@ export default function WishlistPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {wishlist.items.map(item => (
+          {uniqueItems.map(item => (
              <ProductCard key={item.variantId} product={item.product} variant={item.variant} />
           ))}
         </div>

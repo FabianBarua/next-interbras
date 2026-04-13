@@ -159,6 +159,18 @@
   100% { transform: scale(1); }
 }
 
+/* Hero floating orbs */
+@keyframes hero-float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+/* Header shimmer accent */
+@keyframes header-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 
 @layer components {
   .container {

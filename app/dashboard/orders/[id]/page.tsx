@@ -214,7 +214,7 @@ export default async function AdminOrderDetailPage({
               <div>
                 <p className="text-xs text-muted-foreground">Documento</p>
                 <p className="font-medium">
-                  {user?.cpf ?? order.customerDocument ?? "—"}
+                  {user?.documentNumber ?? order.customerDocument ?? "—"}
                 </p>
               </div>
             </div>

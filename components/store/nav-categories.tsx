@@ -98,13 +98,7 @@ export function NavCategories() {
           </NavigationMenuLink>
         </NavigationMenuItem>
 
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link href="/donde-estamos" className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold tracking-wide text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
-              {dict.nav.stores}
-            </Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
+
       </NavigationMenuList>
     </NavigationMenu>
   )

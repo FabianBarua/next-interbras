@@ -2,15 +2,21 @@
 
 import Link from "@/i18n/link"
 import { Suspense, useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { OrderTracker } from "@/components/store/order-tracker"
 import { useDictionary } from "@/i18n/context"
+import { useEcommerce } from "@/components/store/ecommerce-context"
 
 function ConfirmacionContent() {
   const searchParams = useSearchParams()
   const [mounted, setMounted] = useState(false)
   const { dict, locale } = useDictionary()
-  useEffect(() => { setMounted(true) }, [])
+  const ecommerce = useEcommerce()
+  const router = useRouter()
+  useEffect(() => {
+    if (!ecommerce) { router.replace("/"); return }
+    setMounted(true)
+  }, [ecommerce, router])
   if (!mounted) return null
 
   const orderId = searchParams.get("orderId") ?? `INT-${Date.now().toString().slice(-8)}`

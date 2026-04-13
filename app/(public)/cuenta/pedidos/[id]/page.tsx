@@ -1,6 +1,7 @@
 import { getOrderById } from "@/services/orders"
 import { requireAuth } from "@/lib/auth/get-session"
-import { notFound } from "next/navigation"
+import { isEcommerceEnabled } from "@/lib/settings"
+import { notFound, redirect } from "next/navigation"
 import Link from "@/i18n/link"
 import { OrderTracker } from "@/components/store/order-tracker"
 import { Separator } from "@/components/ui/separator"
@@ -8,6 +9,8 @@ import { Separator } from "@/components/ui/separator"
 export default async function OrderDetailPage(
   { params }: { params: Promise<{ id: string }> }
 ) {
+  if (!(await isEcommerceEnabled())) redirect("/")
+
   const user = await requireAuth()
   const resolvedParams = await params
   const { id } = resolvedParams

@@ -363,7 +363,7 @@ export async function getAffiliateDetail(affiliateId: string) {
       userName: users.name,
       userEmail: users.email,
       userPhone: users.phone,
-      userCpf: users.cpf,
+      userDocumentNumber: users.documentNumber,
     })
     .from(affiliates)
     .innerJoin(users, eq(affiliates.userId, users.id))

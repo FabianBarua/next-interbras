@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { getSetting, setSetting } from "@/lib/settings"
+import { getSetting, setSetting, invalidateEcommerceCache } from "@/lib/settings"
 import { requireAdmin } from "@/lib/auth/get-session"
 import { logEvent } from "@/lib/logging"
 
@@ -134,6 +134,37 @@ export async function saveSiteDomains(
     action: "update_site_domains",
     userId: admin.id,
     meta: { domains: unique },
+  })
+
+  return { success: true }
+}
+
+// ─── Ecommerce Toggle ────────────────────────
+
+export async function getEcommerceStatus(): Promise<boolean> {
+  await requireAdmin()
+  const val = await getSetting("site.ecommerce")
+  return val === "true"
+}
+
+export async function toggleEcommerce(
+  enabled: boolean,
+): Promise<{ error?: string; success?: boolean }> {
+  const admin = await requireAdmin()
+
+  if (typeof enabled !== "boolean") {
+    return { error: "Valor inválido" }
+  }
+
+  await setSetting("site.ecommerce", String(enabled))
+  await invalidateEcommerceCache()
+  revalidatePath("/", "layout")
+
+  logEvent({
+    category: "sistema",
+    action: "toggle_ecommerce",
+    userId: admin.id,
+    meta: { enabled },
   })
 
   return { success: true }

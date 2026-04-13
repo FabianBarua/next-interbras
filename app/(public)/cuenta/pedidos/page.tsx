@@ -1,9 +1,13 @@
 import { getOrders } from "@/services/orders"
 import { requireAuth } from "@/lib/auth/get-session"
+import { isEcommerceEnabled } from "@/lib/settings"
+import { redirect } from "next/navigation"
 import Link from "@/i18n/link"
 import { getDictionary } from "@/i18n/get-dictionary"
 
 export default async function OrdersPage() {
+  if (!(await isEcommerceEnabled())) redirect("/")
+
   const user = await requireAuth()
   const orders = await getOrders(user.id)
   const dict = await getDictionary()

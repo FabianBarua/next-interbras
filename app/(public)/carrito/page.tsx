@@ -4,14 +4,25 @@ import Link from "@/i18n/link"
 import Image from "next/image"
 import { useCartStore } from "@/store/cart-store"
 import { useDictionary } from "@/i18n/context"
+import { useEcommerce } from "@/components/store/ecommerce-context"
 import { getVariantMainImage } from "@/lib/variant-images"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { QuantitySelector } from "@/components/store/quantity-selector"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 
 export default function CartPage() {
+  const ecommerce = useEcommerce()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!ecommerce) router.replace("/")
+  }, [ecommerce, router])
+
+  if (!ecommerce) return null
+
   const { cart, removeItem, clear } = useCartStore()
   const { dict, locale } = useDictionary()
   const [mounted, setMounted] = useState(false)

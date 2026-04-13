@@ -7,7 +7,9 @@ import { resetPassword } from "@/lib/auth/actions/reset-password"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useDictionary } from "@/i18n/context"
+import { Lock, Loader2 } from "lucide-react"
 
 type State = { error?: string; success?: boolean }
 
@@ -22,28 +24,50 @@ function ResetPasswordForm() {
   const { dict } = useDictionary()
 
   return (
-    <div className="w-full max-w-sm">
-      <h1 className="mb-6 text-center text-xl font-bold">{dict.auth.resetTitle}</h1>
-
-      <form action={action} className="space-y-4">
-        <input type="hidden" name="token" value={token} />
-        {state?.error && (
-          <p className="text-sm text-destructive">{state.error}</p>
-        )}
-        {state?.success && (
-          <p className="text-sm text-primary">
-            {dict.auth.resetSuccess}{" "}
-            <Link href="/login" className="font-medium underline">{dict.auth.resetLogin}</Link>
-          </p>
-        )}
-        <div className="space-y-1.5">
-          <Label htmlFor="password">{dict.auth.password}</Label>
-          <Input id="password" name="password" type="password" placeholder={dict.auth.newPasswordPlaceholder} required />
-        </div>
-        <Button type="submit" className="w-full" disabled={pending}>
-          {pending ? dict.auth.resetting : dict.auth.resetButton}
-        </Button>
-      </form>
+    <div className="space-y-6">
+      <Card className="border-0 shadow-lg ring-1 ring-border/50">
+        <CardHeader className="space-y-1 pb-2">
+          <CardTitle className="text-center text-2xl font-bold tracking-tight">
+            {dict.auth.resetTitle}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <form action={action} className="space-y-4">
+            <input type="hidden" name="token" value={token} />
+            {state?.error && (
+              <div className="rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                {state.error}
+              </div>
+            )}
+            {state?.success && (
+              <div className="rounded-lg bg-primary/10 px-4 py-3 text-sm text-primary">
+                {dict.auth.resetSuccess}{" "}
+                <Link href="/login" className="font-medium underline">
+                  {dict.auth.resetLogin}
+                </Link>
+              </div>
+            )}
+            <div className="space-y-2">
+              <Label htmlFor="password">{dict.auth.password}</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder={dict.auth.newPasswordPlaceholder}
+                  className="h-11 pl-10"
+                  required
+                />
+              </div>
+            </div>
+            <Button type="submit" className="h-11 w-full text-sm font-medium" disabled={pending}>
+              {pending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {pending ? dict.auth.resetting : dict.auth.resetButton}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   )
 }

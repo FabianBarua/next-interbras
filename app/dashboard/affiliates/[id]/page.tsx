@@ -153,8 +153,8 @@ export default async function AffiliateDetailPage({
           <p>{detail.userPhone ?? "—"}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">CPF</p>
-          <p className="font-mono">{detail.userCpf ?? "—"}</p>
+          <p className="text-muted-foreground">Documento</p>
+          <p className="font-mono">{detail.userDocumentNumber ?? "—"}</p>
         </div>
         <div>
           <p className="text-muted-foreground">Desde</p>

@@ -21,14 +21,13 @@ export const useWishlistStore = create<WishlistState>()(
       removeItem: (variantId) => set((state) => ({
         wishlist: { items: state.wishlist.items.filter(i => i.variantId !== variantId) }
       })),
-      toggle: (product, variant) => {
-        const state = get()
-        if (state.wishlist.items.find(i => i.variantId === variant.id)) {
-          state.removeItem(variant.id)
-        } else {
-          state.addItem(product, variant)
+      toggle: (product, variant) => set((state) => {
+        const exists = state.wishlist.items.some(i => i.variantId === variant.id)
+        if (exists) {
+          return { wishlist: { items: state.wishlist.items.filter(i => i.variantId !== variant.id) } }
         }
-      }
+        return { wishlist: { items: [...state.wishlist.items, { productId: product.id, variantId: variant.id, product, variant, addedAt: new Date().toISOString() }] } }
+      })
     }),
     { name: 'interbras-wishlist' }
   )

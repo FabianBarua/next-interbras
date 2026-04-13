@@ -97,8 +97,8 @@ export default async function CustomerDetailPage({
           <p className="font-medium">{user.phone || "—"}</p>
         </div>
         <div>
-          <p className="text-muted-foreground">CPF</p>
-          <p className="font-mono">{user.cpf || "—"}</p>
+          <p className="text-muted-foreground">Documento</p>
+          <p className="font-mono">{user.documentNumber ? `${user.documentType ?? ""}: ${user.documentNumber}` : "—"}</p>
         </div>
         <div>
           <p className="text-muted-foreground">Registrado en</p>

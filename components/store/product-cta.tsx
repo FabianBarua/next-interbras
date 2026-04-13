@@ -53,10 +53,10 @@ export function ProductCTA() {
             </svg>
           </Link>
           <Link
-            href="/donde-estamos"
+            href="/contacto"
             className="mt-3 sm:mt-5 text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
           >
-            {t.storesLink}
+            {t.contactLink}
           </Link>
         </div>
       </div>

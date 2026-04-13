@@ -2,7 +2,7 @@ import Link from "@/i18n/link"
 import { getDictionary } from "@/i18n/get-dictionary"
 import { LanguageSwitcherInline } from "./language-switcher"
 
-export async function Footer() {
+export async function Footer({ ecommerceEnabled = false }: { ecommerceEnabled?: boolean }) {
   const dict = await getDictionary()
   const t = dict.footer
 
@@ -32,7 +32,7 @@ export async function Footer() {
             <h4 className="font-semibold">{t.institutional}</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/quienes-somos" className="hover:text-primary transition-colors">{t.aboutUs}</Link></li>
-              <li><Link href="/donde-estamos" className="hover:text-primary transition-colors">{t.locations}</Link></li>
+
               <li><Link href="/downloads" className="hover:text-primary transition-colors">{t.downloads}</Link></li>
               <li><Link href="/contacto" className="hover:text-primary transition-colors">{t.contact}</Link></li>
             </ul>
@@ -41,7 +41,9 @@ export async function Footer() {
           <div className="space-y-4">
             <h4 className="font-semibold">{t.customerService}</h4>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><Link href="/cuenta/pedidos" className="hover:text-primary transition-colors">{t.myOrders}</Link></li>
+              {ecommerceEnabled && (
+                <li><Link href="/cuenta/pedidos" className="hover:text-primary transition-colors">{t.myOrders}</Link></li>
+              )}
               <li><Link href="/terminos" className="hover:text-primary transition-colors">{t.terms}</Link></li>
               <li><Link href="/garantia" className="hover:text-primary transition-colors">{t.warranty}</Link></li>
               <li><a href="mailto:contacto@interbras.com" className="hover:text-primary transition-colors">contacto@interbras.com</a></li>

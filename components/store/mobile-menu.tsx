@@ -6,7 +6,7 @@ import { LanguageSwitcherInline } from "./language-switcher"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { categoriesMock } from "@/mock/categories"
-import { Menu, Search, ChevronDown, Home, ShoppingBag, Download, Headphones, Users, MapPin, User } from "lucide-react"
+import { Menu, Search, ChevronDown, Home, ShoppingBag, Download, Headphones, Users, User } from "lucide-react"
 
 export function MobileMenu() {
   const [mounted, setMounted] = useState(false)
@@ -109,10 +109,7 @@ export function MobileMenu() {
               <Users className="h-4 w-4 text-muted-foreground" />
               {t.aboutUs}
             </Link>
-            <Link href="/donde-estamos" onClick={close} className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors">
-              <MapPin className="h-4 w-4 text-muted-foreground" />
-              {t.locations}
-            </Link>
+
           </nav>
 
           <div className="h-px bg-border mx-3" />

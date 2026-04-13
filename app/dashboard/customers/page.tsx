@@ -18,11 +18,9 @@ import { Users, UserPlus, Shield, TrendingUp, Globe, Mail } from "lucide-react"
 const fmt = (n: number | string) =>
   Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-function formatCpf(cpf: string | null) {
-  if (!cpf) return "—"
-  const d = cpf.replace(/\D/g, "")
-  if (d.length !== 11) return cpf
-  return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`
+function formatDocument(docType: string | null, docNumber: string | null) {
+  if (!docNumber) return "—"
+  return docType ? `${docType}: ${docNumber}` : docNumber
 }
 
 const ROLE_BADGE: Record<string, string> = {
@@ -107,7 +105,7 @@ export default async function CustomersPage({
             id="search"
             name="search"
             defaultValue={filters.search}
-            placeholder="Nombre, email, CPF..."
+            placeholder="Nombre, email, documento..."
             className="h-9"
           />
         </div>
@@ -158,7 +156,7 @@ export default async function CustomersPage({
           <TableHeader>
             <TableRow>
               <TableHead>Cliente</TableHead>
-              <TableHead className="hidden sm:table-cell">CPF</TableHead>
+              <TableHead className="hidden sm:table-cell">Documento</TableHead>
               <TableHead className="hidden md:table-cell">Teléfono</TableHead>
               <TableHead className="w-20 text-center">Pedidos</TableHead>
               <TableHead className="w-28 text-right">Total gastado</TableHead>
@@ -196,7 +194,7 @@ export default async function CustomersPage({
                     </div>
                   </TableCell>
                   <TableCell className="hidden text-xs text-muted-foreground sm:table-cell">
-                    {formatCpf(c.cpf)}
+                    {formatDocument(c.documentType, c.documentNumber)}
                   </TableCell>
                   <TableCell className="hidden text-xs text-muted-foreground md:table-cell">
                     {c.phone || "—"}

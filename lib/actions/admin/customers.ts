@@ -78,7 +78,7 @@ export async function searchCustomers({
       or(
         ilike(users.name, `%${term}%`),
         ilike(users.email, `%${term}%`),
-        ilike(users.cpf, `%${term}%`),
+        ilike(users.documentNumber, `%${term}%`),
         ilike(users.phone, `%${term}%`),
       )!,
     )
@@ -103,7 +103,9 @@ export async function searchCustomers({
         id: users.id,
         name: users.name,
         email: users.email,
-        cpf: users.cpf,
+        documentType: users.documentType,
+        documentNumber: users.documentNumber,
+        nationality: users.nationality,
         phone: users.phone,
         role: users.role,
         image: users.image,
@@ -182,7 +184,9 @@ export async function getCustomerDetail(customerId: string) {
       name: true,
       email: true,
       phone: true,
-      cpf: true,
+      documentType: true,
+      documentNumber: true,
+      nationality: true,
       role: true,
       image: true,
       createdAt: true,
@@ -281,7 +285,7 @@ export async function updateCustomerRole(customerId: string, role: "user" | "adm
 
 export async function updateCustomerInfo(
   customerId: string,
-  data: { name: string; phone: string; cpf: string },
+  data: { name: string; phone: string; documentType: string; documentNumber: string; nationality: string },
 ) {
   await requireAdmin()
   if (!UUID_RE.test(customerId)) return { error: "ID inválido" }
@@ -292,8 +296,10 @@ export async function updateCustomerInfo(
   const phone = data.phone.replace(/\D/g, "")
   if (phone && (phone.length < 10 || phone.length > 11)) return { error: "Teléfono inválido" }
 
-  const cpf = data.cpf.replace(/\D/g, "")
-  if (cpf && cpf.length !== 11) return { error: "CPF debe tener 11 dígitos" }
+  const docType = data.documentType as "CI" | "CPF" | "RG" | "OTRO" | ""
+  const docNumber = data.documentNumber.trim().slice(0, 30)
+  const nationality = data.nationality.trim().slice(0, 100)
+  if (docType && !["CI", "CPF", "RG", "OTRO"].includes(docType)) return { error: "Tipo de documento inválido" }
 
   const user = await db.query.users.findFirst({
     where: eq(users.id, customerId),
@@ -303,7 +309,13 @@ export async function updateCustomerInfo(
 
   await db
     .update(users)
-    .set({ name, phone: phone || null, cpf: cpf || null })
+    .set({
+      name,
+      phone: phone || null,
+      documentType: docType || null,
+      documentNumber: docNumber || null,
+      nationality: nationality || null,
+    })
     .where(eq(users.id, customerId))
 
   revalidatePath(`/dashboard/customers/${customerId}`)
