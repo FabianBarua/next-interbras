@@ -10,6 +10,6 @@ const client = postgres(connectionString, {
   idle_timeout: 20,
   max_lifetime: 1800,
   max: 20,
-  ...(isProduction && { ssl: { rejectUnauthorized: true } }),
+  ssl: isProduction ? "prefer" : false,
 })
 export const db = drizzle(client, { schema })
