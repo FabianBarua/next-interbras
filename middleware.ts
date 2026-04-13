@@ -21,6 +21,11 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth
   const role = req.auth?.user?.role
 
+  // ── Prevent rewrite loop: if this is a rewritten subrequest, skip
+  if (req.headers.get("x-locale-resolved")) {
+    return NextResponse.next()
+  }
+
   // ── Skip non-page paths (including static files by extension)
   if (SKIP_PREFIX.test(pathname) || /\.\w{2,5}$/.test(pathname)) {
     return NextResponse.next()
@@ -91,7 +96,13 @@ export default auth((req) => {
   }
 
   // ── Rewrite: /es/productos → internal /productos, /pt/produtos → internal /productos
-  const response = NextResponse.rewrite(new URL(restPath + search, req.url))
+  const rewriteUrl = req.nextUrl.clone()
+  rewriteUrl.pathname = restPath
+  const response = NextResponse.rewrite(rewriteUrl, {
+    request: {
+      headers: new Headers([...req.headers.entries(), ["x-locale-resolved", "1"]]),
+    },
+  })
   return setCookie(response)
 })
 
