@@ -143,6 +143,8 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
       description: c.description ?? null,
       shortDescription: c.shortDescription ?? null,
       image: c.image ?? null,
+      svgIcon: c.svgIcon ?? null,
+      svgIconMeta: c.svgIconMeta as Category["svgIconMeta"],
       sortOrder: c.sortOrder,
       active: c.active,
       createdAt: c.createdAt.toISOString(),

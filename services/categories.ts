@@ -12,6 +12,8 @@ function mapCategory(row: typeof categories.$inferSelect): Category {
     description: row.description ?? null,
     shortDescription: row.shortDescription ?? null,
     image: row.image ?? null,
+    svgIcon: row.svgIcon ?? null,
+    svgIconMeta: row.svgIconMeta as Category["svgIconMeta"],
     sortOrder: row.sortOrder,
     active: row.active,
     createdAt: row.createdAt.toISOString(),

@@ -11,6 +11,7 @@ import {
   bulkDeleteVariantsAction,
   bulkToggleVariantsAction,
 } from "@/lib/actions/admin/variants"
+import { Pencil, Trash2 } from "lucide-react"
 
 export function VariantsTable({
   productId,
@@ -136,8 +137,12 @@ export function VariantsTable({
                 </td>
                 <td className="px-3 py-2 text-right">
                   <div className="flex items-center justify-end gap-1">
-                    <Link href={`/dashboard/products/${productId}/variants/${v.id}`} className="text-xs text-primary hover:underline">Editar</Link>
-                    <button onClick={() => handleDelete(v.id)} disabled={isPending} className="text-xs text-destructive hover:underline">Eliminar</button>
+                    <Link href={`/dashboard/products/${productId}/variants/${v.id}`} title="Editar" className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                      <Pencil className="size-3.5" />
+                    </Link>
+                    <button onClick={() => handleDelete(v.id)} disabled={isPending} title="Eliminar" className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                      <Trash2 className="size-3.5" />
+                    </button>
                   </div>
                 </td>
               </tr>

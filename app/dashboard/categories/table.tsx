@@ -1,223 +1,377 @@
 "use client"
 
-import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useTransition, useCallback, useRef, useEffect } from "react"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
+import Link from "next/link"
 import Image from "next/image"
 import type { Category } from "@/types/category"
 import {
-  createCategoryAction,
   updateCategoryAction,
   deleteCategoryAction,
   bulkDeleteCategoriesAction,
   bulkToggleCategoriesAction,
 } from "@/lib/actions/admin/categories"
-import { Modal } from "@/components/dashboard/modal"
-import { I18nInput } from "@/components/dashboard/i18n-input"
-import { ImageUpload } from "@/components/dashboard/image-upload"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
+import { CategoryIcon } from "@/components/dashboard/icon-picker"
+import {
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
+  Search,
+  Loader2,
+  Trash2,
+  ToggleLeft,
+  ToggleRight,
+  Pencil,
+} from "lucide-react"
 
-export function CategoriesTable({ items }: { items: Category[] }) {
+interface Props {
+  categories: Category[]
+  total: number
+  page: number
+  totalPages: number
+  sortBy: string
+  sortOrder: string
+}
+
+export function CategoriesTable({
+  categories,
+  total,
+  page,
+  totalPages,
+  sortBy,
+  sortOrder,
+}: Props) {
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const [, startTransition] = useTransition()
+
+  // Search
+  const [searchValue, setSearchValue] = useState(searchParams.get("search") ?? "")
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+
+  useEffect(() => {
+    debounceRef.current = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString())
+      if (searchValue) params.set("search", searchValue)
+      else params.delete("search")
+      params.delete("page")
+      startTransition(() => router.push(`${pathname}?${params.toString()}`))
+    }, 400)
+    return () => clearTimeout(debounceRef.current)
+  }, [searchValue]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Active filter
+  const activeFilter = searchParams.get("active") ?? ""
+  const setActiveFilter = (val: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (val) params.set("active", val)
+    else params.delete("active")
+    params.delete("page")
+    startTransition(() => router.push(`${pathname}?${params.toString()}`))
+  }
+
+  // Selection
   const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [error, setError] = useState<string | null>(null)
-  const [editItem, setEditItem] = useState<Category | null>(null)
-  const [showCreate, setShowCreate] = useState(false)
-  const [bulkAction, setBulkAction] = useState("")
-
-  const toggleSelect = (id: string) => {
-    const next = new Set(selected)
-    next.has(id) ? next.delete(id) : next.add(id)
-    setSelected(next)
-  }
-  const toggleAll = () => {
-    setSelected(selected.size === items.length ? new Set() : new Set(items.map(i => i.id)))
+  const allSelected = categories.length > 0 && categories.every((c) => selected.has(c.id))
+  const toggleAll = () =>
+    setSelected(allSelected ? new Set() : new Set(categories.map((c) => c.id)))
+  const toggle = (id: string) => {
+    setSelected((prev) => {
+      const s = new Set(prev)
+      if (s.has(id)) s.delete(id)
+      else s.add(id)
+      return s
+    })
   }
 
-  const handleBulk = () => {
-    if (!bulkAction || selected.size === 0) return
-    startTransition(async () => {
-      const ids = Array.from(selected)
-      if (bulkAction === "delete") {
-        if (!confirm(`¿Eliminar ${ids.length} categoría(s)?`)) return
-        const res = await bulkDeleteCategoriesAction(ids)
-        if ("error" in res) setError(res.error!)
-      } else if (bulkAction === "activate") {
-        await bulkToggleCategoriesAction(ids, true)
-      } else if (bulkAction === "deactivate") {
-        await bulkToggleCategoriesAction(ids, false)
+  // Sorting
+  const handleSort = useCallback(
+    (col: string) => {
+      const params = new URLSearchParams(searchParams.toString())
+      if (sortBy === col) {
+        params.set("sortOrder", sortOrder === "asc" ? "desc" : "asc")
+      } else {
+        params.set("sortBy", col)
+        params.set("sortOrder", "asc")
       }
-      setSelected(new Set())
-      setBulkAction("")
-      router.refresh()
-    })
+      params.delete("page")
+      startTransition(() => router.push(`${pathname}?${params.toString()}`))
+    },
+    [router, pathname, searchParams, sortBy, sortOrder, startTransition],
+  )
+
+  const SortIcon = ({ col }: { col: string }) => {
+    if (sortBy !== col) return <ArrowUpDown className="size-3" />
+    return sortOrder === "asc" ? <ArrowUp className="size-3" /> : <ArrowDown className="size-3" />
   }
 
-  const handleDelete = (id: string) => {
-    if (!confirm("¿Eliminar esta categoría?")) return
-    startTransition(async () => {
-      const res = await deleteCategoryAction(id)
-      if ("error" in res) setError(res.error!)
-      router.refresh()
-    })
+  // Pagination
+  const goPage = (p: number) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (p > 1) params.set("page", String(p))
+    else params.delete("page")
+    startTransition(() => router.push(`${pathname}?${params.toString()}`))
   }
 
-  const handleToggle = (item: Category) => {
-    startTransition(async () => {
-      await updateCategoryAction(item.id, { active: !item.active })
-      router.refresh()
-    })
+  // Bulk actions
+  const [bulkDialog, setBulkDialog] = useState<"delete" | "activate" | "deactivate" | null>(null)
+  const [busy, setBusy] = useState(false)
+
+  const handleBulk = async () => {
+    if (selected.size === 0) return
+    setBusy(true)
+    const ids = [...selected]
+    if (bulkDialog === "delete") {
+      await bulkDeleteCategoriesAction(ids)
+    } else if (bulkDialog === "activate") {
+      await bulkToggleCategoriesAction(ids, true)
+    } else if (bulkDialog === "deactivate") {
+      await bulkToggleCategoriesAction(ids, false)
+    }
+    setBusy(false)
+    setBulkDialog(null)
+    setSelected(new Set())
+    router.refresh()
   }
 
   return (
-    <div className="space-y-4">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-3">
-        <button onClick={() => setShowCreate(true)} className="h-9 px-4 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90">
-          + Nueva categoría
-        </button>
-        {selected.size > 0 && (
-          <div className="flex items-center gap-2 ml-auto">
-            <span className="text-sm text-muted-foreground">{selected.size} seleccionada(s)</span>
-            <select value={bulkAction} onChange={e => setBulkAction(e.target.value)} className="h-9 rounded-lg border px-2 text-sm">
-              <option value="">Acción masiva...</option>
-              <option value="activate">Activar</option>
-              <option value="deactivate">Desactivar</option>
-              <option value="delete">Eliminar</option>
-            </select>
-            <button onClick={handleBulk} disabled={!bulkAction || isPending} className="h-9 px-3 bg-primary text-primary-foreground text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50">
-              Aplicar
+    <>
+      {/* Filters row */}
+      <div className="mb-3 flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 min-w-[200px] max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <input
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            placeholder="Buscar por nombre, slug..."
+            className="h-9 w-full rounded-lg border border-input bg-background pl-9 pr-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
+          />
+        </div>
+        <div className="flex gap-1">
+          {[
+            { label: "Todas", value: "" },
+            { label: "Activas", value: "true" },
+            { label: "Inactivas", value: "false" },
+          ].map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setActiveFilter(opt.value)}
+              className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                activeFilter === opt.value
+                  ? "border-primary bg-primary/10 text-primary"
+                  : "border-border hover:border-foreground/30"
+              }`}
+            >
+              {opt.label}
             </button>
-          </div>
-        )}
+          ))}
+        </div>
       </div>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      {/* Bulk action bar */}
+      {selected.size > 0 && (
+        <div className="mb-3 flex items-center gap-3 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2">
+          <span className="text-sm font-medium">{selected.size} seleccionada(s)</span>
+          <Button size="sm" variant="outline" onClick={() => setBulkDialog("activate")}>
+            <ToggleRight className="mr-1.5 size-3.5" /> Activar
+          </Button>
+          <Button size="sm" variant="outline" onClick={() => setBulkDialog("deactivate")}>
+            <ToggleLeft className="mr-1.5 size-3.5" /> Desactivar
+          </Button>
+          <Button size="sm" variant="destructive" onClick={() => setBulkDialog("delete")}>
+            <Trash2 className="mr-1.5 size-3.5" /> Eliminar
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())} className="ml-auto">
+            Deseleccionar
+          </Button>
+        </div>
+      )}
 
       {/* Table */}
       <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              <th className="w-10 px-3 py-3"><input type="checkbox" checked={selected.size === items.length && items.length > 0} onChange={toggleAll} /></th>
-              <th className="w-16 px-3 py-3 text-left font-medium">Img</th>
-              <th className="px-3 py-3 text-left font-medium">Slug</th>
-              <th className="px-3 py-3 text-left font-medium">Nombre (ES)</th>
-              <th className="px-3 py-3 text-left font-medium">Nombre (PT)</th>
-              <th className="px-3 py-3 text-center font-medium">Orden</th>
-              <th className="px-3 py-3 text-center font-medium">Activo</th>
-              <th className="px-3 py-3 text-right font-medium">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map(item => (
-              <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30">
-                <td className="px-3 py-2 text-center"><input type="checkbox" checked={selected.has(item.id)} onChange={() => toggleSelect(item.id)} /></td>
-                <td className="px-3 py-2">
-                  {item.image ? (
-                    <div className="relative w-10 h-10 rounded border bg-muted/30 overflow-hidden">
-                      <Image src={item.image} alt="" fill className="object-contain p-0.5" />
-                    </div>
-                  ) : <div className="w-10 h-10 rounded border bg-muted/30" />}
-                </td>
-                <td className="px-3 py-2 font-mono text-xs">{item.slug}</td>
-                <td className="px-3 py-2">{item.name.es ?? "—"}</td>
-                <td className="px-3 py-2">{item.name.pt ?? "—"}</td>
-                <td className="px-3 py-2 text-center">{item.sortOrder}</td>
-                <td className="px-3 py-2 text-center">
-                  <button onClick={() => handleToggle(item)} disabled={isPending}
-                    className={`inline-flex h-6 w-10 items-center rounded-full transition-colors ${item.active ? "bg-green-500" : "bg-muted"}`}>
-                    <span className={`inline-block h-4 w-4 rounded-full bg-white transition-transform ${item.active ? "translate-x-5" : "translate-x-1"}`} />
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-muted/50">
+                <th className="w-10 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleAll}
+                    className="size-3.5 rounded border-input"
+                  />
+                </th>
+                <th className="w-14 px-2 py-3" />
+                <th className="text-left px-4 py-3 font-medium">
+                  <button
+                    onClick={() => handleSort("name")}
+                    className="inline-flex items-center gap-1 hover:text-foreground"
+                  >
+                    Nombre <SortIcon col="name" />
                   </button>
-                </td>
-                <td className="px-3 py-2 text-right space-x-2">
-                  <button onClick={() => setEditItem(item)} className="text-xs text-primary hover:underline">Editar</button>
-                  <button onClick={() => handleDelete(item.id)} disabled={isPending} className="text-xs text-destructive hover:underline">Eliminar</button>
-                </td>
+                </th>
+                <th className="text-left px-4 py-3 font-medium">
+                  <button
+                    onClick={() => handleSort("slug")}
+                    className="inline-flex items-center gap-1 hover:text-foreground"
+                  >
+                    Slug <SortIcon col="slug" />
+                  </button>
+                </th>
+                <th className="text-center px-4 py-3 font-medium">
+                  <button
+                    onClick={() => handleSort("sortOrder")}
+                    className="inline-flex items-center gap-1 hover:text-foreground"
+                  >
+                    Orden <SortIcon col="sortOrder" />
+                  </button>
+                </th>
+                <th className="text-center px-4 py-3 font-medium">
+                  <button
+                    onClick={() => handleSort("active")}
+                    className="inline-flex items-center gap-1 hover:text-foreground"
+                  >
+                    Estado <SortIcon col="active" />
+                  </button>
+                </th>
+                <th className="w-10" />
               </tr>
-            ))}
-            {items.length === 0 && (
-              <tr><td colSpan={8} className="px-4 py-12 text-center text-muted-foreground">No hay categorías.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Create modal */}
-      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="Nueva Categoría">
-        <CategoryForm onSave={() => { setShowCreate(false); router.refresh() }} setError={setError} />
-      </Modal>
-
-      {/* Edit modal */}
-      <Modal open={!!editItem} onClose={() => setEditItem(null)} title="Editar Categoría">
-        {editItem && <CategoryForm item={editItem} onSave={() => { setEditItem(null); router.refresh() }} setError={setError} />}
-      </Modal>
-    </div>
-  )
-}
-
-function CategoryForm({ item, onSave, setError }: { item?: Category; onSave: () => void; setError: (e: string | null) => void }) {
-  const [isPending, startTransition] = useTransition()
-  const [slug, setSlug] = useState(item?.slug ?? "")
-  const [nameEs, setNameEs] = useState(item?.name.es ?? "")
-  const [namePt, setNamePt] = useState(item?.name.pt ?? "")
-  const [descEs, setDescEs] = useState(item?.description?.es ?? "")
-  const [descPt, setDescPt] = useState(item?.description?.pt ?? "")
-  const [shortEs, setShortEs] = useState(item?.shortDescription?.es ?? "")
-  const [shortPt, setShortPt] = useState(item?.shortDescription?.pt ?? "")
-  const [images, setImages] = useState<string[]>(item?.image ? [item.image] : [])
-  const [sortOrder, setSortOrder] = useState(item?.sortOrder ?? 0)
-  const [active, setActive] = useState(item?.active ?? true)
-
-  const handleSubmit = () => {
-    setError(null)
-    startTransition(async () => {
-      const data = {
-        slug,
-        name: { es: nameEs, pt: namePt },
-        description: descEs || descPt ? { es: descEs, pt: descPt } : undefined,
-        shortDescription: shortEs || shortPt ? { es: shortEs, pt: shortPt } : undefined,
-        image: images[0] || undefined,
-        sortOrder,
-        active,
-      }
-      const res = item
-        ? await updateCategoryAction(item.id, data)
-        : await createCategoryAction(data)
-      if ("error" in res) setError(res.error!)
-      else onSave()
-    })
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="space-y-1.5">
-        <label className="text-xs font-medium text-muted-foreground">Slug</label>
-        <input value={slug} onChange={e => setSlug(e.target.value)} placeholder="mi-categoria" disabled={!!item}
-          className="w-full h-9 rounded-lg border px-3 text-sm font-mono disabled:opacity-50" />
-      </div>
-      <I18nInput label="Nombre" valueEs={nameEs} valuePt={namePt} onChangeEs={setNameEs} onChangePt={setNamePt} placeholder="Nombre" />
-      <I18nInput label="Descripción corta" valueEs={shortEs} valuePt={shortPt} onChangeEs={setShortEs} onChangePt={setShortPt} placeholder="Descripción corta" />
-      <I18nInput label="Descripción" valueEs={descEs} valuePt={descPt} onChangeEs={setDescEs} onChangePt={setDescPt} textarea placeholder="Descripción" />
-      <ImageUpload value={images} onChange={setImages} max={1} label="Imagen" />
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Orden</label>
-          <input type="number" value={sortOrder} onChange={e => setSortOrder(Number(e.target.value))} className="w-full h-9 rounded-lg border px-3 text-sm" />
-        </div>
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Activo</label>
-          <label className="flex items-center gap-2 h-9">
-            <input type="checkbox" checked={active} onChange={e => setActive(e.target.checked)} className="rounded" />
-            <span className="text-sm">{active ? "Sí" : "No"}</span>
-          </label>
+            </thead>
+            <tbody>
+              {categories.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
+                    No se encontraron categorías.
+                  </td>
+                </tr>
+              )}
+              {categories.map((cat) => (
+                <tr
+                  key={cat.id}
+                  className={`border-b last:border-0 transition-colors ${
+                    selected.has(cat.id) ? "bg-primary/5" : "hover:bg-muted/30"
+                  }`}
+                >
+                  <td className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(cat.id)}
+                      onChange={() => toggle(cat.id)}
+                      className="size-3.5 rounded border-input"
+                    />
+                  </td>
+                  <td className="px-2 py-3">
+                    {cat.svgIconMeta ? (
+                      <CategoryIcon meta={cat.svgIconMeta} size={24} className="text-muted-foreground" />
+                    ) : cat.image ? (
+                      <Image
+                        src={cat.image}
+                        alt=""
+                        width={32}
+                        height={32}
+                        className="rounded object-cover"
+                      />
+                    ) : (
+                      <div className="size-8 rounded bg-muted" />
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <Link href={`/dashboard/categories/${cat.id}`} className="hover:underline">
+                      <p className="font-medium">{cat.name.es || cat.name.pt || "—"}</p>
+                      {cat.name.pt && cat.name.es && (
+                        <p className="text-xs text-muted-foreground">{cat.name.pt}</p>
+                      )}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground">{cat.slug}</td>
+                  <td className="px-4 py-3 text-center tabular-nums">{cat.sortOrder}</td>
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      onClick={() => startTransition(async () => { await updateCategoryAction(cat.id, { active: !cat.active }); router.refresh() })}
+                      title={cat.active ? "Desactivar" : "Activar"}
+                    >
+                      <Badge variant={cat.active ? "default" : "secondary"} className="cursor-pointer hover:opacity-80 transition-opacity">
+                        {cat.active ? "Activa" : "Inactiva"}
+                      </Badge>
+                    </button>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <Link
+                      href={`/dashboard/categories/${cat.id}`}
+                      className="text-xs text-muted-foreground hover:text-foreground"
+                    >
+                      Ver →
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-      <div className="flex justify-end gap-3 pt-2">
-        <button onClick={handleSubmit} disabled={isPending}
-          className="h-9 px-6 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 disabled:opacity-50">
-          {isPending ? "Guardando..." : item ? "Guardar cambios" : "Crear categoría"}
-        </button>
-      </div>
-    </div>
+
+      {/* Summary + pagination */}
+      {total > 0 && (
+        <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+          <span>
+            {total} categoría{total !== 1 ? "s" : ""} — página {page} de {totalPages}
+          </span>
+          {totalPages > 1 && (
+            <div className="flex gap-1">
+              <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => goPage(page - 1)}>
+                Anterior
+              </Button>
+              <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => goPage(page + 1)}>
+                Siguiente
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Bulk action dialog */}
+      <Dialog open={!!bulkDialog} onOpenChange={(v) => !v && setBulkDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {bulkDialog === "delete"
+                ? `Eliminar ${selected.size} categoría(s)`
+                : bulkDialog === "activate"
+                ? `Activar ${selected.size} categoría(s)`
+                : `Desactivar ${selected.size} categoría(s)`}
+            </DialogTitle>
+            <DialogDescription>
+              {bulkDialog === "delete"
+                ? "Esta acción no se puede deshacer. Las categorías con productos asociados no se eliminarán."
+                : "Se cambiará el estado de las categorías seleccionadas."}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBulkDialog(null)} disabled={busy}>
+              Cancelar
+            </Button>
+            <Button
+              variant={bulkDialog === "delete" ? "destructive" : "default"}
+              onClick={handleBulk}
+              disabled={busy}
+            >
+              {busy && <Loader2 className="mr-2 size-3.5 animate-spin" />}
+              Confirmar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }

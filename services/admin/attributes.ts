@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { attributes, attributeValues } from "@/lib/db/schema"
-import { eq, asc, inArray } from "drizzle-orm"
+import { eq, asc, inArray, ilike, or, sql, count } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
 import type { I18nText } from "@/types/common"
 
@@ -186,4 +186,68 @@ export async function bulkCreateAttributeValues(inputs: CreateAttributeValueInpu
     ids.push(id)
   }
   return ids
+}
+
+export async function searchAttributes({
+  page = 1,
+  limit = 50,
+  search,
+  sortBy = "sortOrder",
+  sortOrder = "asc",
+}: {
+  page?: number
+  limit?: number
+  search?: string
+  sortBy?: string
+  sortOrder?: string
+}): Promise<{ items: AdminAttribute[]; total: number; page: number; totalPages: number }> {
+  const conditions: ReturnType<typeof eq>[] = []
+  if (search) {
+    const term = `%${search}%`
+    conditions.push(
+      or(
+        ilike(attributes.slug, term),
+        sql`${attributes.name}->>'es' ILIKE ${term}`,
+        sql`${attributes.name}->>'pt' ILIKE ${term}`,
+      )!,
+    )
+  }
+
+  const where = conditions.length > 0
+    ? sql`${sql.join(conditions, sql` AND `)}`
+    : undefined
+
+  const orderCol = sortBy === "name" ? sql`${attributes.name}->>'es'`
+    : sortBy === "slug" ? attributes.slug
+    : attributes.sortOrder
+  const dir = sortOrder === "desc" ? sql`DESC` : sql`ASC`
+
+  const [rows, [{ total: totalCount }]] = await Promise.all([
+    db.select().from(attributes).where(where).orderBy(sql`${orderCol} ${dir}`).limit(limit).offset((page - 1) * limit),
+    db.select({ total: count() }).from(attributes).where(where),
+  ])
+
+  if (rows.length === 0) return { items: [], total: totalCount, page, totalPages: Math.ceil(totalCount / limit) }
+
+  const attrIds = rows.map(r => r.id)
+  const valRows = await db.select().from(attributeValues).where(inArray(attributeValues.attributeId, attrIds))
+  const countMap = new Map<string, number>()
+  for (const v of valRows) countMap.set(v.attributeId, (countMap.get(v.attributeId) ?? 0) + 1)
+
+  return {
+    items: rows.map(r => ({
+      id: r.id,
+      slug: r.slug,
+      name: r.name as I18nText,
+      description: (r.description as I18nText) ?? null,
+      sortOrder: r.sortOrder,
+      active: r.active,
+      valueCount: countMap.get(r.id) ?? 0,
+      createdAt: r.createdAt.toISOString(),
+      updatedAt: r.updatedAt.toISOString(),
+    })),
+    total: totalCount,
+    page,
+    totalPages: Math.ceil(totalCount / limit),
+  }
 }

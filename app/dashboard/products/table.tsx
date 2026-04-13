@@ -10,6 +10,7 @@ import {
   deleteProductAction,
   bulkDeleteProductsAction,
 } from "@/lib/actions/admin/products"
+import { Pencil, Trash2, Package } from "lucide-react"
 
 export function ProductsTable({ items, categories }: { items: AdminProduct[]; categories: Category[] }) {
   const router = useRouter()
@@ -119,10 +120,18 @@ export function ProductsTable({ items, categories }: { items: AdminProduct[]; ca
                     {item.variantCount}
                   </Link>
                 </td>
-                <td className="px-3 py-2 text-right space-x-2">
-                  <Link href={`/dashboard/products/${item.id}`} className="text-xs text-primary hover:underline">Editar</Link>
-                  <Link href={`/dashboard/products/${item.id}/variants`} className="text-xs text-primary hover:underline">Variantes</Link>
-                  <button onClick={() => handleDelete(item.id)} disabled={isPending} className="text-xs text-destructive hover:underline">Eliminar</button>
+                <td className="px-3 py-2 text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Link href={`/dashboard/products/${item.id}`} title="Editar" className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                      <Pencil className="size-3.5" />
+                    </Link>
+                    <Link href={`/dashboard/products/${item.id}/variants`} title="Variantes" className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                      <Package className="size-3.5" />
+                    </Link>
+                    <button onClick={() => handleDelete(item.id)} disabled={isPending} title="Eliminar" className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
+                      <Trash2 className="size-3.5" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

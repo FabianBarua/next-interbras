@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { externalCodes, variants, products, categories } from "@/lib/db/schema"
-import { eq, asc, desc, sql, like, or } from "drizzle-orm"
+import { eq, asc, desc, sql, like, or, ilike, count, inArray } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
 import type { I18nText } from "@/types/common"
 
@@ -146,4 +146,111 @@ export async function bulkUpdatePrices(updates: { id: string; priceUsd?: string;
   }
   if (updated > 0) await invalidateCache("products:*", "variants:*")
   return updated
+}
+
+export interface CreateExternalCodeInput {
+  variantId: string
+  system: string
+  code: string
+  externalName?: string | null
+  priceUsd?: string | null
+  priceGs?: string | null
+  priceBrl?: string | null
+}
+
+export async function createExternalCode(input: CreateExternalCodeInput): Promise<string> {
+  const [row] = await db.insert(externalCodes).values({
+    variantId: input.variantId,
+    system: input.system,
+    code: input.code,
+    externalName: input.externalName ?? null,
+    priceUsd: input.priceUsd ?? null,
+    priceGs: input.priceGs ?? null,
+    priceBrl: input.priceBrl ?? null,
+  }).returning({ id: externalCodes.id })
+  await invalidateCache("products:*", "variants:*")
+  return row.id
+}
+
+export async function searchExternalCodes({
+  page = 1,
+  limit = 50,
+  search,
+  system,
+}: {
+  page?: number
+  limit?: number
+  search?: string
+  system?: string
+}): Promise<{ items: AdminExternalCode[]; total: number; page: number; totalPages: number }> {
+  const conditions: ReturnType<typeof eq>[] = []
+
+  if (system) conditions.push(eq(externalCodes.system, system))
+  if (search) {
+    const term = `%${search}%`
+    conditions.push(
+      or(
+        ilike(externalCodes.code, term),
+        ilike(variants.sku, term),
+        sql`${products.name}->>'es' ILIKE ${term}`,
+        ilike(externalCodes.externalName, term),
+      )!,
+    )
+  }
+
+  const where = conditions.length > 0
+    ? sql`${sql.join(conditions, sql` AND `)}`
+    : undefined
+
+  const baseQuery = db.select({
+    ec: externalCodes,
+    variantSku: variants.sku,
+    productId: products.id,
+    productName: products.name,
+    productSlug: products.slug,
+    categoryName: categories.name,
+  })
+    .from(externalCodes)
+    .innerJoin(variants, eq(externalCodes.variantId, variants.id))
+    .innerJoin(products, eq(variants.productId, products.id))
+    .leftJoin(categories, eq(products.categoryId, categories.id))
+
+  const countQuery = db.select({ total: count() })
+    .from(externalCodes)
+    .innerJoin(variants, eq(externalCodes.variantId, variants.id))
+    .innerJoin(products, eq(variants.productId, products.id))
+    .leftJoin(categories, eq(products.categoryId, categories.id))
+
+  const [rows, [{ total: totalCount }]] = await Promise.all([
+    baseQuery.where(where).orderBy(desc(externalCodes.updatedAt)).limit(limit).offset((page - 1) * limit),
+    countQuery.where(where),
+  ])
+
+  return {
+    items: rows.map(({ ec, variantSku, productId, productName, productSlug, categoryName }) => ({
+      id: ec.id,
+      system: ec.system,
+      code: ec.code,
+      externalName: ec.externalName,
+      priceUsd: ec.priceUsd,
+      priceGs: ec.priceGs,
+      priceBrl: ec.priceBrl,
+      variantId: ec.variantId,
+      variantSku,
+      productId,
+      productName: productName as I18nText,
+      productSlug,
+      categoryName: categoryName as I18nText | null,
+      createdAt: ec.createdAt.toISOString(),
+      updatedAt: ec.updatedAt.toISOString(),
+    })),
+    total: totalCount,
+    page,
+    totalPages: Math.ceil(totalCount / limit),
+  }
+}
+
+export async function getDistinctSystems(): Promise<string[]> {
+  const rows = await db.selectDistinct({ system: externalCodes.system }).from(externalCodes).orderBy(asc(externalCodes.system))
+  return rows.map(r => r.system)
 }

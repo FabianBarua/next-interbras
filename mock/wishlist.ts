@@ -132,6 +132,10 @@ export const wishlistMock: Wishlist = {
             "pt": "A melhor qualidade."
           },
           "image": null,
+
+          "svgIcon": null,
+
+          "svgIconMeta": null,
           "sortOrder": 0,
           "active": true,
           "createdAt": "2026-04-08T18:03:53.151Z",
@@ -370,6 +374,10 @@ export const wishlistMock: Wishlist = {
             "pt": "A melhor qualidade."
           },
           "image": null,
+
+          "svgIcon": null,
+
+          "svgIconMeta": null,
           "sortOrder": 0,
           "active": true,
           "createdAt": "2026-04-08T18:03:53.151Z",
@@ -626,6 +634,10 @@ export const wishlistMock: Wishlist = {
             "pt": "A melhor qualidade."
           },
           "image": null,
+
+          "svgIcon": null,
+
+          "svgIconMeta": null,
           "sortOrder": 0,
           "active": true,
           "createdAt": "2026-04-08T18:03:53.151Z",

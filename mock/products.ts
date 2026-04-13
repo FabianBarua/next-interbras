@@ -128,6 +128,8 @@ export const productsMock: Product[] = [
         "pt": "A melhor qualidade."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 0,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.151Z",
@@ -312,6 +314,8 @@ export const productsMock: Product[] = [
         "pt": "A melhor qualidade."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 0,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.151Z",
@@ -505,6 +509,8 @@ export const productsMock: Product[] = [
         "pt": "A melhor qualidade."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 0,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.151Z",
@@ -694,6 +700,8 @@ export const productsMock: Product[] = [
         "pt": "A melhor qualidade."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 0,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.151Z",
@@ -883,6 +891,8 @@ export const productsMock: Product[] = [
         "pt": "A melhor qualidade."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 0,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.151Z",
@@ -1072,6 +1082,8 @@ export const productsMock: Product[] = [
         "pt": "A melhor qualidade."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 0,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.151Z",
@@ -1261,6 +1273,8 @@ export const productsMock: Product[] = [
         "pt": "A melhor qualidade."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 0,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.151Z",
@@ -1426,6 +1440,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -1589,6 +1605,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -1743,6 +1761,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -1897,6 +1917,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -2171,6 +2193,8 @@ export const productsMock: Product[] = [
         "pt": "Eficientes e elegantes."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 2,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -2446,6 +2470,8 @@ export const productsMock: Product[] = [
         "pt": "Eficientes e elegantes."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 2,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -2721,6 +2747,8 @@ export const productsMock: Product[] = [
         "pt": "Eficientes e elegantes."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 2,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -2988,6 +3016,8 @@ export const productsMock: Product[] = [
         "pt": "Eficientes e elegantes."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 2,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -3153,6 +3183,8 @@ export const productsMock: Product[] = [
         "pt": "Eficientes e elegantes."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 2,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -3410,6 +3442,8 @@ export const productsMock: Product[] = [
         "pt": "Eficientes e elegantes."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 2,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -3589,6 +3623,8 @@ export const productsMock: Product[] = [
         "pt": "Estilo e diversão"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 3,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -3785,6 +3821,8 @@ export const productsMock: Product[] = [
         "pt": "Estilo e diversão"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 3,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -3981,6 +4019,8 @@ export const productsMock: Product[] = [
         "pt": "Estilo e diversão"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 3,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -4177,6 +4217,8 @@ export const productsMock: Product[] = [
         "pt": "Estilo e diversão"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 3,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -4373,6 +4415,8 @@ export const productsMock: Product[] = [
         "pt": "Estilo e diversão"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 3,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -4569,6 +4613,8 @@ export const productsMock: Product[] = [
         "pt": "Estilo e diversão"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 3,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -4765,6 +4811,8 @@ export const productsMock: Product[] = [
         "pt": "Estilo e diversão"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 3,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -4961,6 +5009,8 @@ export const productsMock: Product[] = [
         "pt": "Estilo e diversão"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 3,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -5157,6 +5207,8 @@ export const productsMock: Product[] = [
         "pt": "Estilo e diversão"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 3,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -5329,6 +5381,8 @@ export const productsMock: Product[] = [
         "pt": "Cozinhe mais saudável."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 4,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -5576,6 +5630,8 @@ export const productsMock: Product[] = [
         "pt": "Cozinhe mais saudável."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 4,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -5831,6 +5887,8 @@ export const productsMock: Product[] = [
         "pt": "Cozinhe mais saudável."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 4,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -5986,6 +6044,8 @@ export const productsMock: Product[] = [
         "pt": "Cozinhe mais saudável."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 4,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -6133,6 +6193,8 @@ export const productsMock: Product[] = [
         "pt": "Sanduíches, sem esforço."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 5,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -6280,6 +6342,8 @@ export const productsMock: Product[] = [
         "pt": "Sanduíches, sem esforço."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 5,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -6427,6 +6491,8 @@ export const productsMock: Product[] = [
         "pt": "Sanduíches, sem esforço."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 5,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -6574,6 +6640,8 @@ export const productsMock: Product[] = [
         "pt": "Sanduíches, sem esforço."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 5,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -6721,6 +6789,8 @@ export const productsMock: Product[] = [
         "pt": "Sanduíches, sem esforço."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 5,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -6876,6 +6946,8 @@ export const productsMock: Product[] = [
         "pt": "Inovação compacta."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 6,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.158Z",
@@ -7031,6 +7103,8 @@ export const productsMock: Product[] = [
         "pt": "Inovação compacta."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 6,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.158Z",
@@ -7186,6 +7260,8 @@ export const productsMock: Product[] = [
         "pt": "Inovação compacta."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 6,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.158Z",
@@ -7341,6 +7417,8 @@ export const productsMock: Product[] = [
         "pt": "Seguras e fáceis de usar."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 7,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.159Z",
@@ -7504,6 +7582,8 @@ export const productsMock: Product[] = [
         "pt": "Seguras e fáceis de usar."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 7,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.159Z",
@@ -7667,6 +7747,8 @@ export const productsMock: Product[] = [
         "pt": "Seguras e fáceis de usar."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 7,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.159Z",
@@ -7862,6 +7944,8 @@ export const productsMock: Product[] = [
         "pt": "Qualidade em cada xícara."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 8,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.159Z",
@@ -8009,6 +8093,8 @@ export const productsMock: Product[] = [
         "pt": "Passar roupas perfeitas."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 9,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.160Z",
@@ -8156,6 +8242,8 @@ export const productsMock: Product[] = [
         "pt": "Passar roupas perfeitas."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 9,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.160Z",
@@ -8307,6 +8395,8 @@ export const productsMock: Product[] = [
         "pt": "Passar roupas perfeitas."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 9,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.160Z",
@@ -8458,6 +8548,8 @@ export const productsMock: Product[] = [
         "pt": "Passar roupas perfeitas."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 9,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.160Z",
@@ -8609,6 +8701,8 @@ export const productsMock: Product[] = [
         "pt": "Passar roupas perfeitas."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 9,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.160Z",
@@ -8759,6 +8853,8 @@ export const productsMock: Product[] = [
         "pt": "Potentes e rápidas."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 10,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.161Z",
@@ -8909,6 +9005,8 @@ export const productsMock: Product[] = [
         "pt": "Potentes e rápidas."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 10,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.161Z",
@@ -9095,6 +9193,8 @@ export const productsMock: Product[] = [
         "pt": "Potentes e rápidas."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 10,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.161Z",
@@ -9261,6 +9361,8 @@ export const productsMock: Product[] = [
         "pt": "Potentes e rápidas."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 10,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.161Z",
@@ -9476,6 +9578,8 @@ export const productsMock: Product[] = [
         "pt": "Cuidados pessoais."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 11,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.161Z",
@@ -9623,6 +9727,8 @@ export const productsMock: Product[] = [
         "pt": "Cuidados pessoais."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 11,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.161Z",
@@ -9746,6 +9852,8 @@ export const productsMock: Product[] = [
         "pt": "Cuidados pessoais."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 11,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.161Z",
@@ -9869,6 +9977,8 @@ export const productsMock: Product[] = [
         "pt": "Cuidados pessoais."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 11,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.161Z",
@@ -9992,6 +10102,8 @@ export const productsMock: Product[] = [
         "pt": "Potentes e versáteis."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 12,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.162Z",
@@ -10147,6 +10259,8 @@ export const productsMock: Product[] = [
         "pt": "Potentes e versáteis."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 12,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.162Z",
@@ -10302,6 +10416,8 @@ export const productsMock: Product[] = [
         "pt": "Potentes e versáteis."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 12,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.162Z",
@@ -10460,6 +10576,8 @@ export const productsMock: Product[] = [
         "pt": "Cozinhar mais fácil."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 13,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.162Z",
@@ -10615,6 +10733,8 @@ export const productsMock: Product[] = [
         "pt": "Cozinhar mais fácil."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 13,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.162Z",
@@ -10770,6 +10890,8 @@ export const productsMock: Product[] = [
         "pt": "Água pura."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 14,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -10933,6 +11055,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -11064,6 +11188,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -11195,6 +11321,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -11326,6 +11454,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -11457,6 +11587,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -11588,6 +11720,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -11719,6 +11853,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -11850,6 +11986,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -11981,6 +12119,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -12112,6 +12252,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -12243,6 +12385,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -12374,6 +12518,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -12505,6 +12651,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -12636,6 +12784,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -12767,6 +12917,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -12898,6 +13050,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -13029,6 +13183,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -13160,6 +13316,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -13291,6 +13449,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -13422,6 +13582,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -13553,6 +13715,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -13684,6 +13848,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -13815,6 +13981,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -13946,6 +14114,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -14077,6 +14247,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -14208,6 +14380,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -14339,6 +14513,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -14470,6 +14646,8 @@ export const productsMock: Product[] = [
         "pt": "Triciclos para crianças"
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 15,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.163Z",
@@ -14609,6 +14787,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -14755,6 +14935,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -14901,6 +15083,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -15063,6 +15247,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -15169,6 +15355,8 @@ export const productsMock: Product[] = [
         "pt": "Sanduíches, sem esforço."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 5,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -15326,6 +15514,8 @@ export const productsMock: Product[] = [
         "pt": "Sanduíches, sem esforço."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 5,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.157Z",
@@ -15547,6 +15737,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -15696,6 +15888,8 @@ export const productsMock: Product[] = [
         "pt": "Complementos perfeitos."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 16,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.164Z",
@@ -15834,6 +16028,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -16011,6 +16207,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -16167,6 +16365,8 @@ export const productsMock: Product[] = [
         "pt": "Mobilidade mais ecológica."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 1,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.155Z",
@@ -16435,6 +16635,8 @@ export const productsMock: Product[] = [
         "pt": "Eficientes e elegantes."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 2,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",
@@ -16710,6 +16912,8 @@ export const productsMock: Product[] = [
         "pt": "Eficientes e elegantes."
       },
       "image": null,
+      "svgIcon": null,
+      "svgIconMeta": null,
       "sortOrder": 2,
       "active": true,
       "createdAt": "2026-04-08T18:03:53.156Z",

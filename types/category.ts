@@ -7,6 +7,8 @@ export interface Category {
   description: I18nRichText | null
   shortDescription: I18nText | null
   image: string | null
+  svgIcon: string | null
+  svgIconMeta: { library: string; name: string } | null
   sortOrder: number
   active: boolean
   createdAt: string

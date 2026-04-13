@@ -25,6 +25,8 @@ const createSchema = z.object({
   description: i18nTextSchema.optional(),
   shortDescription: i18nTextSchema.optional(),
   image: z.string().max(500).optional(),
+  svgIcon: z.string().max(50000).nullable().optional(),
+  svgIconMeta: z.object({ library: z.string(), name: z.string() }).nullable().optional(),
   sortOrder: z.number().int().min(0).optional(),
   active: z.boolean().optional(),
 })

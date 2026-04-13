@@ -17,6 +17,8 @@ export const categoriesMock: Category[] = [
       "pt": "A melhor qualidade."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 0,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.151Z",
@@ -38,6 +40,8 @@ export const categoriesMock: Category[] = [
       "pt": "Mobilidade mais ecológica."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 1,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.155Z",
@@ -59,6 +63,8 @@ export const categoriesMock: Category[] = [
       "pt": "Eficientes e elegantes."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 2,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.156Z",
@@ -80,6 +86,8 @@ export const categoriesMock: Category[] = [
       "pt": "Estilo e diversão"
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 3,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.156Z",
@@ -101,6 +109,8 @@ export const categoriesMock: Category[] = [
       "pt": "Cozinhe mais saudável."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 4,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.157Z",
@@ -122,6 +132,8 @@ export const categoriesMock: Category[] = [
       "pt": "Sanduíches, sem esforço."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 5,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.157Z",
@@ -143,6 +155,8 @@ export const categoriesMock: Category[] = [
       "pt": "Inovação compacta."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 6,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.158Z",
@@ -164,6 +178,8 @@ export const categoriesMock: Category[] = [
       "pt": "Seguras e fáceis de usar."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 7,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.159Z",
@@ -185,6 +201,8 @@ export const categoriesMock: Category[] = [
       "pt": "Qualidade em cada xícara."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 8,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.159Z",
@@ -206,6 +224,8 @@ export const categoriesMock: Category[] = [
       "pt": "Passar roupas perfeitas."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 9,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.160Z",
@@ -227,6 +247,8 @@ export const categoriesMock: Category[] = [
       "pt": "Potentes e rápidas."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 10,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.161Z",
@@ -248,6 +270,8 @@ export const categoriesMock: Category[] = [
       "pt": "Cuidados pessoais."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 11,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.161Z",
@@ -269,6 +293,8 @@ export const categoriesMock: Category[] = [
       "pt": "Potentes e versáteis."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 12,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.162Z",
@@ -290,6 +316,8 @@ export const categoriesMock: Category[] = [
       "pt": "Cozinhar mais fácil."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 13,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.162Z",
@@ -311,6 +339,8 @@ export const categoriesMock: Category[] = [
       "pt": "Água pura."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 14,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.163Z",
@@ -332,6 +362,8 @@ export const categoriesMock: Category[] = [
       "pt": "Triciclos para crianças"
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 15,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.163Z",
@@ -353,6 +385,8 @@ export const categoriesMock: Category[] = [
       "pt": "Complementos perfeitos."
     },
     "image": null,
+    "svgIcon": null,
+    "svgIconMeta": null,
     "sortOrder": 16,
     "active": true,
     "createdAt": "2026-04-08T18:03:53.164Z",

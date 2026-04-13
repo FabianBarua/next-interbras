@@ -17,6 +17,8 @@ export const categories = pgTable("categories", {
   description: jsonb("description").$type<I18nRichText>(),
   shortDescription: jsonb("short_description").$type<I18nText>(),
   image: text("image"),
+  svgIcon: text("svg_icon"),
+  svgIconMeta: jsonb("svg_icon_meta").$type<{ library: string; name: string }>(),
   sortOrder: integer("sort_order").default(0).notNull(),
   active: boolean("active").default(true).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

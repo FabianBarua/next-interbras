@@ -8,6 +8,7 @@ import {
   updateShippingMethodAction,
   deleteShippingMethodAction,
 } from "@/lib/actions/admin/shipping-methods"
+import { Pencil, Trash2 } from "lucide-react"
 
 const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
@@ -80,20 +81,24 @@ export function ShippingMethodsTable({ items }: { items: ShippingMethod[] }) {
                     </button>
                   </td>
                   <td className="px-4 py-3 text-center">{item.sortOrder}</td>
-                  <td className="px-4 py-3 text-right space-x-2">
-                    <button
-                      onClick={() => setEditing(item.id)}
-                      className="text-xs text-primary hover:underline"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      disabled={isPending}
-                      className="text-xs text-destructive hover:underline"
-                    >
-                      Eliminar
-                    </button>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex items-center justify-end gap-1">
+                      <button
+                        onClick={() => setEditing(item.id)}
+                        title="Editar"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        <Pencil className="size-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        disabled={isPending}
+                        title="Eliminar"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <Trash2 className="size-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               )
