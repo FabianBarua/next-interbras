@@ -52,8 +52,8 @@ function ProductGridInner({ entries, showCategories = false }: ProductGridWithFi
       {/* Main content */}
       <div className="flex-1 min-w-0">
         {/* Top bar: search + sort */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
-          <div className="flex items-center gap-2 w-full sm:w-auto">
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          <div className="flex md:hidden">
             <ProductFiltersMobile
               facets={facets}
               filters={filters}
@@ -61,18 +61,16 @@ function ProductGridInner({ entries, showCategories = false }: ProductGridWithFi
               onSetPriceRange={setPriceRange}
               showCategories={showCategories}
             />
-            <SearchInput
-              value={filters.q}
-              onChange={setQuery}
-              className="flex-1 sm:w-72"
-            />
           </div>
-          <div className="flex items-center gap-3 ml-auto">
-            <span className="text-sm text-muted-foreground whitespace-nowrap">
-              {filtered.length} {dict.products.results}
-            </span>
-            <SortSelect value={filters.sort} onChange={setSort} />
-          </div>
+          <SearchInput
+            value={filters.q}
+            onChange={setQuery}
+            className="flex-1 min-w-0 sm:max-w-72"
+          />
+          <span className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
+            {filtered.length} {dict.products.results}
+          </span>
+          <SortSelect value={filters.sort} onChange={setSort} />
         </div>
 
         {/* Active filters */}

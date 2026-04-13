@@ -14,7 +14,7 @@ export function ProductCarousel({ products, compact }: { products: Product[]; co
   if (!products || products.length === 0) return null
 
   return (
-    <div className="relative w-full overflow-visible px-0 group">
+    <div className="relative w-full overflow-hidden px-0 group">
       <Carousel
         opts={{
           align: "start",
@@ -29,10 +29,9 @@ export function ProductCarousel({ products, compact }: { products: Product[]; co
             </CarouselItem>
           ))}
         </CarouselContent>
-        {/* We place navigation arrows slightly outside the container for visual aesthetics */}
         <div className="hidden sm:block">
-          <CarouselPrevious className="-left-12 lg:-left-16" />
-          <CarouselNext className="-right-12 lg:-right-16" />
+          <CarouselPrevious className="left-2" />
+          <CarouselNext className="right-2" />
         </div>
       </Carousel>
     </div>

@@ -43,17 +43,9 @@ export function NavCategories() {
 
   return (
     <NavigationMenu>
-      <NavigationMenuList>
+      <NavigationMenuList className="gap-0.5">
         <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link href="/" className="inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-semibold tracking-wide text-muted-foreground transition-all hover:bg-muted hover:text-foreground">
-              {dict.nav.home}
-            </Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuTrigger className="text-sm font-semibold tracking-wide text-muted-foreground">
+          <NavigationMenuTrigger className="text-sm font-medium text-muted-foreground hover:text-foreground h-9 px-3">
             {dict.nav.products}
           </NavigationMenuTrigger>
           <NavigationMenuContent>

@@ -54,7 +54,7 @@ export function ProductGallery({ variant, alt }: { variant?: Variant; alt: strin
   }
 
   return (
-    <div className=" max-w-sm w-full" ref={galleryRef}>
+    <div className=" md:max-w-sm w-full" ref={galleryRef}>
       {/* Main image */}
       <a
         href={sorted[selected].url}
