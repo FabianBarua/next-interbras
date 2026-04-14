@@ -10,7 +10,7 @@ export function ProductCTA() {
   const t = dict.cta
 
   return (
-    <section className="w-full grid grid-cols-1 md:grid-cols-3 my-8 md:my-12 relative z-20 max-w-5xl mx-auto overflow-hidden bg-linear-to-br from-brand-50 to-white dark:from-brand-950/60 dark:to-neutral-950">
+    <section className="w-full grid grid-cols-1 md:grid-cols-3 my-8 md:my-12 relative z-20  mx-auto overflow-hidden bg-linear-to-br from-brand-50 to-white dark:from-brand-950/60 dark:to-neutral-950">
       <GridLineHorizontal className="top-0" offset="120px" />
       <GridLineHorizontal className="bottom-0 top-auto" offset="120px" />
       <GridLineVertical className="left-0" offset="60px" />
