@@ -26,7 +26,7 @@ export default async function ProductDetailPage(
   const name = product.name[locale] || product.name.es
 
   return (
-    <div className="container px-4 py-6 max-w-6xl mx-auto">
+    <div className="container px-4 py-8 max-w-6xl mx-auto">
       <Breadcrumbs items={[
         { label: dict.nav.products, href: "/productos" },
         { label: product.category?.name?.[locale] || product.category?.name?.es || catSlug, href: `/productos/${catSlug}` },

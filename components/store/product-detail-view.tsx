@@ -24,14 +24,14 @@ export function ProductDetailView({
   const selectedVariant = product.variants.find(v => v.id === selectedVariantId) || product.variants[0]
 
   return (
-    <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
+    <div className="flex flex-col md:flex-row gap-8 lg:gap-14 items-start">
       {/* Gallery */}
-      <div className="md:w-1/2 lg:w-[55%]">
+      <div className="w-full md:w-[55%] lg:w-[58%]">
         <ProductGallery variant={selectedVariant} alt={name} />
       </div>
 
       {/* Info */}
-      <div className="md:w-1/2 lg:w-[45%] md:sticky md:top-24 h-fit self-start">
+      <div className="w-full md:w-[45%] lg:w-[42%] md:sticky md:top-24">
         <ProductInfo
           product={product}
           initialVariantId={initialVariantId}

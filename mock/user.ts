@@ -8,6 +8,8 @@ export const userProfileMock: UserProfile = {
   documentType: "CI",
   documentNumber: "1234567",
   nationality: "PY",
+  isOAuth: false,
+  createdAt: "2025-01-15T10:30:00.000Z",
   addresses: [
     {
       id: "addr-1",
