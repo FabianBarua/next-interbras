@@ -34,6 +34,12 @@ export async function getAllShippingMethods(): Promise<ShippingMethod[]> {
   return rows.map(mapRow)
 }
 
+export async function getShippingMethodById(id: string): Promise<ShippingMethod | null> {
+  const rows = await db.select().from(shippingMethods)
+    .where(eq(shippingMethods.id, id)).limit(1)
+  return rows[0] ? mapRow(rows[0]) : null
+}
+
 export async function getShippingMethodBySlug(slug: string): Promise<ShippingMethod | null> {
   const rows = await db.select().from(shippingMethods)
     .where(eq(shippingMethods.slug, slug)).limit(1)

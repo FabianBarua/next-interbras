@@ -18,10 +18,9 @@ import {
   Users,
   Bell,
   Search,
-  UserCheck,
   Activity,
   FileText,
-  Palette,
+  Globe,
   type LucideIcon,
 } from "lucide-react"
 
@@ -59,21 +58,9 @@ const navGroups: NavGroup[] = [
     items: [
       { href: "/dashboard/orders", label: "Pedidos", icon: ShoppingCart },
       { href: "/dashboard/shipping-methods", label: "Métodos de Envío", icon: Truck },
-      { href: "/dashboard/customers", label: "Clientes", icon: Users },
-    ],
-  },
-  {
-    label: "Financiero",
-    items: [
+      { href: "/dashboard/countries", label: "Países", icon: Globe },
       { href: "/dashboard/payments", label: "Pagos", icon: CreditCard },
-      { href: "/dashboard/alerts", label: "Alertas", icon: Bell },
-    ],
-  },
-  {
-    label: "Marketing",
-    items: [
-      { href: "/dashboard/seo", label: "SEO", icon: Search },
-      { href: "/dashboard/affiliates", label: "Afiliados", icon: UserCheck },
+      { href: "/dashboard/customers", label: "Clientes", icon: Users },
     ],
   },
   {
@@ -82,7 +69,8 @@ const navGroups: NavGroup[] = [
       { href: "/dashboard/status", label: "Estado", icon: Activity },
       { href: "/dashboard/logs", label: "Logs", icon: FileText },
       { href: "/dashboard/emails", label: "Emails", icon: Mail },
-      { href: "/dashboard/customization", label: "Personalización", icon: Palette },
+      { href: "/dashboard/alerts", label: "Alertas", icon: Bell },
+      { href: "/dashboard/seo", label: "SEO", icon: Search },
       { href: "/dashboard/settings", label: "Configuraciones", icon: Settings },
     ],
   },

@@ -97,14 +97,34 @@ export async function createPayment(
   }
 
   // Save payment record (stores instance slug in gateway column)
+  const isAutoConfirm = instance.type === "manual-cash" || instance.type === "manual-card"
+
   await db.insert(payments).values({
     orderId,
     gateway: gatewaySlug,
     externalId: result.externalId,
-    status: "pending",
+    status: isAutoConfirm ? "succeeded" : "pending",
     amount: amountCents,
     metadata: result.data,
+    ...(isAutoConfirm ? { paidAt: new Date() } : {}),
   })
+
+  // Auto-confirm for in-store payments (cash & card)
+  if (isAutoConfirm) {
+    await db
+      .update(orders)
+      .set({ status: "CONFIRMED" })
+      .where(eq(orders.id, orderId))
+
+    await logEvent({
+      category: "pedidos",
+      level: "info",
+      action: "payment-auto-confirmed",
+      message: `Pago en local (${instance.type}) auto-confirmado para pedido ${orderId.slice(0, 8)}`,
+      entityId: orderId,
+      userId: session.user.id,
+    })
+  }
 
   return {
     success: true,

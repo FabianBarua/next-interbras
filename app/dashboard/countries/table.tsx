@@ -3,19 +3,17 @@
 import { useTransition } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import type { ShippingMethod } from "@/types/shipping-method"
-import { updateShippingMethodAction } from "@/lib/actions/admin/shipping-methods"
+import type { Country } from "@/types/country"
+import { updateCountryAction } from "@/lib/actions/admin/countries"
 import { Pencil } from "lucide-react"
 
-const fmt = (n: number) => n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-
-export function ShippingMethodsTable({ items }: { items: ShippingMethod[] }) {
+export function CountriesTable({ items }: { items: Country[] }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
-  const handleToggleActive = (item: ShippingMethod) => {
+  const handleToggleActive = (item: Country) => {
     startTransition(async () => {
-      await updateShippingMethodAction(item.id, { active: !item.active })
+      await updateCountryAction(item.id, { active: !item.active })
       router.refresh()
     })
   }
@@ -25,10 +23,11 @@ export function ShippingMethodsTable({ items }: { items: ShippingMethod[] }) {
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b bg-muted/50">
-            <th className="text-left px-4 py-3 font-medium">Slug</th>
+            <th className="text-left px-4 py-3 font-medium">Código</th>
+            <th className="text-center px-4 py-3 font-medium">Bandera</th>
             <th className="text-left px-4 py-3 font-medium">Nombre (ES)</th>
             <th className="text-left px-4 py-3 font-medium">Nombre (PT)</th>
-            <th className="text-right px-4 py-3 font-medium">Precio (USD)</th>
+            <th className="text-left px-4 py-3 font-medium">Moneda</th>
             <th className="text-center px-4 py-3 font-medium">Activo</th>
             <th className="text-center px-4 py-3 font-medium">Orden</th>
             <th className="text-right px-4 py-3 font-medium">Acciones</th>
@@ -37,12 +36,11 @@ export function ShippingMethodsTable({ items }: { items: ShippingMethod[] }) {
         <tbody>
           {items.map((item) => (
             <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30">
-              <td className="px-4 py-3 font-mono text-xs">{item.slug}</td>
+              <td className="px-4 py-3 font-mono text-xs">{item.code}</td>
+              <td className="px-4 py-3 text-center text-lg">{item.flag}</td>
               <td className="px-4 py-3">{item.name.es ?? "—"}</td>
               <td className="px-4 py-3">{item.name.pt ?? "—"}</td>
-              <td className="px-4 py-3 text-right font-mono">
-                {item.price === 0 ? "Gratis" : `$ ${fmt(item.price)}`}
-              </td>
+              <td className="px-4 py-3 font-mono text-xs">{item.currency}</td>
               <td className="px-4 py-3 text-center">
                 <button
                   onClick={() => handleToggleActive(item)}
@@ -59,7 +57,7 @@ export function ShippingMethodsTable({ items }: { items: ShippingMethod[] }) {
               <td className="px-4 py-3 text-center">{item.sortOrder}</td>
               <td className="px-4 py-3 text-right">
                 <Link
-                  href={`/dashboard/shipping-methods/${item.id}`}
+                  href={`/dashboard/countries/${item.id}`}
                   title="Editar"
                   className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                 >
@@ -70,8 +68,8 @@ export function ShippingMethodsTable({ items }: { items: ShippingMethod[] }) {
           ))}
           {items.length === 0 && (
             <tr>
-              <td colSpan={7} className="px-4 py-8 text-center text-muted-foreground">
-                No hay métodos de envío configurados.
+              <td colSpan={8} className="px-4 py-8 text-center text-muted-foreground">
+                No hay países configurados.
               </td>
             </tr>
           )}
