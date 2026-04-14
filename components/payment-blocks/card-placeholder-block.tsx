@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import type { PaymentBlockProps } from "@/lib/payments/types"
 import { simulateCardPayment } from "@/lib/actions/simulate-card-payment"
 
@@ -9,10 +10,10 @@ export function CardPlaceholderBlock({ data, orderId }: PaymentBlockProps) {
   const router = useRouter()
   const message = data.message as string
   const [loading, setLoading] = useState(false)
-  const [paid, setPaid] = useState(false)
+  const [confirmed, setConfirmed] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  async function handlePay() {
+  async function handleConfirm() {
     setLoading(true)
     setError(null)
     const res = await simulateCardPayment(orderId)
@@ -21,11 +22,11 @@ export function CardPlaceholderBlock({ data, orderId }: PaymentBlockProps) {
       setLoading(false)
       return
     }
-    setPaid(true)
+    setConfirmed(true)
     setTimeout(() => router.push(`/checkout/confirmacion?orderId=${orderId}`), 1500)
   }
 
-  if (paid) {
+  if (confirmed) {
     return (
       <div className="flex flex-col items-center gap-3 py-8 text-center">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-100 dark:bg-green-950/40">
@@ -33,7 +34,7 @@ export function CardPlaceholderBlock({ data, orderId }: PaymentBlockProps) {
             <path d="M20 6 9 17l-5-5" />
           </svg>
         </div>
-        <h2 className="text-lg font-bold">¡Pago registrado!</h2>
+        <h2 className="text-lg font-bold">¡Pedido registrado!</h2>
         <p className="text-sm text-muted-foreground">Redirigiendo a la confirmación…</p>
       </div>
     )
@@ -41,64 +42,40 @@ export function CardPlaceholderBlock({ data, orderId }: PaymentBlockProps) {
 
   return (
     <div className="space-y-5">
-      {/* Info banner */}
-      <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/40 dark:bg-blue-950/20">
-        <p className="text-sm text-blue-800 dark:text-blue-200">{message}</p>
-      </div>
-
-      {/* Fake card form */}
-      <div className="rounded-xl border bg-card p-4 space-y-4">
-        <h3 className="text-sm font-semibold flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+      {/* Success header */}
+      <div className="flex flex-col items-center gap-3 py-4 text-center">
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-950/40">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 dark:text-blue-400">
             <rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" />
           </svg>
-          Datos de la tarjeta
-        </h3>
-        <div className="space-y-3">
-          <div>
-            <label className="mb-1 block text-xs font-medium text-muted-foreground">Número de tarjeta</label>
-            <input
-              defaultValue="4111 1111 1111 1111"
-              disabled
-              className="h-10 w-full rounded-md border bg-muted/40 px-3 text-sm font-mono opacity-70 cursor-not-allowed"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">Vencimiento</label>
-              <input
-                defaultValue="12/29"
-                disabled
-                className="h-10 w-full rounded-md border bg-muted/40 px-3 text-sm font-mono opacity-70 cursor-not-allowed"
-              />
-            </div>
-            <div>
-              <label className="mb-1 block text-xs font-medium text-muted-foreground">CVV</label>
-              <input
-                defaultValue="123"
-                disabled
-                className="h-10 w-full rounded-md border bg-muted/40 px-3 text-sm font-mono opacity-70 cursor-not-allowed"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="mb-1 block text-xs font-medium text-muted-foreground">Titular</label>
-            <input
-              defaultValue="NOMBRE APELLIDO"
-              disabled
-              className="h-10 w-full rounded-md border bg-muted/40 px-3 text-sm font-mono opacity-70 cursor-not-allowed"
-            />
-          </div>
         </div>
-        <p className="text-[10px] text-muted-foreground/60 italic">
-          Formulario de demostración — el cobro real se realiza al retirar el pedido.
-        </p>
+        <div>
+          <h2 className="text-lg font-bold">Pago con tarjeta en tienda</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Pedido <span className="font-mono font-semibold text-foreground">#{orderId.slice(0, 8).toUpperCase()}</span>
+          </p>
+        </div>
+      </div>
+
+      {/* Info banner */}
+      <div className="rounded-xl border border-blue-200 bg-blue-50 p-4 dark:border-blue-800/40 dark:bg-blue-950/20">
+        <div className="flex gap-3">
+          <div className="mt-0.5 shrink-0 text-blue-600 dark:text-blue-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
+            </svg>
+          </div>
+          <p className="text-sm text-blue-800 dark:text-blue-200">
+            {message || "El pago con tarjeta se realizará al momento de retirar el pedido en la tienda."}
+          </p>
+        </div>
       </div>
 
       {error && <p className="text-sm text-destructive text-center">{error}</p>}
 
+      {/* Confirm button */}
       <button
-        onClick={handlePay}
+        onClick={handleConfirm}
         disabled={loading}
         className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20 transition-colors hover:bg-primary/90 disabled:opacity-60"
       >

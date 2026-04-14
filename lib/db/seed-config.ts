@@ -73,6 +73,8 @@ async function seedConfig() {
 
   for (const method of allMethods) {
     for (const country of allCountries) {
+      // BR: only pickup (no delivery)
+      if (country.code === "BR" && method.requiresAddress) continue
       await db.insert(shippingMethodCountries).values({
         shippingMethodId: method.id,
         countryId: country.id,

@@ -36,11 +36,7 @@ export default async function EnvioPage() {
   const methodsByCountry: Record<string, Awaited<ReturnType<typeof getShippingMethodsByCountry>>> = {}
   await Promise.all(
     allCountries.map(async (c) => {
-      const methods = await getShippingMethodsByCountry(c.code)
-      // BR: only pickup (no delivery)
-      methodsByCountry[c.code] = c.code === "BR"
-        ? methods.filter((m) => !m.requiresAddress)
-        : methods
+      methodsByCountry[c.code] = await getShippingMethodsByCountry(c.code)
     }),
   )
 
