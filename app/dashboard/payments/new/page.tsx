@@ -1,7 +1,14 @@
 import { getSiteDomains } from "@/lib/actions/admin/settings"
 import { GatewayInstanceForm } from "../[slug]/gateway-instance-form"
 
-const KNOWN_TYPES = ["commpix-pix", "pyxpay-pix", "manual-transfer"]
+const KNOWN_TYPES = [
+  "commpix-pix",
+  "pyxpay-pix",
+  "pyxpay-card",
+  "manual-cash",
+  "manual-transfer",
+  "manual-card",
+]
 
 export default async function NewPaymentPage() {
   const siteDomains = await getSiteDomains()

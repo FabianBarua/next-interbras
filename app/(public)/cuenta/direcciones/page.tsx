@@ -30,7 +30,7 @@ export default async function AddressesPage() {
             <div className="space-y-1 text-sm text-muted-foreground mb-6">
               <p>{addr.street}</p>
               <p>{addr.city}, {addr.state}</p>
-              <p>{addr.country} - {addr.zipCode}</p>
+              <p>{addr.countryCode} - {addr.zipCode}</p>
             </div>
             
             <div className="flex gap-3">

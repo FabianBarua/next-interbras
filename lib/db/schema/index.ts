@@ -7,7 +7,6 @@ export * from "./event-logs"
 
 // i18n
 export * from "./i18n-helpers"
-export * from "./locales"
 
 // product catalog
 export * from "./categories"
@@ -19,11 +18,8 @@ export * from "./attributes"
 // external systems & pricing
 export * from "./external-codes"
 
-// promotions
+// promotions (table only — promotionItems dropped)
 export * from "./promotions"
-
-// catalog presets
-export * from "./catalog-presets"
 
 // orders & commerce
 export * from "./orders"
@@ -33,8 +29,10 @@ export * from "./wishlists"
 export * from "./addresses"
 
 // checkout config
-export * from "./payment-types"
 export * from "./shipping-methods"
+export * from "./countries"
+export * from "./shipping-method-countries"
+export * from "./shipping-payment-rules"
 
 // payments & gateway
 export * from "./payments"
@@ -43,11 +41,5 @@ export * from "./order-payment-details"
 // seo
 export * from "./seo-pages"
 
-// affiliates
-export * from "./affiliates"
-
 // coupons
 export * from "./coupons"
-
-// support
-export * from "./support"

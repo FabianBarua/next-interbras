@@ -29,6 +29,13 @@
       "when": 1776090601238,
       "tag": "0003_sticky_cyclops",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1776111318047,
+      "tag": "0004_add-checkout-tables",
+      "breakpoints": true
     }
   ]
 }

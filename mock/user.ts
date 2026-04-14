@@ -5,6 +5,9 @@ export const userProfileMock: UserProfile = {
   name: "Juan García",
   email: "juan.garcia@example.com",
   phone: "+595 981 234567",
+  documentType: "CI",
+  documentNumber: "1234567",
+  nationality: "PY",
   addresses: [
     {
       id: "addr-1",
@@ -13,7 +16,7 @@ export const userProfileMock: UserProfile = {
       city: "Ciudad del Este",
       state: "Alto Paraná",
       zipCode: "7000",
-      country: "Paraguay",
+      countryCode: "PY",
       isDefault: true,
     },
     {
@@ -23,7 +26,7 @@ export const userProfileMock: UserProfile = {
       city: "Ciudad del Este",
       state: "Alto Paraná",
       zipCode: "7000",
-      country: "Paraguay",
+      countryCode: "PY",
       isDefault: false,
     },
   ],

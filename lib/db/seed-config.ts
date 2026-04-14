@@ -3,38 +3,31 @@ dotenv.config({ path: ".env.local" })
 
 import { drizzle } from "drizzle-orm/postgres-js"
 import postgres from "postgres"
-import { paymentTypes, shippingMethods } from "./schema"
+import { shippingMethods, countries, shippingMethodCountries, shippingPaymentRules } from "./schema"
+import { eq } from "drizzle-orm"
 
 const connectionString = process.env.DATABASE_URL!
 const client = postgres(connectionString)
 const db = drizzle(client)
 
 async function seedConfig() {
-  console.log("Seeding payment types...")
-  await db.insert(paymentTypes).values([
+  console.log("Seeding countries...")
+  await db.insert(countries).values([
     {
-      slug: "cash",
-      name: { es: "Efectivo", pt: "Dinheiro" },
-      description: { es: "Pago contra entrega en efectivo", pt: "Pagamento na entrega em dinheiro" },
-      icon: "cash",
+      code: "PY",
+      name: { es: "Paraguay", pt: "Paraguai" },
+      flag: "🇵🇾",
+      currency: "PYG",
       active: true,
       sortOrder: 0,
     },
     {
-      slug: "card",
-      name: { es: "Tarjeta de crédito/débito", pt: "Cartão de crédito/débito" },
-      description: { es: "Pago con tarjeta al momento de la entrega", pt: "Pagamento com cartão no momento da entrega" },
-      icon: "card",
-      active: false,
+      code: "BR",
+      name: { es: "Brasil", pt: "Brasil" },
+      flag: "🇧🇷",
+      currency: "BRL",
+      active: true,
       sortOrder: 1,
-    },
-    {
-      slug: "transfer",
-      name: { es: "Transferencia bancaria", pt: "Transferência bancária" },
-      description: { es: "Transferencia a cuenta bancaria. Se confirmará tras verificar el comprobante.", pt: "Transferência para conta bancária. Confirmação após verificação do comprovante." },
-      icon: "bank",
-      active: false,
-      sortOrder: 2,
     },
   ]).onConflictDoNothing()
 
@@ -46,6 +39,7 @@ async function seedConfig() {
       description: { es: "Entrega en 3-5 días hábiles", pt: "Entrega em 3-5 dias úteis" },
       price: "8.50",
       active: true,
+      requiresAddress: true,
       sortOrder: 0,
     },
     {
@@ -54,6 +48,7 @@ async function seedConfig() {
       description: { es: "Entrega en 24-48 horas", pt: "Entrega em 24-48 horas" },
       price: "15.00",
       active: true,
+      requiresAddress: true,
       sortOrder: 1,
     },
     {
@@ -62,9 +57,43 @@ async function seedConfig() {
       description: { es: "Retirá tu pedido gratis en nuestro local", pt: "Retire seu pedido grátis em nossa loja" },
       price: "0.00",
       active: true,
+      requiresAddress: false,
+      pickupConfig: {
+        address: "Local Interbras, Asunción",
+        hours: "Lun-Vie 8:00-17:00",
+      },
       sortOrder: 2,
     },
   ]).onConflictDoNothing()
+
+  // Link shipping methods to countries
+  console.log("Linking shipping methods to countries...")
+  const allCountries = await db.select().from(countries)
+  const allMethods = await db.select().from(shippingMethods)
+
+  for (const method of allMethods) {
+    for (const country of allCountries) {
+      await db.insert(shippingMethodCountries).values({
+        shippingMethodId: method.id,
+        countryId: country.id,
+      }).onConflictDoNothing()
+    }
+  }
+
+  // Seed shipping payment rules
+  console.log("Seeding shipping payment rules...")
+  const gatewayTypes = ["manual-cash", "manual-transfer", "manual-card", "pyxpay-pix", "pyxpay-card", "commpix-pix"]
+  const pickupGatewayTypes = ["manual-cash", "manual-card"]
+
+  for (const method of allMethods) {
+    const allowedTypes = method.slug === "pickup" ? pickupGatewayTypes : gatewayTypes
+    for (const gt of allowedTypes) {
+      await db.insert(shippingPaymentRules).values({
+        shippingMethodId: method.id,
+        gatewayType: gt,
+      }).onConflictDoNothing()
+    }
+  }
 
   console.log("Done!")
   await client.end()

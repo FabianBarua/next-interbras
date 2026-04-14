@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { users, sessions, passwordResetTokens, eventLogs, emailTemplates, emailLogs, locales, catalogPresets, promotions, catalogPages, categories, products, variants, externalCodes, orders, orderItems, productImages, addresses, wishlists, promotionItems, attributes, attributeValues, payments, orderPaymentDetails, affiliates, supportActivityLogs, adminAlerts, affiliatesPayouts, affiliatesCommissions, orderNotes, accounts } from "./schema";
+import { users, sessions, passwordResetTokens, eventLogs, emailTemplates, emailLogs, promotions, categories, products, variants, externalCodes, orders, orderItems, productImages, addresses, wishlists, attributes, attributeValues, payments, orderPaymentDetails, adminAlerts, orderNotes, shippingMethods, shippingMethodCountries, countries, shippingPaymentRules, accounts } from "./schema";
 
 export const sessionsRelations = relations(sessions, ({one}) => ({
 	user: one(users, {
@@ -15,9 +15,6 @@ export const usersRelations = relations(users, ({many}) => ({
 	orders: many(orders),
 	addresses: many(addresses),
 	wishlists: many(wishlists),
-	affiliates: many(affiliates),
-	supportActivityLogs: many(supportActivityLogs),
-	affiliatesPayouts: many(affiliatesPayouts),
 	orderNotes: many(orderNotes),
 	accounts: many(accounts),
 }));
@@ -47,32 +44,8 @@ export const emailTemplatesRelations = relations(emailTemplates, ({many}) => ({
 	emailLogs: many(emailLogs),
 }));
 
-export const catalogPresetsRelations = relations(catalogPresets, ({one, many}) => ({
-	locale: one(locales, {
-		fields: [catalogPresets.preferredLocale],
-		references: [locales.code]
-	}),
-	promotion: one(promotions, {
-		fields: [catalogPresets.promotionId],
-		references: [promotions.id]
-	}),
-	catalogPages: many(catalogPages),
-}));
-
-export const localesRelations = relations(locales, ({many}) => ({
-	catalogPresets: many(catalogPresets),
-}));
 
 export const promotionsRelations = relations(promotions, ({many}) => ({
-	catalogPresets: many(catalogPresets),
-	promotionItems: many(promotionItems),
-}));
-
-export const catalogPagesRelations = relations(catalogPages, ({one}) => ({
-	catalogPreset: one(catalogPresets, {
-		fields: [catalogPages.presetId],
-		references: [catalogPresets.id]
-	}),
 }));
 
 export const productsRelations = relations(products, ({one, many}) => ({
@@ -89,12 +62,11 @@ export const categoriesRelations = relations(categories, ({many}) => ({
 	products: many(products),
 }));
 
-export const externalCodesRelations = relations(externalCodes, ({one, many}) => ({
+export const externalCodesRelations = relations(externalCodes, ({one}) => ({
 	variant: one(variants, {
 		fields: [externalCodes.variantId],
 		references: [variants.id]
 	}),
-	promotionItems: many(promotionItems),
 }));
 
 export const variantsRelations = relations(variants, ({one, many}) => ({
@@ -128,7 +100,6 @@ export const ordersRelations = relations(orders, ({one, many}) => ({
 	payments: many(payments),
 	orderPaymentDetails: many(orderPaymentDetails),
 	adminAlerts: many(adminAlerts),
-	affiliatesCommissions: many(affiliatesCommissions),
 	orderNotes: many(orderNotes),
 }));
 
@@ -165,16 +136,6 @@ export const wishlistsRelations = relations(wishlists, ({one}) => ({
 	}),
 }));
 
-export const promotionItemsRelations = relations(promotionItems, ({one}) => ({
-	promotion: one(promotions, {
-		fields: [promotionItems.promotionId],
-		references: [promotions.id]
-	}),
-	externalCode: one(externalCodes, {
-		fields: [promotionItems.externalCodeId],
-		references: [externalCodes.id]
-	}),
-}));
 
 export const attributeValuesRelations = relations(attributeValues, ({one}) => ({
 	attribute: one(attributes, {
@@ -201,20 +162,6 @@ export const orderPaymentDetailsRelations = relations(orderPaymentDetails, ({one
 	}),
 }));
 
-export const affiliatesRelations = relations(affiliates, ({one, many}) => ({
-	user: one(users, {
-		fields: [affiliates.userId],
-		references: [users.id]
-	}),
-	affiliatesCommissions: many(affiliatesCommissions),
-}));
-
-export const supportActivityLogsRelations = relations(supportActivityLogs, ({one}) => ({
-	user: one(users, {
-		fields: [supportActivityLogs.agentId],
-		references: [users.id]
-	}),
-}));
 
 export const adminAlertsRelations = relations(adminAlerts, ({one}) => ({
 	order: one(orders, {
@@ -223,23 +170,6 @@ export const adminAlertsRelations = relations(adminAlerts, ({one}) => ({
 	}),
 }));
 
-export const affiliatesPayoutsRelations = relations(affiliatesPayouts, ({one}) => ({
-	user: one(users, {
-		fields: [affiliatesPayouts.createdBy],
-		references: [users.id]
-	}),
-}));
-
-export const affiliatesCommissionsRelations = relations(affiliatesCommissions, ({one}) => ({
-	affiliate: one(affiliates, {
-		fields: [affiliatesCommissions.affiliateId],
-		references: [affiliates.id]
-	}),
-	order: one(orders, {
-		fields: [affiliatesCommissions.orderId],
-		references: [orders.id]
-	}),
-}));
 
 export const orderNotesRelations = relations(orderNotes, ({one}) => ({
 	order: one(orders, {
@@ -249,6 +179,33 @@ export const orderNotesRelations = relations(orderNotes, ({one}) => ({
 	user: one(users, {
 		fields: [orderNotes.createdBy],
 		references: [users.id]
+	}),
+}));
+
+export const shippingMethodCountriesRelations = relations(shippingMethodCountries, ({one}) => ({
+	shippingMethod: one(shippingMethods, {
+		fields: [shippingMethodCountries.shippingMethodId],
+		references: [shippingMethods.id]
+	}),
+	country: one(countries, {
+		fields: [shippingMethodCountries.countryId],
+		references: [countries.id]
+	}),
+}));
+
+export const shippingMethodsRelations = relations(shippingMethods, ({many}) => ({
+	shippingMethodCountries: many(shippingMethodCountries),
+	shippingPaymentRules: many(shippingPaymentRules),
+}));
+
+export const countriesRelations = relations(countries, ({many}) => ({
+	shippingMethodCountries: many(shippingMethodCountries),
+}));
+
+export const shippingPaymentRulesRelations = relations(shippingPaymentRules, ({one}) => ({
+	shippingMethod: one(shippingMethods, {
+		fields: [shippingPaymentRules.shippingMethodId],
+		references: [shippingMethods.id]
 	}),
 }));
 

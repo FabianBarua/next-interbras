@@ -8,6 +8,8 @@ import { eq, and } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
 import bcrypt from "bcryptjs"
 
+import { rateLimit } from "@/lib/rate-limit"
+
 // ---------------------------------------------------------------------------
 // Update profile (name, phone)
 // ---------------------------------------------------------------------------
@@ -84,13 +86,18 @@ const addressSchema = z.object({
   city: z.string().min(2).max(100),
   state: z.string().min(2).max(100),
   zipCode: z.string().max(20).optional(),
-  country: z.string().min(2).max(50).default("Paraguay"),
+  countryCode: z.string().min(2).max(5).default("PY"),
   isDefault: z.boolean().default(false),
 })
 
 export async function createAddressAction(data: unknown) {
   const user = await requireAuth()
   const userId = user.id
+
+  const rl = await rateLimit(`create-address:${userId}`, 10, 60)
+  if (!rl.success) {
+    return { error: `Demasiados intentos. Intente de nuevo en ${rl.retryAfter}s.` }
+  }
 
   const parsed = addressSchema.safeParse(data)
   if (!parsed.success) {
@@ -108,7 +115,7 @@ export async function createAddressAction(data: unknown) {
     city: parsed.data.city,
     state: parsed.data.state,
     zipCode: parsed.data.zipCode,
-    country: parsed.data.country,
+    countryCode: parsed.data.countryCode,
     isDefault: parsed.data.isDefault,
   }).returning({ id: addresses.id })
 

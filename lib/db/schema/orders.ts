@@ -25,6 +25,7 @@ export const paymentMethodEnum = pgEnum("payment_method", [
   "cash",
   "card",
   "transfer",
+  "pix",
 ])
 
 export const orders = pgTable("orders", {
@@ -47,7 +48,7 @@ export const orders = pgTable("orders", {
     city: string
     state: string
     zipCode?: string
-    country: string
+    countryCode: string
   }>(),
   notes: text("notes"),
   trackingCode: varchar("tracking_code", { length: 100 }),

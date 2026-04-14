@@ -6,14 +6,13 @@ import { rateLimit } from "@/lib/rate-limit"
 import { headers } from "next/headers"
 import { createOrder, type CreateOrderInput } from "@/services/orders"
 import { getShippingMethodBySlug } from "@/services/shipping-methods"
-import { getPaymentTypeBySlug } from "@/services/payment-types"
 
 const addressSchema = z.object({
   street: z.string().min(3).max(300),
   city: z.string().min(2).max(100),
   state: z.string().min(2).max(100),
   zipCode: z.string().max(20).optional(),
-  country: z.string().min(2).max(50),
+  countryCode: z.string().min(2).max(5),
 })
 
 const checkoutItemSchema = z.object({
@@ -51,16 +50,10 @@ export async function createOrderAction(data: unknown) {
 
   const { shippingMethod, paymentMethod, ...rest } = parsed.data
 
-  const [shippingRecord, paymentRecord] = await Promise.all([
-    getShippingMethodBySlug(shippingMethod),
-    getPaymentTypeBySlug(paymentMethod),
-  ])
+  const shippingRecord = await getShippingMethodBySlug(shippingMethod)
 
   if (!shippingRecord || !shippingRecord.active) {
     return { error: "Método de envío no válido." }
-  }
-  if (!paymentRecord || !paymentRecord.active) {
-    return { error: "Método de pago no válido." }
   }
 
   const shippingCost = shippingRecord.price
@@ -71,7 +64,7 @@ export async function createOrderAction(data: unknown) {
       ...rest,
       shippingMethod,
       shippingCost,
-      paymentMethod: paymentMethod as "cash" | "card" | "transfer",
+      paymentMethod: paymentMethod as "cash" | "card" | "transfer" | "pix",
     })
     return { orderId }
   } catch (err) {

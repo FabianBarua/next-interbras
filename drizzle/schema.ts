@@ -6,9 +6,10 @@ export const affiliatePayoutStatus = pgEnum("affiliate_payout_status", ['pending
 export const affiliateStatus = pgEnum("affiliate_status", ['pending', 'approved', 'rejected'])
 export const catalogPageType = pgEnum("catalog_page_type", ['category', 'product', 'banner', 'photo', 'custom'])
 export const couponType = pgEnum("coupon_type", ['percent', 'fixed'])
+export const documentType = pgEnum("document_type", ['CI', 'CPF', 'RG', 'OTRO'])
 export const emailLogStatus = pgEnum("email_log_status", ['sent', 'failed'])
 export const orderStatus = pgEnum("order_status", ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'])
-export const paymentMethod = pgEnum("payment_method", ['cash', 'card', 'transfer'])
+export const paymentMethod = pgEnum("payment_method", ['cash', 'card', 'transfer', 'pix'])
 export const paymentStatus = pgEnum("payment_status", ['pending', 'processing', 'succeeded', 'failed', 'refunded'])
 export const promotionType = pgEnum("promotion_type", ['percentage', 'fixed'])
 export const userRole = pgEnum("user_role", ['user', 'admin', 'support'])
@@ -97,11 +98,13 @@ export const users = pgTable("users", {
 	passwordHash: text("password_hash"),
 	name: varchar({ length: 255 }).notNull(),
 	phone: varchar({ length: 50 }),
-	cpf: varchar({ length: 14 }),
+	documentNumber: varchar("document_number", { length: 30 }),
 	role: userRole().default('user').notNull(),
 	passwordChangedAt: timestamp("password_changed_at", { withTimezone: true, mode: 'string' }),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	nationality: varchar({ length: 100 }),
+	documentType: documentType("document_type"),
 }, (table) => [
 	unique("users_email_unique").on(table.email),
 ]);
@@ -348,7 +351,7 @@ export const addresses = pgTable("addresses", {
 	city: varchar({ length: 100 }).notNull(),
 	state: varchar({ length: 100 }).notNull(),
 	zipCode: varchar("zip_code", { length: 20 }),
-	country: varchar({ length: 50 }).default('Paraguay').notNull(),
+	countryCode: varchar("country_code", { length: 5 }).notNull(),
 	isDefault: boolean("is_default").default(false).notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -386,20 +389,6 @@ export const wishlists = pgTable("wishlists", {
 		}).onDelete("cascade"),
 ]);
 
-export const paymentTypes = pgTable("payment_types", {
-	id: uuid().defaultRandom().primaryKey().notNull(),
-	slug: varchar({ length: 50 }).notNull(),
-	name: jsonb().notNull(),
-	description: jsonb(),
-	icon: varchar({ length: 30 }).default('cash').notNull(),
-	active: boolean().default(true).notNull(),
-	sortOrder: integer("sort_order").default(0).notNull(),
-	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
-}, (table) => [
-	unique("payment_types_slug_unique").on(table.slug),
-]);
-
 export const shippingMethods = pgTable("shipping_methods", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	slug: varchar({ length: 50 }).notNull(),
@@ -410,6 +399,8 @@ export const shippingMethods = pgTable("shipping_methods", {
 	sortOrder: integer("sort_order").default(0).notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	requiresAddress: boolean("requires_address").default(true).notNull(),
+	pickupConfig: jsonb("pickup_config"),
 }, (table) => [
 	unique("shipping_methods_slug_unique").on(table.slug),
 ]);
@@ -488,7 +479,7 @@ export const gatewayConfig = pgTable("gateway_config", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	type: varchar({ length: 50 }).notNull(),
 	slug: varchar({ length: 100 }).notNull(),
-	name: varchar({ length: 100 }).default(').notNull(),
+	name: varchar({ length: 100 }).default('').notNull(),
 	displayName: varchar("display_name", { length: 100 }).notNull(),
 	credentials: text().notNull(),
 	domains: jsonb().default([]).notNull(),
@@ -667,6 +658,51 @@ export const orderNotes = pgTable("order_notes", {
 			foreignColumns: [users.id],
 			name: "order_notes_created_by_users_id_fk"
 		}),
+]);
+
+export const shippingMethodCountries = pgTable("shipping_method_countries", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	shippingMethodId: uuid("shipping_method_id").notNull(),
+	countryId: uuid("country_id").notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.shippingMethodId],
+			foreignColumns: [shippingMethods.id],
+			name: "shipping_method_countries_shipping_method_id_shipping_methods_i"
+		}).onDelete("cascade"),
+	foreignKey({
+			columns: [table.countryId],
+			foreignColumns: [countries.id],
+			name: "shipping_method_countries_country_id_countries_id_fk"
+		}).onDelete("cascade"),
+	unique("smc_method_country_unique").on(table.shippingMethodId, table.countryId),
+]);
+
+export const countries = pgTable("countries", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	code: varchar({ length: 5 }).notNull(),
+	name: jsonb().notNull(),
+	flag: varchar({ length: 10 }).notNull(),
+	currency: varchar({ length: 5 }).notNull(),
+	active: boolean().default(true).notNull(),
+	sortOrder: integer("sort_order").default(0).notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	unique("countries_code_unique").on(table.code),
+]);
+
+export const shippingPaymentRules = pgTable("shipping_payment_rules", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	shippingMethodId: uuid("shipping_method_id").notNull(),
+	gatewayType: varchar("gateway_type", { length: 50 }).notNull(),
+}, (table) => [
+	foreignKey({
+			columns: [table.shippingMethodId],
+			foreignColumns: [shippingMethods.id],
+			name: "shipping_payment_rules_shipping_method_id_shipping_methods_id_f"
+		}).onDelete("cascade"),
+	unique("spr_method_gateway_unique").on(table.shippingMethodId, table.gatewayType),
 ]);
 
 export const verificationTokens = pgTable("verificationTokens", {

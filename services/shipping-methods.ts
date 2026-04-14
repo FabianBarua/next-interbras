@@ -13,6 +13,8 @@ function mapRow(row: typeof shippingMethods.$inferSelect): ShippingMethod {
     description: (row.description as I18nText) ?? null,
     price: Number(row.price),
     active: row.active,
+    requiresAddress: row.requiresAddress,
+    pickupConfig: row.pickupConfig ?? null,
     sortOrder: row.sortOrder,
   }
 }

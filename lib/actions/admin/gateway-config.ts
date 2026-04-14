@@ -22,7 +22,14 @@ export type GatewayInstance = {
 }
 
 // Known gateway types — extend as new gateways are added
-const KNOWN_GATEWAY_TYPES = ["commpix-pix", "pyxpay-pix", "manual-transfer"]
+const KNOWN_GATEWAY_TYPES = [
+  "commpix-pix",
+  "pyxpay-pix",
+  "pyxpay-card",
+  "manual-cash",
+  "manual-transfer",
+  "manual-card",
+]
 
 // ─── Domain Resolution ───
 

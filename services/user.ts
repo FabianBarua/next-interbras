@@ -24,6 +24,9 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
       name: u.name,
       email: u.email,
       phone: u.phone ?? null,
+      documentType: u.documentType ?? null,
+      documentNumber: u.documentNumber ?? null,
+      nationality: u.nationality ?? null,
       addresses: addrRows.map(mapAddress),
     } satisfies UserProfile
   }, 120)
@@ -44,7 +47,7 @@ function mapAddress(row: typeof addresses.$inferSelect): Address {
     city: row.city,
     state: row.state,
     zipCode: row.zipCode ?? "",
-    country: row.country,
+    countryCode: row.countryCode,
     isDefault: row.isDefault,
   }
 }

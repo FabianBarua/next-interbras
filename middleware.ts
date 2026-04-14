@@ -75,6 +75,17 @@ export default auth((req) => {
     return setCookie(NextResponse.redirect(new URL(`/${locale}/login`, req.url)))
   }
 
+  // ── Auth: Protect checkout sub-routes (envio, pago, payment, confirmacion)
+  if (
+    (restPath.startsWith("/checkout/envio") ||
+     restPath.startsWith("/checkout/pago") ||
+     restPath.startsWith("/checkout/payment") ||
+     restPath.startsWith("/checkout/confirmacion")) &&
+    !isLoggedIn
+  ) {
+    return setCookie(NextResponse.redirect(new URL(`/${locale}/checkout`, req.url)))
+  }
+
   // ── Auth: Protect /dashboard routes — require admin role
   if (restPath.startsWith("/dashboard")) {
     if (!isLoggedIn) {

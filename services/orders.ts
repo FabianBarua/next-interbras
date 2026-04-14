@@ -182,11 +182,11 @@ export interface CreateOrderInput {
     city: string
     state: string
     zipCode?: string
-    country: string
+    countryCode: string
   }
   shippingMethod: string
   shippingCost: number
-  paymentMethod: "cash" | "card" | "transfer"
+  paymentMethod: "cash" | "card" | "transfer" | "pix"
   notes?: string
   items: {
     variantId: string

@@ -6,22 +6,34 @@ import {
 import { getSiteDomains } from "@/lib/actions/admin/settings"
 import { GatewayInstanceForm } from "./gateway-instance-form"
 
-const KNOWN_TYPES = ["commpix-pix", "pyxpay-pix", "manual-transfer"]
+const KNOWN_TYPES = [
+  "commpix-pix",
+  "pyxpay-pix",
+  "pyxpay-card",
+  "manual-cash",
+  "manual-transfer",
+  "manual-card",
+]
 
 const PLACEHOLDERS: Record<string, string> = {
   "commpix-pix": JSON.stringify(
-    {
-      email: "",
-      password: "",
-      webhookSecret: "",
-      apiUrl: "https://api.commpix.com",
-      currency: "BRL",
-      nature: "SERVICES_AND_OTHERS",
-    },
-    null,
-    2,
+    { email: "", password: "", webhookSecret: "", apiUrl: "https://api.commpix.com", currency: "BRL", nature: "SERVICES_AND_OTHERS" },
+    null, 2,
   ),
   "pyxpay-pix": JSON.stringify({ apiKey: "", taxa: 2.5 }, null, 2),
+  "pyxpay-card": JSON.stringify({ apiKey: "", taxa: 3.5 }, null, 2),
+  "manual-cash": JSON.stringify(
+    { storeAddress: "Av. Ejemplo 123, Asunción", storePhone: "+595 21 000-0000", storeHours: "Lun–Vie 8:00–18:00", pickupMessage: "Diríjase a nuestra tienda para abonar y retirar su pedido." },
+    null, 2,
+  ),
+  "manual-transfer": JSON.stringify(
+    { bankName: "Banco Ejemplo", accountNumber: "000-000000-0", accountType: "Cuenta Corriente", holder: "Nombre Empresa S.A.", message: "Envíe el comprobante de pago y procesaremos su pedido." },
+    null, 2,
+  ),
+  "manual-card": JSON.stringify(
+    { message: "Realice el pago con su tarjeta al momento de retirar el pedido." },
+    null, 2,
+  ),
 }
 
 export default async function EditPaymentPage({

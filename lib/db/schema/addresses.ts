@@ -16,7 +16,7 @@ export const addresses = pgTable("addresses", {
   city: varchar("city", { length: 100 }).notNull(),
   state: varchar("state", { length: 100 }).notNull(),
   zipCode: varchar("zip_code", { length: 20 }),
-  country: varchar("country", { length: 50 }).notNull().default("Paraguay"),
+  countryCode: varchar("country_code", { length: 5 }).notNull(),
   isDefault: boolean("is_default").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdateFn(() => new Date()),
