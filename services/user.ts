@@ -1,5 +1,6 @@
 import { db } from "@/lib/db"
 import { users, addresses } from "@/lib/db/schema"
+import { accounts } from "@/lib/db/schema/auth-tables"
 import { eq, asc } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
 import type { UserProfile, Address } from "@/types/user"
@@ -19,6 +20,14 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
       console.error("[getUserProfile] Failed to fetch addresses", err)
     }
 
+    // Check if user has OAuth account linked
+    let isOAuth = false
+    try {
+      const acct = await db.select({ provider: accounts.provider })
+        .from(accounts).where(eq(accounts.userId, userId)).limit(1)
+      isOAuth = acct.length > 0
+    } catch { /* accounts table may not exist yet */ }
+
     return {
       id: u.id,
       name: u.name,
@@ -27,6 +36,8 @@ export async function getUserProfile(userId: string): Promise<UserProfile | null
       documentType: u.documentType ?? null,
       documentNumber: u.documentNumber ?? null,
       nationality: u.nationality ?? null,
+      isOAuth,
+      createdAt: u.createdAt.toISOString(),
       addresses: addrRows.map(mapAddress),
     } satisfies UserProfile
   }, 120)

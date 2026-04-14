@@ -25,11 +25,13 @@ export function ProductDetailView({
 
   return (
     <div className="flex flex-col md:flex-row gap-8 lg:gap-12">
-      {/* Gallery — filtered by selected variant */}
-      <ProductGallery variant={selectedVariant} alt={name} />
+      {/* Gallery */}
+      <div className="md:w-1/2 lg:w-[55%]">
+        <ProductGallery variant={selectedVariant} alt={name} />
+      </div>
 
       {/* Info */}
-      <div className="md:sticky md:top-24 h-fit w-fit self-start">
+      <div className="md:w-1/2 lg:w-[45%] md:sticky md:top-24 h-fit self-start">
         <ProductInfo
           product={product}
           initialVariantId={initialVariantId}

@@ -17,5 +17,7 @@ export interface UserProfile {
   documentType: string | null
   documentNumber: string | null
   nationality: string | null
+  isOAuth: boolean
+  createdAt: string
   addresses: Address[]
 }

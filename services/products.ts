@@ -3,6 +3,7 @@ import { products, categories, variants, productImages, externalCodes } from "@/
 import { eq, and, desc, asc, ne, sql, inArray } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
 import { toVariantSlug } from "@/lib/variant-slug"
+import { resolveVariantImageMap } from "@/lib/variant-images"
 import type { Product, Variant, ProductImage as FrontendImage, ExternalCode } from "@/types/product"
 import type { Category } from "@/types/category"
 
@@ -70,45 +71,32 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
     }
   }
 
+  // ---- Resolve images per-product using shared fallback logic ----
+  const variantsByProduct = new Map<string, { id: string; options: Record<string, string> }[]>()
+  for (const { v } of varRows) {
+    const list = variantsByProduct.get(v.productId) ?? []
+    list.push({ id: v.id, options: (v.options ?? {}) as Record<string, string> })
+    variantsByProduct.set(v.productId, list)
+  }
+
+  const resolvedImgMap = new Map<string, FrontendImage[]>()
+  for (const [pid, pVars] of variantsByProduct) {
+    const pVarIds = new Set(pVars.map(x => x.id))
+    const pImgByVariant = new Map<string, FrontendImage[]>()
+    for (const [vId, imgs] of imgByVariant) {
+      if (pVarIds.has(vId)) pImgByVariant.set(vId, imgs)
+    }
+    const resolved = resolveVariantImageMap(pVars, pImgByVariant, imgByProduct.get(pid) ?? [])
+    for (const [vId, imgs] of resolved) resolvedImgMap.set(vId, imgs)
+  }
+
   // ---- Build variants: skip CEC-less, add stock + images ----
-  // First pass: collect all CEC-linked variants per product (need full list for sibling fallback)
   const varMap = new Map<string, Variant[]>()
   for (const { v, ec } of varRows) {
     if (!v.active) continue
     if (!ec) continue // CEC required for visibility
 
     const attrs = (v.options ?? {}) as Record<string, any>
-
-    // Resolve images: direct → sibling with most matching attrs → product-level
-    let images = imgByVariant.get(v.id) ?? []
-    if (images.length === 0) {
-      // Sibling fallback: find variant images sharing the most attributes (e.g. same color)
-      const attrEntries = Object.entries(attrs)
-      if (attrEntries.length > 0) {
-        let bestImages: FrontendImage[] = []
-        let bestScore = 0
-        for (const [sibId, sibImgs] of imgByVariant) {
-          if (sibId === v.id) continue
-          // Find sibling variant data from varRows
-          const sibRow = varRows.find(r => r.v.id === sibId)
-          if (!sibRow || sibRow.v.productId !== v.productId) continue
-          const sibAttrs = (sibRow.v.options ?? {}) as Record<string, any>
-          let score = 0
-          for (const [key, val] of attrEntries) {
-            if (sibAttrs[key] === val) score++
-          }
-          if (score > bestScore) {
-            bestScore = score
-            bestImages = sibImgs
-          }
-        }
-        if (bestImages.length > 0) images = bestImages
-      }
-    }
-    if (images.length === 0) {
-      // Fallback to product-level images
-      images = imgByProduct.get(v.productId) ?? []
-    }
 
     const mapped: Variant = {
       id: v.id,
@@ -117,7 +105,7 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
       name: null,
       attributes: attrs,
       stock: v.stock ?? null,
-      images,
+      images: resolvedImgMap.get(v.id) ?? [],
       externalCode: {
         id: ec.id,
         system: ec.system,

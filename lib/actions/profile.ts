@@ -11,12 +11,15 @@ import bcrypt from "bcryptjs"
 import { rateLimit } from "@/lib/rate-limit"
 
 // ---------------------------------------------------------------------------
-// Update profile (name, phone)
+// Update profile (name, phone, document, nationality)
 // ---------------------------------------------------------------------------
 
 const profileSchema = z.object({
   name: z.string().min(2).max(100),
   phone: z.string().max(50).optional(),
+  documentType: z.enum(["CI", "CPF", "RG", "OTRO"]).optional(),
+  documentNumber: z.string().max(30).optional(),
+  nationality: z.string().max(100).optional(),
 })
 
 export async function updateProfileAction(data: unknown) {
@@ -31,6 +34,9 @@ export async function updateProfileAction(data: unknown) {
   await db.update(users).set({
     name: parsed.data.name,
     phone: parsed.data.phone ?? null,
+    documentType: parsed.data.documentType ?? null,
+    documentNumber: parsed.data.documentNumber ?? null,
+    nationality: parsed.data.nationality ?? null,
   }).where(eq(users.id, userId))
 
   await invalidateCache(`profile:user:${userId}`)

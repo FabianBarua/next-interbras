@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { variants, externalCodes, productImages } from "@/lib/db/schema"
 import { eq, asc, inArray, and, sql } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
+import { resolveVariantImageMap } from "@/lib/variant-images"
 import type { I18nText } from "@/types/common"
 
 export interface AdminVariant {
@@ -36,21 +37,31 @@ export async function getAllVariantsForProduct(productId: string): Promise<Admin
 
   const variantIds = rows.map(r => r.id)
 
-  // Load variant images
+  // Load ALL images for this product (variant-specific + product-level)
   const imgRows = await db.select().from(productImages)
-    .where(and(
-      eq(productImages.productId, productId),
-      inArray(productImages.variantId, variantIds),
-    ))
+    .where(eq(productImages.productId, productId))
     .orderBy(asc(productImages.sortOrder))
 
-  const imgMap = new Map<string, AdminVariant["images"]>()
+  // Separate variant-specific and product-level images
+  const imgByVariant = new Map<string, AdminVariant["images"]>()
+  const productLevelImgs: AdminVariant["images"] = []
   for (const img of imgRows) {
-    if (!img.variantId) continue
-    const arr = imgMap.get(img.variantId) ?? []
-    arr.push({ id: img.id, url: img.url, alt: img.alt as I18nText | null, sortOrder: img.sortOrder })
-    imgMap.set(img.variantId, arr)
+    const mapped = { id: img.id, url: img.url, alt: img.alt as I18nText | null, sortOrder: img.sortOrder }
+    if (img.variantId) {
+      const arr = imgByVariant.get(img.variantId) ?? []
+      arr.push(mapped)
+      imgByVariant.set(img.variantId, arr)
+    } else {
+      productLevelImgs.push(mapped)
+    }
   }
+
+  // Resolve images with sibling/product-level fallback
+  const imgMap = resolveVariantImageMap(
+    rows.map(r => ({ id: r.id, options: r.options as Record<string, string> })),
+    imgByVariant,
+    productLevelImgs,
+  )
 
   // Load external codes
   const ecRows = await db.select().from(externalCodes)
