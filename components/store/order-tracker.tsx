@@ -1,32 +1,38 @@
 "use client"
 
-import type { OrderStatus } from "@/types/order"
-import { Check, Package, Clock, Truck, Home } from "lucide-react"
-import { useState, useEffect } from "react"
+import { Check, Package, Clock, Truck, Home, CreditCard, CheckCircle, XCircle, RotateCcw, Timer, Building, Circle } from "lucide-react"
+import { useState, useEffect, type ElementType } from "react"
 import { useDictionary } from "@/i18n/context"
 
+const ICON_MAP: Record<string, ElementType> = {
+  Clock, Package, Truck, Home, CreditCard, CheckCircle, XCircle, RotateCcw, Timer, Building, Circle, Check,
+}
+
+export interface TrackerStep {
+  slug: string
+  label: string
+  icon: string
+}
+
 interface TrackerProps {
-  status: OrderStatus
+  steps: TrackerStep[]
+  currentStatus: string
   dateStr?: string
 }
 
-export function OrderTracker({ status, dateStr }: TrackerProps) {
+export function OrderTracker({ steps, currentStatus, dateStr }: TrackerProps) {
   const { dict } = useDictionary()
   const [mounted, setMounted] = useState(false)
-
-  const STAGES = [
-    { id: "PENDING", label: dict.orderTracker.received, desc: dict.orderTracker.receivedDesc, detail: dict.orderTracker.receivedDetail, Icon: Clock },
-    { id: "PROCESSING", label: dict.orderTracker.processing, desc: dict.orderTracker.processingDesc, detail: dict.orderTracker.processingDetail, Icon: Package },
-    { id: "SHIPPED", label: dict.orderTracker.shipped, desc: dict.orderTracker.shippedDesc, detail: dict.orderTracker.shippedDetail, Icon: Truck },
-    { id: "DELIVERED", label: dict.orderTracker.delivered, desc: dict.orderTracker.deliveredDesc, detail: dict.orderTracker.deliveredDetail, Icon: Home },
-  ]
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 80)
     return () => clearTimeout(t)
   }, [])
 
-  if (status === "CANCELLED") {
+  const activeIdx = steps.findIndex((s) => s.slug === currentStatus)
+
+  // Terminal status not in flow (cancelled, refunded, etc.)
+  if (activeIdx === -1) {
     return (
       <div className="flex items-center gap-4 p-4 rounded-xl border border-destructive/20 bg-destructive/5 text-destructive">
         <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center shrink-0">
@@ -40,9 +46,10 @@ export function OrderTracker({ status, dateStr }: TrackerProps) {
     )
   }
 
-  const activeIdx = Math.max(0, STAGES.findIndex((s) => s.id === status))
-  const pct = activeIdx === 0 ? 0 : activeIdx === 1 ? 33 : activeIdx === 2 ? 66 : 100
+  const isLast = activeIdx === steps.length - 1
+  const pct = steps.length <= 1 ? 100 : (activeIdx / (steps.length - 1)) * 100
   const visualPct = mounted ? pct : 0
+  const widthFraction = steps.length > 1 ? `${steps.length - 1}` : "1"
 
   return (
     <div className="space-y-6">
@@ -57,14 +64,13 @@ export function OrderTracker({ status, dateStr }: TrackerProps) {
         />
 
         <div className="relative z-10 flex justify-between">
-          {STAGES.map((stage, idx) => {
+          {steps.map((step, idx) => {
             const done = idx < activeIdx
             const active = idx === activeIdx
-            const future = idx > activeIdx
-            const { Icon } = stage
+            const Icon = ICON_MAP[step.icon] ?? Circle
 
             return (
-              <div key={stage.id} className="flex flex-col items-center w-1/4">
+              <div key={step.slug} className="flex flex-col items-center" style={{ width: `${100 / steps.length}%` }}>
                 <div
                   className={`flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full border-2 transition-all duration-500 ${
                     done ? "bg-primary border-primary text-primary-foreground" :
@@ -77,7 +83,7 @@ export function OrderTracker({ status, dateStr }: TrackerProps) {
                 <span className={`mt-2.5 text-[10px] sm:text-xs font-semibold tracking-wide uppercase ${
                   active ? "text-primary" : done ? "text-foreground" : "text-muted-foreground/50"
                 }`}>
-                  {stage.label}
+                  {step.label}
                 </span>
               </div>
             )
@@ -85,22 +91,21 @@ export function OrderTracker({ status, dateStr }: TrackerProps) {
         </div>
       </div>
 
-      {/* Current status detail — simple & clean */}
+      {/* Current status detail */}
       <div className="flex items-start gap-3 p-4 rounded-xl bg-muted/40 border">
         <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
-          {(() => { const I = STAGES[activeIdx].Icon; return <I className="h-4 w-4" /> })()}
+          {(() => { const I = ICON_MAP[steps[activeIdx].icon] ?? Circle; return <I className="h-4 w-4" /> })()}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-sm font-semibold">{STAGES[activeIdx].desc}</p>
-            {status !== "DELIVERED" && (
+            <p className="text-sm font-semibold">{steps[activeIdx].label}</p>
+            {!isLast && (
               <span className="inline-flex items-center gap-1 text-[10px] font-medium text-primary">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                 {dict.orderTracker.active}
               </span>
             )}
           </div>
-          <p className="text-xs text-muted-foreground mt-1">{STAGES[activeIdx].detail}</p>
           {dateStr && (
             <p className="text-[11px] text-muted-foreground mt-1.5">{dict.orderTracker.lastUpdate}: {dateStr}</p>
           )}

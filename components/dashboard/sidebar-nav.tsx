@@ -21,6 +21,8 @@ import {
   Activity,
   FileText,
   Globe,
+  ListOrdered,
+  GitBranch,
   type LucideIcon,
 } from "lucide-react"
 
@@ -57,6 +59,8 @@ const navGroups: NavGroup[] = [
     label: "Comercio",
     items: [
       { href: "/dashboard/orders", label: "Pedidos", icon: ShoppingCart },
+      { href: "/dashboard/order-statuses", label: "Estados de Pedido", icon: ListOrdered },
+      { href: "/dashboard/order-flows", label: "Flujos de Pedido", icon: GitBranch },
       { href: "/dashboard/shipping-methods", label: "Métodos de Envío", icon: Truck },
       { href: "/dashboard/countries", label: "Países", icon: Globe },
       { href: "/dashboard/payments", label: "Pagos", icon: CreditCard },

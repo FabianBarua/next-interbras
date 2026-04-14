@@ -5,6 +5,9 @@ import { notFound, redirect } from "next/navigation"
 import Link from "@/i18n/link"
 import { OrderTracker } from "@/components/store/order-tracker"
 import { Separator } from "@/components/ui/separator"
+import { getFlowForOrder } from "@/lib/order-flow-resolver"
+import { getAllStatusesForDisplay, getStatusLabel, getStatusColor } from "@/lib/order-status-helpers"
+import { getLocale } from "@/i18n/get-dictionary"
 
 export default async function OrderDetailPage(
   { params }: { params: Promise<{ id: string }> }
@@ -35,15 +38,19 @@ export default async function OrderDetailPage(
     minute: "2-digit",
   })
 
-  const statusLabels: Record<string, { text: string; color: string }> = {
-    PENDING: { text: "Pendiente", color: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" },
-    PROCESSING: { text: "En proceso", color: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" },
-    SHIPPED: { text: "En camino", color: "bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400" },
-    DELIVERED: { text: "Entregado", color: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" },
-    CANCELLED: { text: "Cancelado", color: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" },
-  }
+  const locale = await getLocale()
+  const [statusLabel, statusColor, flow, allStatuses] = await Promise.all([
+    getStatusLabel(order.status, locale),
+    getStatusColor(order.status),
+    getFlowForOrder(id),
+    getAllStatusesForDisplay(locale),
+  ])
+  const statusMap = new Map(allStatuses.map(s => [s.slug, s]))
+  const trackerSteps = (flow?.steps ?? []).map(step => {
+    const info = statusMap.get(step.statusSlug)
+    return { slug: step.statusSlug, label: info?.label ?? step.statusSlug, icon: info?.icon ?? "Circle" }
+  })
 
-  const st = statusLabels[order.status] || statusLabels.PENDING
   const shippingCost = 8.5
 
   return (
@@ -59,8 +66,11 @@ export default async function OrderDetailPage(
         </Link>
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="text-2xl font-bold tracking-tight">Pedido #{order.id}</h1>
-          <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${st.color}`}>
-            {st.text}
+          <span
+            className="text-[11px] font-bold px-2.5 py-1 rounded-full"
+            style={{ backgroundColor: `${statusColor}20`, color: statusColor }}
+          >
+            {statusLabel}
           </span>
         </div>
       </div>
@@ -90,7 +100,8 @@ export default async function OrderDetailPage(
               </a>
             </div>
             <OrderTracker
-              status={order.status}
+              steps={trackerSteps}
+              currentStatus={order.status}
               dateStr={updatedDate}
             />
           </div>
@@ -129,7 +140,7 @@ export default async function OrderDetailPage(
           <div className="rounded-3xl border border-border/50 bg-card p-6 sm:p-8 shadow-sm ring-1 ring-black/5 dark:ring-white/5">
             <h2 className="font-bold text-base mb-4">Historial de Actividad</h2>
             <div className="relative pl-6 space-y-5 before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-px before:bg-border">
-              {order.status === "DELIVERED" && (
+              {order.status === "delivered" && (
                 <TimelineEntry
                   title="Pedido entregado"
                   desc="El paquete fue recibido en la dirección de destino."
@@ -137,14 +148,14 @@ export default async function OrderDetailPage(
                   active
                 />
               )}
-              {(order.status === "DELIVERED" || order.status === "SHIPPED") && (
+              {(order.status === "delivered" || order.status === "shipped") && (
                 <TimelineEntry
                   title="Paquete despachado"
                   desc="Se entregó al servicio de courier para envío."
                   date="3 abr., 10:15"
                 />
               )}
-              {order.status !== "PENDING" && (
+              {order.status !== "pending" && (
                 <TimelineEntry
                   title="Preparando embalaje"
                   desc="El equipo de expedición comenzó a preparar tu pedido."

@@ -5,6 +5,7 @@ import { notifyPaymentUpdate } from "@/lib/payments/notify"
 import { sendEmail } from "@/lib/email/send"
 import { logEvent } from "@/lib/logging"
 import { getSiteUrl } from "@/lib/get-base-url"
+import { getFlowForOrder } from "@/lib/order-flow-resolver"
 import type { WebhookEvent } from "./types"
 
 const CAT = "webhook-payment"
@@ -35,10 +36,23 @@ export async function processWebhookEvent(
       })
       .where(eq(payments.id, payment.id))
 
-    // Map to project's uppercase order status enum
+    // Advance order to next status from flow (typically "confirmed")
+    const flow = await getFlowForOrder(payment.orderId)
+    const currentOrder = await db.query.orders.findFirst({
+      where: eq(orders.id, payment.orderId),
+      columns: { status: true },
+    })
+    let nextStatus = "confirmed"
+    if (flow && currentOrder) {
+      const currentIdx = flow.steps.findIndex((s) => s.statusSlug === currentOrder.status)
+      if (currentIdx >= 0 && currentIdx + 1 < flow.steps.length) {
+        nextStatus = flow.steps[currentIdx + 1].statusSlug
+      }
+    }
+
     await db
       .update(orders)
-      .set({ status: "CONFIRMED" })
+      .set({ status: nextStatus })
       .where(eq(orders.id, payment.orderId))
 
     // Send confirmation email
@@ -106,7 +120,7 @@ export async function processWebhookEvent(
 
     await db
       .update(orders)
-      .set({ status: "CANCELLED" })
+      .set({ status: "cancelled" })
       .where(eq(orders.id, payment.orderId))
 
     // Send cancellation email
@@ -140,7 +154,7 @@ export async function processWebhookEvent(
 
     await db
       .update(orders)
-      .set({ status: "CANCELLED" })
+      .set({ status: "refunded" })
       .where(eq(orders.id, payment.orderId))
 
     await notifyPaymentUpdate(payment.orderId, "refunded")

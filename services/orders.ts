@@ -8,7 +8,8 @@ import {
 } from "@/lib/db/schema"
 import { eq, desc, sql, and, inArray, count } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
-import type { Order, OrderItem, OrderStatus, AdminOrder } from "@/types/order"
+import { resolveFlow } from "@/lib/order-flow-resolver"
+import type { Order, OrderItem, AdminOrder } from "@/types/order"
 
 // ---------------------------------------------------------------------------
 // Mapping helpers
@@ -18,7 +19,7 @@ function mapOrder(row: typeof orders.$inferSelect, items: OrderItem[]): Order {
   return {
     id: row.id,
     userId: row.userId ?? "",
-    status: row.status as OrderStatus,
+    status: row.status as string,
     totalAmount: Number(row.total),
     currency: row.currency,
     items,
@@ -108,7 +109,7 @@ function mapAdminOrder(row: typeof orders.$inferSelect, items: OrderItem[]): Adm
 }
 
 export async function getAllOrders(opts?: {
-  status?: OrderStatus
+  status?: string
   page?: number
   perPage?: number
 }): Promise<{ orders: AdminOrder[]; total: number }> {
@@ -158,7 +159,7 @@ export async function getOrderByIdAdmin(id: string): Promise<AdminOrder | null> 
 
 export async function updateOrderStatus(
   id: string,
-  status: OrderStatus,
+  status: string,
   trackingCode?: string,
 ): Promise<void> {
   const values: Record<string, unknown> = { status }
@@ -188,6 +189,8 @@ export interface CreateOrderInput {
   shippingCost: number
   paymentMethod: "cash" | "card" | "transfer" | "pix"
   notes?: string
+  shippingMethodId?: string
+  gatewayType?: string
   items: {
     variantId: string
     quantity: number
@@ -230,6 +233,9 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
   const total = subtotal + input.shippingCost
 
   // Insert in transaction
+  // Resolve order flow before transaction
+  const flow = await resolveFlow(input.shippingMethodId ?? null, input.gatewayType ?? null)
+
   const orderId = await db.transaction(async (tx) => {
     // Decrement stock for each variant (with atomic check)
     for (const item of input.items) {
@@ -256,7 +262,8 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
 
     const [order] = await tx.insert(orders).values({
       userId: input.userId,
-      status: "PENDING",
+      status: "pending",
+      flowId: flow?.id ?? null,
       paymentMethod: input.paymentMethod,
       shippingMethod: input.shippingMethod,
       shippingCost: String(input.shippingCost),

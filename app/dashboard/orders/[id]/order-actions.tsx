@@ -20,7 +20,7 @@ export function OrderActions({ orderId, orderStatus }: Props) {
     text: string
   } | null>(null)
 
-  const canRefund = ["CONFIRMED", "SHIPPED", "DELIVERED"].includes(
+  const canRefund = ["confirmed", "shipped", "delivered"].includes(
     orderStatus,
   )
 

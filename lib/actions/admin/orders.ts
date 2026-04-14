@@ -7,10 +7,8 @@ import { logEvent } from "@/lib/logging"
 
 const uuidSchema = z.string().uuid()
 
-const ORDER_STATUSES = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"] as const
-
 const updateStatusSchema = z.object({
-  status: z.enum(ORDER_STATUSES),
+  status: z.string().min(1).max(50),
   trackingCode: z.string().max(100).optional(),
 })
 

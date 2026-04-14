@@ -6,12 +6,13 @@ import { db } from "@/lib/db"
 import { orders, payments } from "@/lib/db/schema"
 import { notifyPaymentUpdate } from "@/lib/payments/notify"
 import { logEvent } from "@/lib/logging"
+import { getFlowForOrder } from "@/lib/order-flow-resolver"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 /**
  * Simulate a card payment confirmation (placeholder/demo mode).
- * Marks the payment as succeeded and the order as CONFIRMED.
+ * Marks the payment as succeeded and advances order to the next flow status.
  */
 export async function simulateCardPayment(
   orderId: string,
@@ -27,7 +28,7 @@ export async function simulateCardPayment(
 
   if (!order) return { error: "Pedido no encontrado" }
   if (order.paymentMethod !== "card") return { error: "Este pedido no es por tarjeta" }
-  if (!["PENDING", "PROCESSING"].includes(order.status)) {
+  if (!["pending", "awaiting-payment"].includes(order.status)) {
     return { error: "El pedido no está en estado válido" }
   }
 
@@ -37,10 +38,19 @@ export async function simulateCardPayment(
     .set({ status: "succeeded", paidAt: new Date() })
     .where(and(eq(payments.orderId, orderId), eq(payments.status, "pending")))
 
-  // Confirm order
+  // Advance order to next flow status
+  const flow = await getFlowForOrder(orderId)
+  let nextStatus = "confirmed"
+  if (flow) {
+    const currentIdx = flow.steps.findIndex((s) => s.statusSlug === order.status)
+    if (currentIdx >= 0 && currentIdx + 1 < flow.steps.length) {
+      nextStatus = flow.steps[currentIdx + 1].statusSlug
+    }
+  }
+
   await db
     .update(orders)
-    .set({ status: "CONFIRMED" })
+    .set({ status: nextStatus })
     .where(eq(orders.id, orderId))
 
   await logEvent({

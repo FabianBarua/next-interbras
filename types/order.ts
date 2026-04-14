@@ -1,6 +1,6 @@
 import type { I18nText } from "./common"
 
-export type OrderStatus = "PENDING" | "CONFIRMED" | "PROCESSING" | "SHIPPED" | "DELIVERED" | "CANCELLED"
+export type OrderStatus = string
 
 export interface OrderItem {
   id: string

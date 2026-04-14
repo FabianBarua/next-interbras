@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { nationalities } from "@/lib/data/nationalities"
 import { useRouter } from "next/navigation"
 import {
   updateCustomerRole,
@@ -208,12 +209,16 @@ export function CustomerEditForm({ customer }: { customer: CustomerUser }) {
       </div>
       <div>
         <label className="mb-1 block text-xs text-muted-foreground">Nacionalidad</label>
-        <Input
+        <select
           value={nationality}
           onChange={(e) => setNationality(e.target.value)}
-          placeholder="Nacionalidad"
-          className="h-8"
-        />
+          className="flex h-8 w-full rounded-md border border-input bg-background px-3 text-sm"
+        >
+          <option value="">— Sin nacionalidad —</option>
+          {nationalities.map((n) => (
+            <option key={n.code} value={n.code}>{n.es}</option>
+          ))}
+        </select>
       </div>
       <div className="flex gap-2">
         <Button size="sm" onClick={handleSave} disabled={pending}>

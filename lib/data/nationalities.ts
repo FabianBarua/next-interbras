@@ -1,0 +1,51 @@
+/** Nationalities list – code is ISO 3166-1 alpha-2, labels are es/pt */
+export interface Nationality {
+  code: string
+  es: string
+  pt: string
+}
+
+export const nationalities: Nationality[] = [
+  { code: "PY", es: "Paraguaya", pt: "Paraguaia" },
+  { code: "BR", es: "Brasileña", pt: "Brasileira" },
+  { code: "AR", es: "Argentina", pt: "Argentina" },
+  { code: "UY", es: "Uruguaya", pt: "Uruguaia" },
+  { code: "BO", es: "Boliviana", pt: "Boliviana" },
+  { code: "CL", es: "Chilena", pt: "Chilena" },
+  { code: "PE", es: "Peruana", pt: "Peruana" },
+  { code: "CO", es: "Colombiana", pt: "Colombiana" },
+  { code: "EC", es: "Ecuatoriana", pt: "Equatoriana" },
+  { code: "VE", es: "Venezolana", pt: "Venezuelana" },
+  { code: "MX", es: "Mexicana", pt: "Mexicana" },
+  { code: "US", es: "Estadounidense", pt: "Estadunidense" },
+  { code: "CA", es: "Canadiense", pt: "Canadense" },
+  { code: "ES", es: "Española", pt: "Espanhola" },
+  { code: "PT", es: "Portuguesa", pt: "Portuguesa" },
+  { code: "FR", es: "Francesa", pt: "Francesa" },
+  { code: "DE", es: "Alemana", pt: "Alemã" },
+  { code: "IT", es: "Italiana", pt: "Italiana" },
+  { code: "GB", es: "Británica", pt: "Britânica" },
+  { code: "JP", es: "Japonesa", pt: "Japonesa" },
+  { code: "CN", es: "China", pt: "Chinesa" },
+  { code: "KR", es: "Surcoreana", pt: "Sul-coreana" },
+  { code: "IN", es: "India", pt: "Indiana" },
+  { code: "RU", es: "Rusa", pt: "Russa" },
+  { code: "AU", es: "Australiana", pt: "Australiana" },
+  { code: "ZA", es: "Sudafricana", pt: "Sul-africana" },
+  { code: "IL", es: "Israelí", pt: "Israelense" },
+  { code: "TR", es: "Turca", pt: "Turca" },
+  { code: "SA", es: "Saudí", pt: "Saudita" },
+  { code: "AE", es: "Emiratí", pt: "Emiradense" },
+  { code: "CR", es: "Costarricense", pt: "Costarriquenha" },
+  { code: "PA", es: "Panameña", pt: "Panamenha" },
+  { code: "DO", es: "Dominicana", pt: "Dominicana" },
+  { code: "CU", es: "Cubana", pt: "Cubana" },
+  { code: "GT", es: "Guatemalteca", pt: "Guatemalteca" },
+  { code: "HN", es: "Hondureña", pt: "Hondurenha" },
+  { code: "NI", es: "Nicaragüense", pt: "Nicaraguense" },
+  { code: "SV", es: "Salvadoreña", pt: "Salvadorenha" },
+  { code: "PR", es: "Puertorriqueña", pt: "Porto-riquenha" },
+  { code: "GY", es: "Guyanesa", pt: "Guianense" },
+  { code: "SR", es: "Surinamesa", pt: "Surinamesa" },
+  { code: "XX", es: "Otra", pt: "Outra" },
+]

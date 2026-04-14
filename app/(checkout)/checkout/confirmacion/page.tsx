@@ -58,7 +58,16 @@ function ConfirmacionContent() {
 
         {/* Tracker Preview */}
         <div className="w-full mb-10 text-left">
-          <OrderTracker status="PENDING" dateStr={new Date().toLocaleDateString(locale === "pt" ? "pt-BR" : "es-PY", { day: "numeric", month: "short" })} />
+          <OrderTracker
+            steps={[
+              { slug: "pending", label: dict.orderTracker.received, icon: "Clock" },
+              { slug: "confirmed", label: dict.orderTracker.processing, icon: "CheckCircle" },
+              { slug: "shipped", label: dict.orderTracker.shipped, icon: "Truck" },
+              { slug: "delivered", label: dict.orderTracker.delivered, icon: "Home" },
+            ]}
+            currentStatus="pending"
+            dateStr={new Date().toLocaleDateString(locale === "pt" ? "pt-BR" : "es-PY", { day: "numeric", month: "short" })}
+          />
         </div>
 
         {/* WhatsApp Share */}

@@ -2,8 +2,10 @@ import { getOrderByIdPublic } from "@/services/orders"
 import { notFound } from "next/navigation"
 import { OrderTracker } from "@/components/store/order-tracker"
 import Link from "@/i18n/link"
-import Image from "next/image"
 import { InterbrasLogo } from "@/components/store/interbras-logo"
+import { getFlowForOrder } from "@/lib/order-flow-resolver"
+import { getAllStatusesForDisplay } from "@/lib/order-status-helpers"
+import { getLocale } from "@/i18n/get-dictionary"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -12,6 +14,19 @@ export default async function PublicTrackingPage({ params }: { params: Promise<{
   const { id } = resolvedParams
   if (!UUID_RE.test(id)) return notFound()
   const order = await getOrderByIdPublic(id)
+
+  if (!order) return notFound()
+
+  const locale = await getLocale()
+  const [flow, allStatuses] = await Promise.all([
+    getFlowForOrder(id),
+    getAllStatusesForDisplay(locale),
+  ])
+  const statusMap = new Map(allStatuses.map(s => [s.slug, s]))
+  const trackerSteps = (flow?.steps ?? []).map(step => {
+    const info = statusMap.get(step.statusSlug)
+    return { slug: step.statusSlug, label: info?.label ?? step.statusSlug, icon: info?.icon ?? "Circle" }
+  })
 
   if (!order) return notFound()
 
@@ -30,7 +45,8 @@ export default async function PublicTrackingPage({ params }: { params: Promise<{
         {/* Payload */}
         <div className="p-6 md:p-12 space-y-12">
            <OrderTracker 
-             status={order.status} 
+             steps={trackerSteps}
+             currentStatus={order.status} 
              dateStr={new Date(order.updatedAt).toLocaleDateString("es-PY", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })} 
            />
            

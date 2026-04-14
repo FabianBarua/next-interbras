@@ -11,7 +11,6 @@ import {
   Loader2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   Dialog,
   DialogContent,
@@ -25,40 +24,12 @@ import {
   updateOrderStatus,
 } from "@/lib/actions/orders"
 
-// ─── Status helpers ──────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────
 
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: "Pendiente",
-  CONFIRMED: "Confirmado",
-  PROCESSING: "En proceso",
-  SHIPPED: "Enviado",
-  DELIVERED: "Entregado",
-  CANCELLED: "Cancelado",
+function statusColorClass(color: string) {
+  // Convert hex color to a tailwind-compatible inline approach
+  return `border px-2.5 py-0.5 text-xs font-medium rounded-full`
 }
-
-const STATUS_COLORS: Record<string, string> = {
-  PENDING:
-    "bg-yellow-500/10 text-yellow-700 border-yellow-300 dark:text-yellow-400 dark:border-yellow-700",
-  CONFIRMED:
-    "bg-emerald-500/10 text-emerald-700 border-emerald-300 dark:text-emerald-400 dark:border-emerald-700",
-  PROCESSING:
-    "bg-blue-500/10 text-blue-700 border-blue-300 dark:text-blue-400 dark:border-blue-700",
-  SHIPPED:
-    "bg-indigo-500/10 text-indigo-700 border-indigo-300 dark:text-indigo-400 dark:border-indigo-700",
-  DELIVERED:
-    "bg-green-500/10 text-green-700 border-green-300 dark:text-green-400 dark:border-green-700",
-  CANCELLED:
-    "bg-gray-500/10 text-gray-600 border-gray-300 dark:text-gray-400 dark:border-gray-600",
-}
-
-const STATUSES = [
-  "PENDING",
-  "CONFIRMED",
-  "PROCESSING",
-  "SHIPPED",
-  "DELIVERED",
-  "CANCELLED",
-] as const
 
 const fmtAmount = (v: string | number) =>
   Number(v).toLocaleString("en-US", {
@@ -67,6 +38,12 @@ const fmtAmount = (v: string | number) =>
   })
 
 // ─── Types ───────────────────────────────────────────────────────
+
+interface StatusInfo {
+  slug: string
+  label: string
+  color: string
+}
 
 interface OrderRow {
   id: string
@@ -87,6 +64,7 @@ interface OrdersTableProps {
   totalPages: number
   sortBy: string
   sortOrder: string
+  statuses: StatusInfo[]
 }
 
 // ─── Component ───────────────────────────────────────────────────
@@ -98,11 +76,15 @@ export function OrdersTable({
   totalPages,
   sortBy,
   sortOrder,
+  statuses,
 }: OrdersTableProps) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [, startTransition] = useTransition()
+
+  // Build lookup maps from statuses prop
+  const statusMap = new Map(statuses.map((s) => [s.slug, s]))
 
   // Selection
   const [selected, setSelected] = useState<Set<string>>(new Set())
@@ -165,7 +147,7 @@ export function OrdersTable({
 
   // Bulk & row-level dialogs
   const [bulkOpen, setBulkOpen] = useState(false)
-  const [bulkStatus, setBulkStatus] = useState<string>("CONFIRMED")
+  const [bulkStatus, setBulkStatus] = useState<string>(statuses[0]?.slug ?? "confirmed")
   const [busy, setBusy] = useState(false)
   const [rowDialog, setRowDialog] = useState<{
     id: string
@@ -178,7 +160,7 @@ export function OrdersTable({
     setBusy(true)
     await bulkUpdateOrderStatus(
       [...selected],
-      bulkStatus as (typeof STATUSES)[number],
+      bulkStatus,
     )
     setBusy(false)
     setBulkOpen(false)
@@ -190,7 +172,7 @@ export function OrdersTable({
     setBusy(true)
     await updateOrderStatus(
       rowDialog.id,
-      rowStatus as (typeof STATUSES)[number],
+      rowStatus,
     )
     setBusy(false)
     setRowDialog(null)
@@ -215,7 +197,7 @@ export function OrdersTable({
             size="sm"
             variant="destructive"
             onClick={() => {
-              setBulkStatus("CANCELLED")
+              setBulkStatus("cancelled")
               setBulkOpen(true)
             }}
           >
@@ -330,9 +312,14 @@ export function OrdersTable({
                         })
                         setRowStatus(order.status)
                       }}
-                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-all hover:ring-2 hover:ring-primary/20 cursor-pointer ${STATUS_COLORS[order.status] ?? ""}`}
+                      className="inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-all hover:ring-2 hover:ring-primary/20 cursor-pointer"
+                      style={{
+                        backgroundColor: `${statusMap.get(order.status)?.color ?? "#6b7280"}15`,
+                        color: statusMap.get(order.status)?.color ?? "#6b7280",
+                        borderColor: `${statusMap.get(order.status)?.color ?? "#6b7280"}40`,
+                      }}
                     >
-                      {STATUS_LABELS[order.status] ?? order.status}
+                      {statusMap.get(order.status)?.label ?? order.status}
                     </button>
                   </td>
                   <td className="px-4 py-3 text-right font-medium tabular-nums">
@@ -404,25 +391,24 @@ export function OrdersTable({
           </DialogHeader>
 
           <div className="grid grid-cols-2 gap-2 py-2">
-            {STATUSES.map((s) => (
+            {statuses.map((s) => (
               <button
-                key={s}
-                onClick={() => setBulkStatus(s)}
+                key={s.slug}
+                onClick={() => setBulkStatus(s.slug)}
                 className={`flex items-center gap-2 rounded-lg border p-3 text-sm transition-all ${
-                  bulkStatus === s
+                  bulkStatus === s.slug
                     ? "border-primary bg-primary/5 ring-1 ring-primary"
                     : "border-border hover:border-foreground/30"
                 }`}
               >
-                {bulkStatus === s && (
+                {bulkStatus === s.slug && (
                   <Check className="size-3.5 text-primary" />
                 )}
                 <span
-                  className={`inline-block size-2 rounded-full ${
-                    STATUS_COLORS[s]?.split(" ")[0] ?? ""
-                  }`}
+                  className="inline-block size-2 rounded-full"
+                  style={{ backgroundColor: s.color }}
                 />
-                {STATUS_LABELS[s]}
+                {s.label}
               </button>
             ))}
           </div>
@@ -453,30 +439,29 @@ export function OrdersTable({
             <DialogTitle>Cambiar estado</DialogTitle>
             <DialogDescription>
               Pedido {rowDialog?.id.slice(0, 8)}… — actual:{" "}
-              {STATUS_LABELS[rowDialog?.current ?? ""] ?? rowDialog?.current}
+              {statusMap.get(rowDialog?.current ?? "")?.label ?? rowDialog?.current}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid grid-cols-2 gap-2 py-2">
-            {STATUSES.map((s) => (
+            {statuses.map((s) => (
               <button
-                key={s}
-                onClick={() => setRowStatus(s)}
+                key={s.slug}
+                onClick={() => setRowStatus(s.slug)}
                 className={`flex items-center gap-2 rounded-lg border p-3 text-sm transition-all ${
-                  rowStatus === s
+                  rowStatus === s.slug
                     ? "border-primary bg-primary/5 ring-1 ring-primary"
                     : "border-border hover:border-foreground/30"
                 }`}
               >
-                {rowStatus === s && (
+                {rowStatus === s.slug && (
                   <Check className="size-3.5 text-primary" />
                 )}
                 <span
-                  className={`inline-block size-2 rounded-full ${
-                    STATUS_COLORS[s]?.split(" ")[0] ?? ""
-                  }`}
+                  className="inline-block size-2 rounded-full"
+                  style={{ backgroundColor: s.color }}
                 />
-                {STATUS_LABELS[s]}
+                {s.label}
               </button>
             ))}
           </div>

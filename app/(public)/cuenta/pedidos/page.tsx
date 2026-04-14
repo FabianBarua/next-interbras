@@ -3,14 +3,20 @@ import { requireAuth } from "@/lib/auth/get-session"
 import { isEcommerceEnabled } from "@/lib/settings"
 import { redirect } from "next/navigation"
 import Link from "@/i18n/link"
-import { getDictionary } from "@/i18n/get-dictionary"
+import { getDictionary, getLocale } from "@/i18n/get-dictionary"
+import { getAllStatusesForDisplay } from "@/lib/order-status-helpers"
 
 export default async function OrdersPage() {
   if (!(await isEcommerceEnabled())) redirect("/")
 
   const user = await requireAuth()
-  const orders = await getOrders(user.id)
-  const dict = await getDictionary()
+  const locale = await getLocale()
+  const [orders, dict, statuses] = await Promise.all([
+    getOrders(user.id),
+    getDictionary(),
+    getAllStatusesForDisplay(locale),
+  ])
+  const statusMap = new Map(statuses.map(s => [s.slug, s]))
 
   return (
     <div className="space-y-6">
@@ -23,8 +29,18 @@ export default async function OrdersPage() {
             <div className="space-y-1">
               <div className="flex items-center gap-3">
                 <span className="font-bold text-lg">#{order.id.split('-')[1]}</span>
-                {order.status === "DELIVERED" && <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-1 rounded">{dict.account.delivered}</span>}
-                {order.status === "PROCESSING" && <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">{dict.account.inProcess}</span>}
+                {(() => {
+                  const info = statusMap.get(order.status)
+                  if (!info) return null
+                  return (
+                    <span
+                      className="text-xs font-bold px-2 py-1 rounded"
+                      style={{ backgroundColor: `${info.color}20`, color: info.color }}
+                    >
+                      {info.label}
+                    </span>
+                  )
+                })()}
               </div>
               <p className="text-sm text-muted-foreground">
                 {new Date(order.createdAt).toLocaleDateString()} • {order.items.length} {dict.common.products}

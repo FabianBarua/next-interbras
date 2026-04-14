@@ -75,5 +75,5 @@ export async function register(formData: FormData) {
     // Sign-in failure is non-critical — account was still created
   }
 
-  return { success: true, redirect: "/" }
+  return { success: true, redirect: "/complete-profile" }
 }

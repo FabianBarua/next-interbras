@@ -25,6 +25,13 @@ export default async function CheckoutLayout({
       {/* Minimal header */}
       <header className="border-b border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">{backLabel}</span>
+          </Link>
           <Link href="/" className="flex items-center gap-2">
             {site.logo ? (
               <Image
@@ -37,13 +44,6 @@ export default async function CheckoutLayout({
             ) : (
               <span className="text-lg font-bold tracking-tight">{site.name}</span>
             )}
-          </Link>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">{backLabel}</span>
           </Link>
         </div>
       </header>

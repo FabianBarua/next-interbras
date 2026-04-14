@@ -6,6 +6,7 @@ import {
 import { OrderFilters } from "@/components/dashboard/order-filters"
 import type { OrderFiltersState } from "@/components/dashboard/order-filters"
 import { OrdersTable } from "@/components/dashboard/orders-table"
+import { getAllStatusesForDisplay } from "@/lib/order-status-helpers"
 
 export default async function AdminOrdersPage({
   searchParams,
@@ -44,7 +45,7 @@ export default async function AdminOrdersPage({
     domains: domainsArr,
   }
 
-  const [result, statusCounts, availableDomains] = await Promise.all([
+  const [result, statusCounts, availableDomains, statusDisplay] = await Promise.all([
     searchOrders({
       page,
       limit: 50,
@@ -61,6 +62,7 @@ export default async function AdminOrdersPage({
     }),
     getOrderStatusCounts(countFilters),
     getDistinctDomains(),
+    getAllStatusesForDisplay("es"),
   ])
 
   return (
@@ -85,6 +87,7 @@ export default async function AdminOrdersPage({
         totalPages={result.totalPages}
         sortBy={sortBy}
         sortOrder={sortOrder}
+        statuses={statusDisplay}
       />
     </div>
   )

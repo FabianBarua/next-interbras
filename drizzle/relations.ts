@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { users, sessions, passwordResetTokens, eventLogs, emailTemplates, emailLogs, promotions, categories, products, variants, externalCodes, orders, orderItems, productImages, addresses, wishlists, attributes, attributeValues, payments, orderPaymentDetails, adminAlerts, orderNotes, shippingMethods, shippingMethodCountries, countries, shippingPaymentRules, accounts } from "./schema";
+import { users, sessions, passwordResetTokens, eventLogs, emailTemplates, emailLogs, promotions, categories, products, variants, externalCodes, orders, orderItems, productImages, addresses, wishlists, attributes, attributeValues, payments, orderPaymentDetails, adminAlerts, orderNotes, shippingMethods, shippingMethodCountries, countries, shippingPaymentRules, accounts, orderStatuses, orderFlows, orderFlowSteps } from "./schema";
 
 export const sessionsRelations = relations(sessions, ({one}) => ({
 	user: one(users, {
@@ -96,6 +96,10 @@ export const ordersRelations = relations(orders, ({one, many}) => ({
 	user: one(users, {
 		fields: [orders.userId],
 		references: [users.id]
+	}),
+	orderFlow: one(orderFlows, {
+		fields: [orders.flowId],
+		references: [orderFlows.id]
 	}),
 	payments: many(payments),
 	orderPaymentDetails: many(orderPaymentDetails),
@@ -196,6 +200,7 @@ export const shippingMethodCountriesRelations = relations(shippingMethodCountrie
 export const shippingMethodsRelations = relations(shippingMethods, ({many}) => ({
 	shippingMethodCountries: many(shippingMethodCountries),
 	shippingPaymentRules: many(shippingPaymentRules),
+	orderFlows: many(orderFlows),
 }));
 
 export const countriesRelations = relations(countries, ({many}) => ({
@@ -213,5 +218,31 @@ export const accountsRelations = relations(accounts, ({one}) => ({
 	user: one(users, {
 		fields: [accounts.userId],
 		references: [users.id]
+	}),
+}));
+
+// ─── Order Flow System ───────────────────────────────────────
+
+export const orderStatusesRelations = relations(orderStatuses, ({many}) => ({
+	orderFlowSteps: many(orderFlowSteps),
+}));
+
+export const orderFlowsRelations = relations(orderFlows, ({one, many}) => ({
+	shippingMethod: one(shippingMethods, {
+		fields: [orderFlows.shippingMethodId],
+		references: [shippingMethods.id]
+	}),
+	steps: many(orderFlowSteps),
+	orders: many(orders),
+}));
+
+export const orderFlowStepsRelations = relations(orderFlowSteps, ({one}) => ({
+	flow: one(orderFlows, {
+		fields: [orderFlowSteps.flowId],
+		references: [orderFlows.id]
+	}),
+	status: one(orderStatuses, {
+		fields: [orderFlowSteps.statusSlug],
+		references: [orderStatuses.slug]
 	}),
 }));

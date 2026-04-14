@@ -2,33 +2,10 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getOrderDetail, getOrderPaymentDetails } from "@/lib/actions/orders"
 import { PayerDetails } from "@/components/dashboard/payer-details"
+import { getStatusLabel, getStatusColor } from "@/lib/order-status-helpers"
 import { OrderActions } from "./order-actions"
 import { OrderNotes } from "./order-notes"
 import { Separator } from "@/components/ui/separator"
-
-const STATUS_COLORS: Record<string, string> = {
-  PENDING:
-    "bg-yellow-500/10 text-yellow-700 border-yellow-300 dark:text-yellow-400 dark:border-yellow-700",
-  CONFIRMED:
-    "bg-emerald-500/10 text-emerald-700 border-emerald-300 dark:text-emerald-400 dark:border-emerald-700",
-  PROCESSING:
-    "bg-blue-500/10 text-blue-700 border-blue-300 dark:text-blue-400 dark:border-blue-700",
-  SHIPPED:
-    "bg-indigo-500/10 text-indigo-700 border-indigo-300 dark:text-indigo-400 dark:border-indigo-700",
-  DELIVERED:
-    "bg-green-500/10 text-green-700 border-green-300 dark:text-green-400 dark:border-green-700",
-  CANCELLED:
-    "bg-gray-500/10 text-gray-600 border-gray-300 dark:text-gray-400 dark:border-gray-600",
-}
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: "Pendiente",
-  CONFIRMED: "Confirmado",
-  PROCESSING: "En proceso",
-  SHIPPED: "Enviado",
-  DELIVERED: "Entregado",
-  CANCELLED: "Cancelado",
-}
 
 const PAYMENT_STATUS_LABELS: Record<string, string> = {
   pending: "Pendiente",
@@ -65,6 +42,11 @@ export default async function AdminOrderDetailPage({
     return n.es || n.pt || n.en || "—"
   }
 
+  const [statusLabel, statusColor] = await Promise.all([
+    getStatusLabel(order.status, "es"),
+    getStatusColor(order.status),
+  ])
+
   return (
     <div>
       <div className="flex items-center gap-3 mb-6">
@@ -98,9 +80,14 @@ export default async function AdminOrderDetailPage({
               </p>
             </div>
             <span
-              className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium ${STATUS_COLORS[order.status] ?? ""}`}
+              className="inline-flex items-center rounded-full border px-3 py-1 text-xs font-medium"
+              style={{
+                backgroundColor: `${statusColor}15`,
+                color: statusColor,
+                borderColor: `${statusColor}40`,
+              }}
             >
-              {STATUS_LABELS[order.status] ?? order.status}
+              {statusLabel}
             </span>
           </div>
 

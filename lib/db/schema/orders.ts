@@ -11,15 +11,7 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core"
 import { users } from "./users"
-
-export const orderStatusEnum = pgEnum("order_status", [
-  "PENDING",
-  "CONFIRMED",
-  "PROCESSING",
-  "SHIPPED",
-  "DELIVERED",
-  "CANCELLED",
-])
+import { orderFlows } from "./order-flows"
 
 export const paymentMethodEnum = pgEnum("payment_method", [
   "cash",
@@ -31,7 +23,8 @@ export const paymentMethodEnum = pgEnum("payment_method", [
 export const orders = pgTable("orders", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
-  status: orderStatusEnum("status").notNull().default("PENDING"),
+  status: varchar("status", { length: 50 }).notNull().default("pending"),
+  flowId: uuid("flow_id").references(() => orderFlows.id, { onDelete: "set null" }),
   paymentMethod: paymentMethodEnum("payment_method").notNull().default("cash"),
   shippingMethod: varchar("shipping_method", { length: 50 }),
   shippingCost: decimal("shipping_cost", { precision: 10, scale: 2 }).notNull().default("0"),

@@ -29,20 +29,10 @@ import {
 import { requireAdmin, requireSupport } from "@/lib/auth/get-session"
 import { sendEmail } from "@/lib/email/send"
 import { getSiteUrl } from "@/lib/get-base-url"
+import { isValidTransition, getFlowForOrder } from "@/lib/order-flow-resolver"
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
-const ORDER_STATUSES = [
-  "PENDING",
-  "CONFIRMED",
-  "PROCESSING",
-  "SHIPPED",
-  "DELIVERED",
-  "CANCELLED",
-] as const
-
-type OrderStatus = (typeof ORDER_STATUSES)[number]
 
 // ───────── Search / list orders ─────────
 
@@ -81,8 +71,8 @@ export async function searchOrders({
   const offset = (Math.max(1, page) - 1) * safeLimit
   const conditions: ReturnType<typeof eq>[] = []
 
-  if (status && ORDER_STATUSES.includes(status as OrderStatus)) {
-    conditions.push(eq(orders.status, status as OrderStatus))
+  if (status && typeof status === "string" && status.length <= 50) {
+    conditions.push(eq(orders.status, status))
   }
 
   if (domains && domains.length > 0) {
@@ -428,7 +418,7 @@ export async function getDistinctDomains() {
 
 export async function bulkUpdateOrderStatus(
   orderIds: string[],
-  newStatus: OrderStatus,
+  newStatus: string,
 ) {
   await requireAdmin()
 
@@ -436,7 +426,7 @@ export async function bulkUpdateOrderStatus(
     return { error: "Seleccione entre 1 y 500 pedidos" }
   if (orderIds.some((id) => !UUID_RE.test(id)))
     return { error: "IDs inválidos" }
-  if (!ORDER_STATUSES.includes(newStatus))
+  if (!newStatus || typeof newStatus !== "string" || newStatus.length > 50)
     return { error: "Estado inválido" }
 
   await db
@@ -456,9 +446,14 @@ export async function bulkUpdateOrderStatus(
 
 async function runStatusSideEffects(
   orderId: string,
-  newStatus: OrderStatus,
+  newStatus: string,
 ) {
-  if (newStatus === "CONFIRMED") {
+  // Check if this step has notify_customer=true in the flow
+  const flow = await getFlowForOrder(orderId)
+  const step = flow?.steps.find((s) => s.statusSlug === newStatus)
+  const shouldNotify = step?.notifyCustomer ?? false
+
+  if (newStatus === "confirmed" && shouldNotify) {
     const order = await db.query.orders.findFirst({
       where: eq(orders.id, orderId),
       columns: { userId: true },
@@ -486,7 +481,7 @@ async function runStatusSideEffects(
     }
   }
 
-  if (newStatus === "CANCELLED") {
+  if (newStatus === "cancelled") {
     await db
       .update(payments)
       .set({ status: "failed" })
@@ -528,11 +523,11 @@ async function runStatusSideEffects(
 
 export async function updateOrderStatus(
   orderId: string,
-  newStatus: OrderStatus,
+  newStatus: string,
 ) {
   await requireAdmin()
   if (!UUID_RE.test(orderId)) return { error: "ID inválido" }
-  if (!ORDER_STATUSES.includes(newStatus))
+  if (!newStatus || typeof newStatus !== "string" || newStatus.length > 50)
     return { error: "Estado inválido" }
 
   const order = await db.query.orders.findFirst({
@@ -629,13 +624,13 @@ export async function registerRefund(orderId: string, reason: string) {
   })
 
   if (!order) return { error: "Pedido no encontrado" }
-  if (!["CONFIRMED", "SHIPPED", "DELIVERED"].includes(order.status)) {
+  if (!["confirmed", "shipped", "delivered"].includes(order.status)) {
     return { error: "El pedido no se puede reembolsar en este estado" }
   }
 
   await db
     .update(orders)
-    .set({ status: "CANCELLED" })
+    .set({ status: "refunded" })
     .where(eq(orders.id, orderId))
 
   await db

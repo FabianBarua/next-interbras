@@ -9,6 +9,7 @@ import { rateLimit } from "@/lib/rate-limit"
 import { logEvent } from "@/lib/logging"
 import { getSiteUrl } from "@/lib/get-base-url"
 import { getGatewayInstanceBySlug } from "@/lib/actions/admin/gateway-config"
+import { getFlowForOrder } from "@/lib/order-flow-resolver"
 import "@/lib/payments/init"
 import type { CreatePaymentInput } from "@/lib/payments/types"
 
@@ -43,15 +44,15 @@ export async function createPayment(
 
   if (!order) return { error: "Pedido no encontrado" }
   if (order.userId !== session.user.id) return { error: "No autorizado" }
-  if (order.status !== "PENDING" && order.status !== "PROCESSING") {
+  if (order.status !== "pending") {
     return { error: "El pedido no está pendiente" }
   }
 
-  // Atomic lock: set order to PROCESSING to prevent concurrent payment creation
+  // Atomic lock: set order status to prevent concurrent payment creation
   const [locked] = await db
     .update(orders)
-    .set({ status: "PROCESSING" })
-    .where(and(eq(orders.id, orderId), eq(orders.status, order.status)))
+    .set({ status: "pending" })
+    .where(and(eq(orders.id, orderId), eq(orders.status, "pending")))
     .returning({ id: orders.id })
 
   if (!locked) {
@@ -90,15 +91,28 @@ export async function createPayment(
     // Cancel the order to avoid orphaned orders
     await db
       .update(orders)
-      .set({ status: "CANCELLED" })
+      .set({ status: "cancelled" })
       .where(eq(orders.id, orderId))
     const userMsg = (err as Error & { userMessage?: string }).userMessage
     return { error: userMsg || "Error al crear el pago en el gateway. Intente de nuevo." }
   }
 
-  // Save payment record (stores instance slug in gateway column)
-  const isAutoConfirm = instance.type === "manual-cash" || instance.type === "manual-card"
+  // Check flow for auto_transition on the "pending" step
+  const flow = await getFlowForOrder(orderId)
+  const pendingStep = flow?.steps.find((s) => s.statusSlug === "pending")
+  const isAutoConfirm = pendingStep?.autoTransition ?? false
 
+  // Determine next status from flow
+  const nextStatus = (() => {
+    if (!flow || !isAutoConfirm) return null
+    const pendingIdx = flow.steps.findIndex((s) => s.statusSlug === "pending")
+    if (pendingIdx >= 0 && pendingIdx + 1 < flow.steps.length) {
+      return flow.steps[pendingIdx + 1].statusSlug
+    }
+    return "confirmed"
+  })()
+
+  // Save payment record
   await db.insert(payments).values({
     orderId,
     gateway: gatewaySlug,
@@ -109,18 +123,18 @@ export async function createPayment(
     ...(isAutoConfirm ? { paidAt: new Date() } : {}),
   })
 
-  // Auto-confirm for in-store payments (cash & card)
-  if (isAutoConfirm) {
+  // Auto-transition if the flow says so (e.g., in-store cash/card payments)
+  if (isAutoConfirm && nextStatus) {
     await db
       .update(orders)
-      .set({ status: "CONFIRMED" })
+      .set({ status: nextStatus })
       .where(eq(orders.id, orderId))
 
     await logEvent({
       category: "pedidos",
       level: "info",
       action: "payment-auto-confirmed",
-      message: `Pago en local (${instance.type}) auto-confirmado para pedido ${orderId.slice(0, 8)}`,
+      message: `Pago (${instance.type}) auto-confirmado → ${nextStatus} para pedido ${orderId.slice(0, 8)}`,
       entityId: orderId,
       userId: session.user.id,
     })

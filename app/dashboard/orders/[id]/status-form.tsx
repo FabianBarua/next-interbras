@@ -4,23 +4,22 @@ import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { updateOrderStatusAction } from "@/lib/actions/admin/orders"
 
-const STATUSES = [
-  { value: "PENDING", label: "Pendiente" },
-  { value: "CONFIRMED", label: "Confirmado" },
-  { value: "PROCESSING", label: "Procesando" },
-  { value: "SHIPPED", label: "Enviado" },
-  { value: "DELIVERED", label: "Entregado" },
-  { value: "CANCELLED", label: "Cancelado" },
-]
+interface StatusOption {
+  slug: string
+  label: string
+  color: string
+}
 
 export function OrderStatusForm({
   orderId,
   currentStatus,
   currentTrackingCode,
+  statuses,
 }: {
   orderId: string
   currentStatus: string
   currentTrackingCode: string
+  statuses: StatusOption[]
 }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
@@ -57,8 +56,8 @@ export function OrderStatusForm({
           onChange={(e) => setStatus(e.target.value)}
           className="w-full flex h-9 rounded-lg border border-input bg-background px-3 py-1.5 text-sm"
         >
-          {STATUSES.map((s) => (
-            <option key={s.value} value={s.value}>{s.label}</option>
+          {statuses.map((s) => (
+            <option key={s.slug} value={s.slug}>{s.label}</option>
           ))}
         </select>
       </div>

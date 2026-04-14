@@ -8,7 +8,6 @@ export const catalogPageType = pgEnum("catalog_page_type", ['category', 'product
 export const couponType = pgEnum("coupon_type", ['percent', 'fixed'])
 export const documentType = pgEnum("document_type", ['CI', 'CPF', 'RG', 'OTRO'])
 export const emailLogStatus = pgEnum("email_log_status", ['sent', 'failed'])
-export const orderStatus = pgEnum("order_status", ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'])
 export const paymentMethod = pgEnum("payment_method", ['cash', 'card', 'transfer', 'pix'])
 export const paymentStatus = pgEnum("payment_status", ['pending', 'processing', 'succeeded', 'failed', 'refunded'])
 export const promotionType = pgEnum("promotion_type", ['percentage', 'fixed'])
@@ -252,7 +251,8 @@ export const orderItems = pgTable("order_items", {
 export const orders = pgTable("orders", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	userId: uuid("user_id"),
-	status: orderStatus().default('PENDING').notNull(),
+	status: varchar({ length: 50 }).default('pending').notNull(),
+	flowId: uuid("flow_id"),
 	paymentMethod: paymentMethod("payment_method").default('cash').notNull(),
 	shippingMethod: varchar("shipping_method", { length: 50 }),
 	shippingCost: numeric("shipping_cost", { precision: 10, scale:  2 }).default('0').notNull(),
@@ -274,12 +274,17 @@ export const orders = pgTable("orders", {
 	sourceDomain: varchar("source_domain", { length: 255 }),
 }, (table) => [
 	index("orders_created_at_idx").using("btree", table.createdAt.asc().nullsLast().op("timestamptz_ops")),
-	index("orders_status_idx").using("btree", table.status.asc().nullsLast().op("enum_ops")),
+	index("orders_status_idx").using("btree", table.status.asc().nullsLast().op("text_ops")),
 	index("orders_user_id_idx").using("btree", table.userId.asc().nullsLast().op("uuid_ops")),
 	foreignKey({
 			columns: [table.userId],
 			foreignColumns: [users.id],
 			name: "orders_user_id_users_id_fk"
+		}).onDelete("set null"),
+	foreignKey({
+			columns: [table.flowId],
+			foreignColumns: [orderFlows.id],
+			name: "orders_flow_id_order_flows_id_fk"
 		}).onDelete("set null"),
 ]);
 
@@ -703,6 +708,66 @@ export const shippingPaymentRules = pgTable("shipping_payment_rules", {
 			name: "shipping_payment_rules_shipping_method_id_shipping_methods_id_f"
 		}).onDelete("cascade"),
 	unique("spr_method_gateway_unique").on(table.shippingMethodId, table.gatewayType),
+]);
+
+// ─── Order Flow System ───────────────────────────────────────────
+
+export const orderStatuses = pgTable("order_statuses", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	slug: varchar({ length: 50 }).notNull(),
+	name: jsonb().notNull(),
+	description: jsonb(),
+	color: varchar({ length: 30 }).default('gray').notNull(),
+	icon: varchar({ length: 50 }).default('Circle').notNull(),
+	isFinal: boolean("is_final").default(false).notNull(),
+	sortOrder: integer("sort_order").default(0).notNull(),
+	active: boolean().default(true).notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	unique("order_statuses_slug_unique").on(table.slug),
+]);
+
+export const orderFlows = pgTable("order_flows", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	name: jsonb().notNull(),
+	description: jsonb(),
+	shippingMethodId: uuid("shipping_method_id"),
+	gatewayType: varchar("gateway_type", { length: 50 }),
+	isDefault: boolean("is_default").default(false).notNull(),
+	active: boolean().default(true).notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	unique("order_flows_shipping_gateway_unique").on(table.shippingMethodId, table.gatewayType),
+	foreignKey({
+			columns: [table.shippingMethodId],
+			foreignColumns: [shippingMethods.id],
+			name: "order_flows_shipping_method_id_shipping_methods_id_fk"
+		}).onDelete("set null"),
+]);
+
+export const orderFlowSteps = pgTable("order_flow_steps", {
+	id: uuid().defaultRandom().primaryKey().notNull(),
+	flowId: uuid("flow_id").notNull(),
+	statusSlug: varchar("status_slug", { length: 50 }).notNull(),
+	stepOrder: integer("step_order").notNull(),
+	autoTransition: boolean("auto_transition").default(false).notNull(),
+	notifyCustomer: boolean("notify_customer").default(false).notNull(),
+	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
+}, (table) => [
+	unique("order_flow_steps_flow_order_unique").on(table.flowId, table.stepOrder),
+	unique("order_flow_steps_flow_status_unique").on(table.flowId, table.statusSlug),
+	foreignKey({
+			columns: [table.flowId],
+			foreignColumns: [orderFlows.id],
+			name: "order_flow_steps_flow_id_order_flows_id_fk"
+		}).onDelete("cascade"),
+	foreignKey({
+			columns: [table.statusSlug],
+			foreignColumns: [orderStatuses.slug],
+			name: "order_flow_steps_status_slug_order_statuses_slug_fk"
+		}),
 ]);
 
 export const verificationTokens = pgTable("verificationTokens", {
