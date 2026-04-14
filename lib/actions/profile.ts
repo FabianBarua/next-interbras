@@ -140,3 +140,43 @@ export async function deleteAddressAction(addressId: string) {
   await invalidateCache(`profile:user:${userId}`)
   return { success: true }
 }
+
+export async function updateAddressAction(addressId: string, data: unknown) {
+  const user = await requireAuth()
+  const userId = user.id
+
+  const parsed = addressSchema.safeParse(data)
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message }
+  }
+
+  if (parsed.data.isDefault) {
+    await db.update(addresses).set({ isDefault: false }).where(eq(addresses.userId, userId))
+  }
+
+  await db.update(addresses).set({
+    label: parsed.data.label,
+    street: parsed.data.street,
+    city: parsed.data.city,
+    state: parsed.data.state,
+    zipCode: parsed.data.zipCode,
+    countryCode: parsed.data.countryCode,
+    isDefault: parsed.data.isDefault,
+  }).where(and(eq(addresses.id, addressId), eq(addresses.userId, userId)))
+
+  await invalidateCache(`profile:user:${userId}`)
+  return { success: true }
+}
+
+export async function setDefaultAddressAction(addressId: string) {
+  const user = await requireAuth()
+  const userId = user.id
+
+  await db.update(addresses).set({ isDefault: false }).where(eq(addresses.userId, userId))
+  await db.update(addresses).set({ isDefault: true }).where(
+    and(eq(addresses.id, addressId), eq(addresses.userId, userId))
+  )
+
+  await invalidateCache(`profile:user:${userId}`)
+  return { success: true }
+}

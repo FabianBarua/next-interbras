@@ -1,45 +1,44 @@
 import { getAddresses } from "@/services/user"
+import { getActiveCountries } from "@/services/countries"
 import { requireAuth } from "@/lib/auth/get-session"
-import { getDictionary } from "@/i18n/get-dictionary"
+import { getDictionary, getLocale } from "@/i18n/get-dictionary"
+import { AddressManager } from "@/components/store/address-manager"
 
 export default async function AddressesPage() {
   const user = await requireAuth()
-  const addresses = await getAddresses(user.id)
-  const dict = await getDictionary()
+  const [addresses, countries, dict, locale] = await Promise.all([
+    getAddresses(user.id),
+    getActiveCountries(),
+    getDictionary(),
+    getLocale(),
+  ])
+
+  const isPt = locale === "pt"
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{dict.account.addresses}</h1>
-        <button className="px-4 py-2 bg-primary text-primary-foreground text-sm font-semibold rounded-md hover:bg-primary/90 transition-colors">
-          {dict.account.newAddress}
-        </button>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
-        {addresses.map(addr => (
-          <div key={addr.id} className={`p-6 sm:p-8 rounded-3xl border bg-card relative shadow-xs hover:shadow-sm ring-1 ring-black/5 dark:ring-white/5 transition-all ${addr.isDefault ? 'border-primary/50 bg-primary/5' : 'border-border/50'}`}>
-            {addr.isDefault && (
-              <span className="absolute top-4 right-4 text-[10px] font-bold uppercase tracking-wider bg-primary/10 text-primary px-2 py-1 rounded">
-                {dict.account.primary}
-              </span>
-            )}
-            
-            <h3 className="font-bold mb-2">{addr.name}</h3>
-            
-            <div className="space-y-1 text-sm text-muted-foreground mb-6">
-              <p>{addr.street}</p>
-              <p>{addr.city}, {addr.state}</p>
-              <p>{addr.countryCode} - {addr.zipCode}</p>
-            </div>
-            
-            <div className="flex gap-3">
-              <button className="text-sm font-medium text-primary hover:underline">{dict.common.edit}</button>
-              <button className="text-sm font-medium text-destructive hover:underline">{dict.common.remove}</button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <AddressManager
+      addresses={addresses}
+      countries={countries}
+      locale={locale}
+      dict={{
+        title: dict.account.addresses,
+        newAddress: dict.account.newAddress,
+        primary: dict.account.primary,
+        edit: dict.common.edit,
+        remove: dict.common.remove,
+        save: dict.checkout.saveAddress,
+        saving: dict.common.processing,
+        setDefault: isPt ? "Tornar principal" : "Hacer principal",
+        cancel: isPt ? "Cancelar" : "Cancelar",
+        address: dict.checkout.address,
+        city: dict.checkout.city,
+        state: dict.checkout.state,
+        selectState: dict.checkout.selectState,
+        selectCountry: dict.checkout.selectCountry,
+        zipCode: isPt ? "CEP" : "Código Postal",
+        label: isPt ? "Nome / Etiqueta" : "Nombre / Etiqueta",
+        makeDefault: isPt ? "Estabelecer como principal" : "Establecer como principal",
+      }}
+    />
   )
 }
