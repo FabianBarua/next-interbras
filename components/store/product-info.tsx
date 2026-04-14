@@ -107,7 +107,11 @@ export function ProductInfo({ product, initialVariantId, categorySlug, onVariant
             <Badge variant="destructive">
               {dict.products.outOfStock}
             </Badge>
-          ) : null}
+                    ) : (
+            <Badge variant="secondary">
+              {dict.products.checkAvailability}
+            </Badge>
+          )}
         </div>
       )}
 
