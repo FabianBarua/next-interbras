@@ -1,6 +1,7 @@
 import Link from "@/i18n/link"
 import { getDictionary } from "@/i18n/get-dictionary"
 import { LanguageSwitcherInline } from "./language-switcher"
+import { InterbrasLogo } from "./interbras-logo"
 
 export async function Footer({ ecommerceEnabled = false }: { ecommerceEnabled?: boolean }) {
   const dict = await getDictionary()
@@ -12,7 +13,7 @@ export async function Footer({ ecommerceEnabled = false }: { ecommerceEnabled?: 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           
           <div className="space-y-4">
-            <h3 className="font-bold tracking-tight text-xl text-primary">Interbras</h3>
+            <InterbrasLogo className="h-5 w-auto text-brand-700 dark:text-brand-400" />
             <p className="text-sm text-muted-foreground leading-relaxed">
               {t.description}
             </p>
