@@ -13,11 +13,12 @@ export default async function AtributosPage({
   const str = (k: string) => (typeof sp[k] === "string" ? sp[k] : "") ?? ""
 
   const page = Math.max(1, Number(str("page")) || 1)
+  const perPage = Math.min(100, Math.max(10, Number(str("perPage")) || 50))
   const search = str("search") || undefined
   const sortBy = str("sortBy") || "sortOrder"
-  const sortOrder = str("sortOrder") || "asc"
+  const sortDir = str("sortDir") || "asc"
 
-  const result = await searchAttributes({ page, limit: 50, search, sortBy, sortOrder })
+  const result = await searchAttributes({ page, limit: perPage, search, sortBy, sortOrder: sortDir })
 
   return (
     <div>
@@ -39,10 +40,8 @@ export default async function AtributosPage({
       <AttributesTable
         attributes={result.items}
         total={result.total}
-        page={result.page}
         totalPages={result.totalPages}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
+        perPage={perPage}
       />
     </div>
   )

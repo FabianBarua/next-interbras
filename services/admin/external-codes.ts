@@ -183,11 +183,15 @@ export async function searchExternalCodes({
   limit = 50,
   search,
   system,
+  sortBy = "updatedAt",
+  sortDir = "desc",
 }: {
   page?: number
   limit?: number
   search?: string
   system?: string
+  sortBy?: string
+  sortDir?: string
 }): Promise<{ items: AdminExternalCode[]; total: number; page: number; totalPages: number }> {
   const conditions: ReturnType<typeof eq>[] = []
 
@@ -227,8 +231,18 @@ export async function searchExternalCodes({
     .leftJoin(products, eq(variants.productId, products.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
 
+  const orderCol =
+    sortBy === "code" ? externalCodes.code
+    : sortBy === "system" ? externalCodes.system
+    : sortBy === "stock" ? externalCodes.stock
+    : sortBy === "priceUsd" ? externalCodes.priceUsd
+    : sortBy === "priceGs" ? externalCodes.priceGs
+    : sortBy === "priceBrl" ? externalCodes.priceBrl
+    : externalCodes.updatedAt
+  const direction = sortDir === "asc" ? asc : desc
+
   const [rows, [{ total: totalCount }]] = await Promise.all([
-    baseQuery.where(where).orderBy(desc(externalCodes.updatedAt)).limit(limit).offset((page - 1) * limit),
+    baseQuery.where(where).orderBy(direction(orderCol as any)).limit(limit).offset((page - 1) * limit),
     countQuery.where(where),
   ])
 

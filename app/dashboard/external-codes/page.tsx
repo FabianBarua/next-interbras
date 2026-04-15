@@ -13,11 +13,14 @@ export default async function ExternoPage({
   const str = (k: string) => (typeof sp[k] === "string" ? sp[k] : "") ?? ""
 
   const page = Math.max(1, Number(str("page")) || 1)
+  const perPage = Math.min(100, Math.max(10, Number(str("perPage")) || 50))
   const search = str("search") || undefined
   const system = str("system") || undefined
+  const sortBy = str("sortBy") || "updatedAt"
+  const sortDir = str("sortDir") || "desc"
 
   const [result, systems] = await Promise.all([
-    searchExternalCodes({ page, limit: 50, search, system }),
+    searchExternalCodes({ page, limit: perPage, search, system, sortBy, sortDir }),
     getDistinctSystems(),
   ])
 
@@ -43,6 +46,7 @@ export default async function ExternoPage({
         total={result.total}
         page={result.page}
         totalPages={result.totalPages}
+        perPage={perPage}
         systems={systems}
       />
     </div>

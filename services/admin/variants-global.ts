@@ -103,11 +103,15 @@ export async function searchVariantsGlobal({
   limit = 50,
   search,
   categoryId,
+  sortBy = "product",
+  sortOrder = "asc",
 }: {
   page?: number
   limit?: number
   search?: string
   categoryId?: string
+  sortBy?: string
+  sortOrder?: string
 }): Promise<{ items: AdminVariantGlobal[]; total: number; page: number; totalPages: number }> {
   const conditions: ReturnType<typeof eq>[] = []
 
@@ -141,8 +145,17 @@ export async function searchVariantsGlobal({
     .innerJoin(products, eq(variants.productId, products.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
 
+  const dirFn = sortOrder === "desc" ? desc : asc
+  const orderCols: Record<string, ReturnType<typeof asc>> = {
+    sku: dirFn(variants.sku),
+    product: dirFn(products.slug),
+    category: dirFn(sql`${categories.name}->>'es'`),
+    active: dirFn(variants.active),
+  }
+  const orderBy = orderCols[sortBy] ?? asc(products.slug)
+
   const [rows, [{ total: totalCount }]] = await Promise.all([
-    baseQuery.where(where).orderBy(asc(products.slug), asc(variants.sortOrder)).limit(limit).offset((page - 1) * limit),
+    baseQuery.where(where).orderBy(orderBy, asc(variants.sortOrder)).limit(limit).offset((page - 1) * limit),
     countQuery.where(where),
   ])
 

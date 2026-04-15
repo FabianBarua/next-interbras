@@ -1,149 +1,212 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import type { Category } from "@/types/category"
 import type { AdminProduct } from "@/services/admin/products"
-import {
-  deleteProductAction,
-  bulkDeleteProductsAction,
-} from "@/lib/actions/admin/products"
-import { Pencil, Trash2, Package } from "lucide-react"
+import { deleteProductAction, bulkDeleteProductsAction } from "@/lib/actions/admin/products"
+import { Pencil, Trash2, Package, Search } from "lucide-react"
+import { useTableParams } from "@/hooks/use-table-params"
+import { useSearch } from "@/hooks/use-search"
+import { DataTable, type Column } from "@/components/dashboard/data-table"
+import { bulkDelete } from "@/components/dashboard/bulk-bar"
 
-export function ProductsTable({ items, categories }: { items: AdminProduct[]; categories: Category[] }) {
+interface Props {
+  items: AdminProduct[]
+  categories: Category[]
+  total: number
+  page: number
+  totalPages: number
+  perPage: number
+}
+
+export function ProductsTable({ items, categories, total, totalPages, perPage: defaultPerPage }: Props) {
   const router = useRouter()
-  const [isPending, startTransition] = useTransition()
-  const [selected, setSelected] = useState<Set<string>>(new Set())
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const [, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
-  const [bulkAction, setBulkAction] = useState("")
-  const [filterCat, setFilterCat] = useState("")
 
-  const filtered = filterCat ? items.filter(i => i.categoryId === filterCat) : items
+  const search = useSearch()
 
-  const toggleSelect = (id: string) => {
-    const next = new Set(selected)
-    next.has(id) ? next.delete(id) : next.add(id)
-    setSelected(next)
-  }
-  const toggleAll = () => {
-    setSelected(selected.size === filtered.length ? new Set() : new Set(filtered.map(i => i.id)))
-  }
+  const { sortBy, sortDir, setSort, page, setPage, perPage, setPerPage } = useTableParams({
+    sortBy: "sortOrder",
+    sortDir: "asc",
+    perPage: defaultPerPage,
+  })
 
-  const handleBulk = () => {
-    if (!bulkAction || selected.size === 0) return
-    startTransition(async () => {
-      const ids = Array.from(selected)
-      if (bulkAction === "delete") {
-        if (!confirm(`¿Eliminar ${ids.length} producto(s)?`)) return
-        await bulkDeleteProductsAction(ids)
-      }
-      setSelected(new Set())
-      setBulkAction("")
-      router.refresh()
-    })
+  // Category filter
+  const currentCat = searchParams.get("categoryId") ?? ""
+  const setCatFilter = (val: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (val) params.set("categoryId", val)
+    else params.delete("categoryId")
+    params.delete("page")
+    startTransition(() => router.push(`${pathname}?${params.toString()}`))
   }
 
-  const handleDelete = (id: string) => {
-    if (!confirm("¿Eliminar este producto y todas sus variantes?")) return
-    startTransition(async () => {
-      const res = await deleteProductAction(id)
-      if ("error" in res) setError(res.error!)
-      router.refresh()
-    })
+  const bulkActions = [
+    bulkDelete(async (ids) => { await bulkDeleteProductsAction(ids); router.refresh() }, { entityName: "producto(s)" }),
+  ]
+
+  const columns: Column<AdminProduct>[] = [
+    {
+      key: "img",
+      header: "Img",
+      headerClassName: "w-14",
+      cell: (item) =>
+        item.imageUrl ? (
+          <div className="relative w-10 h-10 rounded border bg-muted/30 overflow-hidden">
+            <Image src={item.imageUrl} alt="" fill className="object-contain p-0.5" />
+          </div>
+        ) : (
+          <div className="w-10 h-10 rounded border bg-muted/30" />
+        ),
+    },
+    {
+      key: "slug",
+      header: "Slug",
+      sortable: true,
+      className: "font-mono text-xs",
+      cell: (item) => <>{item.slug}</>,
+    },
+    {
+      key: "name",
+      header: "Nombre (ES)",
+      sortable: true,
+      className: "font-medium",
+      cell: (item) => <>{item.name.es ?? "—"}</>,
+    },
+    {
+      key: "namePt",
+      header: "Nombre (PT)",
+      className: "text-muted-foreground",
+      cell: (item) => <>{item.name.pt ?? "—"}</>,
+    },
+    {
+      key: "category",
+      header: "Categoría",
+      className: "text-xs text-muted-foreground",
+      cell: (item) => <>{item.categoryName?.es ?? "—"}</>,
+    },
+    {
+      key: "sortOrder",
+      header: "Orden",
+      sortable: true,
+      align: "center" as const,
+      className: "tabular-nums",
+      cell: (item) => <>{item.sortOrder}</>,
+    },
+    {
+      key: "active",
+      header: "Estado",
+      sortable: true,
+      align: "center" as const,
+      cell: (item) => (
+        <span
+          className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${
+            item.active ? "bg-green-100 text-green-700" : "bg-muted text-muted-foreground"
+          }`}
+        >
+          {item.active ? "Activo" : "Inactivo"}
+        </span>
+      ),
+    },
+    {
+      key: "variants",
+      header: "Variantes",
+      align: "center" as const,
+      cell: (item) => (
+        <Link
+          href={`/dashboard/products/${item.id}/variants`}
+          className="text-primary hover:underline font-medium"
+        >
+          {item.variantCount}
+        </Link>
+      ),
+    },
+  ]
+
+  const onDelete = async (id: string) => {
+    const res = await deleteProductAction(id)
+    if ("error" in res) setError(res.error!)
+    router.refresh()
   }
 
   return (
-    <div className="space-y-4">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-3">
-        <Link href="/dashboard/products/new" className="h-9 px-4 bg-primary text-primary-foreground text-sm font-medium rounded-lg hover:bg-primary/90 inline-flex items-center">
-          + Nuevo producto
-        </Link>
-
-        <select value={filterCat} onChange={e => setFilterCat(e.target.value)} className="h-9 rounded-lg border px-2 text-sm">
-          <option value="">Todas las categorías</option>
-          {categories.map(c => (
-            <option key={c.id} value={c.id}>{c.name.es ?? c.slug}</option>
-          ))}
-        </select>
-
-        {selected.size > 0 && (
-          <div className="flex items-center gap-2 ml-auto">
-            <span className="text-sm text-muted-foreground">{selected.size} seleccionado(s)</span>
-            <select value={bulkAction} onChange={e => setBulkAction(e.target.value)} className="h-9 rounded-lg border px-2 text-sm">
-              <option value="">Acción masiva...</option>
-              <option value="delete">Eliminar</option>
+    <>
+      {error && <p className="text-sm text-destructive">{error}</p>}
+      <DataTable
+        data={items}
+        columns={columns}
+        getId={(item) => item.id}
+        sortBy={sortBy}
+        sortDir={sortDir}
+        onSort={setSort}
+        bulkActions={bulkActions}
+        toolbar={
+          <>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <input
+                value={search.value}
+                onChange={(e) => search.setValue(e.target.value)}
+                placeholder="Buscar por nombre, slug..."
+                className="h-9 w-72 rounded-lg border pl-9 pr-3 text-sm"
+              />
+            </div>
+            <select
+              value={currentCat}
+              onChange={(e) => setCatFilter(e.target.value)}
+              className="h-9 rounded-lg border px-2 text-sm"
+            >
+              <option value="">Todas las categorías</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name.es ?? c.slug}
+                </option>
+              ))}
             </select>
-            <button onClick={handleBulk} disabled={!bulkAction || isPending} className="h-9 px-3 bg-primary text-primary-foreground text-sm rounded-lg hover:bg-primary/90 disabled:opacity-50">
-              Aplicar
+          </>
+        }
+        renderActions={(item, { handleDelete }) => (
+          <div className="flex items-center justify-end gap-1">
+            <Link
+              href={`/dashboard/products/${item.id}`}
+              title="Editar"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Pencil className="size-3.5" />
+            </Link>
+            <Link
+              href={`/dashboard/products/${item.id}/variants`}
+              title="Variantes"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Package className="size-3.5" />
+            </Link>
+            <button
+              onClick={() => handleDelete(item.id)}
+              title="Eliminar"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+            >
+              <Trash2 className="size-3.5" />
             </button>
           </div>
         )}
-      </div>
-
-      {error && <p className="text-sm text-destructive">{error}</p>}
-
-      {/* Table */}
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b bg-muted/50">
-              <th className="w-10 px-3 py-3"><input type="checkbox" checked={selected.size === filtered.length && filtered.length > 0} onChange={toggleAll} /></th>
-              <th className="w-14 px-3 py-3 text-left font-medium">Img</th>
-              <th className="px-3 py-3 text-left font-medium">Slug</th>
-              <th className="px-3 py-3 text-left font-medium">Nombre (ES)</th>
-              <th className="px-3 py-3 text-left font-medium">Nombre (PT)</th>
-              <th className="px-3 py-3 text-left font-medium">Categoría</th>
-              <th className="px-3 py-3 text-center font-medium">Variantes</th>
-              <th className="px-3 py-3 text-right font-medium">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(item => (
-              <tr key={item.id} className="border-b last:border-0 hover:bg-muted/30">
-                <td className="px-3 py-2 text-center"><input type="checkbox" checked={selected.has(item.id)} onChange={() => toggleSelect(item.id)} /></td>
-                <td className="px-3 py-2">
-                  {item.imageUrl ? (
-                    <div className="relative w-10 h-10 rounded border bg-muted/30 overflow-hidden">
-                      <Image src={item.imageUrl} alt="" fill className="object-contain p-0.5" />
-                    </div>
-                  ) : <div className="w-10 h-10 rounded border bg-muted/30" />}
-                </td>
-                <td className="px-3 py-2 font-mono text-xs">{item.slug}</td>
-                <td className="px-3 py-2 font-medium">{item.name.es ?? "—"}</td>
-                <td className="px-3 py-2">{item.name.pt ?? "—"}</td>
-                <td className="px-3 py-2 text-xs">{item.categoryName?.es ?? "—"}</td>
-                <td className="px-3 py-2 text-center">
-                  <Link href={`/dashboard/products/${item.id}/variants`} className="text-primary hover:underline font-medium">
-                    {item.variantCount}
-                  </Link>
-                </td>
-                <td className="px-3 py-2 text-right">
-                  <div className="flex items-center justify-end gap-1">
-                    <Link href={`/dashboard/products/${item.id}`} title="Editar" className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
-                      <Pencil className="size-3.5" />
-                    </Link>
-                    <Link href={`/dashboard/products/${item.id}/variants`} title="Variantes" className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
-                      <Package className="size-3.5" />
-                    </Link>
-                    <button onClick={() => handleDelete(item.id)} disabled={isPending} title="Eliminar" className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
-                      <Trash2 className="size-3.5" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {filtered.length === 0 && (
-              <tr><td colSpan={8} className="px-4 py-12 text-center text-muted-foreground">No hay productos.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-    </div>
+        onDelete={onDelete}
+        deleteTitle="¿Eliminar producto?"
+        deleteDescription="Se eliminarán todas las variantes asociadas. Esta acción no se puede deshacer."
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        perPage={perPage}
+        onPageChange={setPage}
+        onPerPageChange={setPerPage}
+        emptyMessage="No hay productos."
+      />
+    </>
   )
 }
-
-

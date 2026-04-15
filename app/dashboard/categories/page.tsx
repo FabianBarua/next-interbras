@@ -13,18 +13,19 @@ export default async function CategoriesPage({
   const str = (k: string) => (typeof sp[k] === "string" ? sp[k] : "") ?? ""
 
   const page = Math.max(1, Number(str("page")) || 1)
+  const perPage = Math.min(100, Math.max(10, Number(str("perPage")) || 50))
   const search = str("search") || undefined
   const activeFilter = str("active")
   const sortBy = str("sortBy") || "sortOrder"
-  const sortOrder = str("sortOrder") || "asc"
+  const sortDir = str("sortDir") || "asc"
 
   const result = await searchCategories({
     page,
-    limit: 50,
+    limit: perPage,
     search,
     active: activeFilter === "true" ? true : activeFilter === "false" ? false : undefined,
     sortBy,
-    sortOrder,
+    sortOrder: sortDir,
   })
 
   return (
@@ -47,10 +48,8 @@ export default async function CategoriesPage({
       <CategoriesTable
         categories={result.items}
         total={result.total}
-        page={result.page}
         totalPages={result.totalPages}
-        sortBy={sortBy}
-        sortOrder={sortOrder}
+        perPage={perPage}
       />
     </div>
   )

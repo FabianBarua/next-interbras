@@ -1,21 +1,54 @@
 import { requireAdmin } from "@/lib/auth/get-session"
-import { getAllProductsAdmin } from "@/services/admin/products"
+import { searchProductsAdmin } from "@/services/admin/products"
 import { getAllCategoriesAdmin } from "@/services/admin/categories"
 import { ProductsTable } from "./table"
+import Link from "next/link"
 
-export default async function ProductsPage() {
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
   await requireAdmin()
-  const [products, categories] = await Promise.all([
-    getAllProductsAdmin(),
+  const sp = await searchParams
+  const str = (k: string) => (typeof sp[k] === "string" ? sp[k] : "") ?? ""
+
+  const page = Math.max(1, Number(str("page")) || 1)
+  const perPage = Math.min(100, Math.max(10, Number(str("perPage")) || 50))
+  const search = str("search") || undefined
+  const categoryId = str("categoryId") || undefined
+  const sortBy = str("sortBy") || "sortOrder"
+  const sortDir = str("sortDir") || "asc"
+
+  const [result, categories] = await Promise.all([
+    searchProductsAdmin({ page, limit: perPage, search, categoryId, sortBy, sortDir }),
     getAllCategoriesAdmin(),
   ])
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight">Productos</h1>
-        <p className="text-sm text-muted-foreground mt-1">Gestión de productos y variantes (ES / PT)</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight">Productos</h1>
+          <p className="text-sm text-muted-foreground">
+            {result.total} producto{result.total !== 1 ? "s" : ""} en total
+          </p>
+        </div>
+        <Link
+          href="/dashboard/products/new"
+          className="inline-flex h-9 items-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+        >
+          + Nuevo producto
+        </Link>
       </div>
-      <ProductsTable items={products} categories={categories} />
+      <ProductsTable
+        items={result.items}
+        categories={categories}
+        total={result.total}
+        page={result.page}
+        totalPages={result.totalPages}
+        perPage={perPage}
+      />
     </div>
   )
 }

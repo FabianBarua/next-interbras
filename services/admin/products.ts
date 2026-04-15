@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { products, categories, productImages } from "@/lib/db/schema"
-import { eq, asc, inArray, count } from "drizzle-orm"
+import { eq, asc, desc, inArray, count, ilike, or, sql, and } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
 import type { I18nText, I18nRichText, I18nSpecs } from "@/types/common"
 
@@ -20,6 +20,104 @@ export interface AdminProduct {
   variantCount: number
   createdAt: string
   updatedAt: string
+}
+
+export async function searchProductsAdmin(opts?: {
+  page?: number
+  limit?: number
+  search?: string
+  categoryId?: string
+  active?: boolean
+  sortBy?: string
+  sortDir?: string
+}): Promise<{ items: AdminProduct[]; total: number; page: number; totalPages: number }> {
+  const page = opts?.page ?? 1
+  const limit = opts?.limit ?? 50
+
+  const conditions: ReturnType<typeof eq>[] = []
+  if (opts?.search) {
+    const term = `%${opts.search}%`
+    conditions.push(
+      or(
+        ilike(products.slug, term),
+        sql`${products.name}->>'es' ILIKE ${term}`,
+        sql`${products.name}->>'pt' ILIKE ${term}`,
+      )!,
+    )
+  }
+  if (opts?.categoryId) conditions.push(eq(products.categoryId, opts.categoryId))
+  if (opts?.active !== undefined) conditions.push(eq(products.active, opts.active))
+
+  const where = conditions.length > 0 ? and(...conditions) : undefined
+
+  const orderCol =
+    opts?.sortBy === "name" ? sql`${products.name}->>'es'`
+    : opts?.sortBy === "slug" ? products.slug
+    : opts?.sortBy === "active" ? products.active
+    : opts?.sortBy === "createdAt" ? products.createdAt
+    : products.sortOrder
+  const dir = opts?.sortDir === "desc" ? sql`DESC` : sql`ASC`
+
+  const [rows, [{ total: totalCount }]] = await Promise.all([
+    db
+      .select({ p: products, catName: categories.name })
+      .from(products)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .where(where)
+      .orderBy(sql`${orderCol} ${dir}`)
+      .limit(limit)
+      .offset((page - 1) * limit),
+    db.select({ total: count() }).from(products).where(where),
+  ])
+
+  if (rows.length === 0)
+    return { items: [], total: Number(totalCount), page, totalPages: Math.ceil(Number(totalCount) / limit) }
+
+  const productIds = rows.map((r) => r.p.id)
+  const { variants } = await import("@/lib/db/schema")
+
+  const [imgRows, vcRows] = await Promise.all([
+    db
+      .select()
+      .from(productImages)
+      .where(inArray(productImages.productId, productIds))
+      .orderBy(asc(productImages.sortOrder)),
+    db
+      .select({ productId: variants.productId, count: count() })
+      .from(variants)
+      .where(inArray(variants.productId, productIds))
+      .groupBy(variants.productId),
+  ])
+
+  const firstImg = new Map<string, string>()
+  for (const img of imgRows) {
+    if (!firstImg.has(img.productId)) firstImg.set(img.productId, img.url)
+  }
+  const variantCounts = new Map<string, number>()
+  for (const r of vcRows) variantCounts.set(r.productId, r.count)
+
+  return {
+    items: rows.map(({ p, catName }) => ({
+      id: p.id,
+      categoryId: p.categoryId,
+      categoryName: catName as I18nText | null,
+      slug: p.slug,
+      name: p.name as I18nText,
+      description: (p.description as I18nRichText) ?? null,
+      specs: (p.specs as I18nSpecs) ?? null,
+      review: (p.review as I18nRichText) ?? null,
+      included: (p.included as I18nRichText) ?? null,
+      sortOrder: p.sortOrder,
+      active: p.active,
+      imageUrl: firstImg.get(p.id) ?? null,
+      variantCount: variantCounts.get(p.id) ?? 0,
+      createdAt: p.createdAt.toISOString(),
+      updatedAt: p.updatedAt.toISOString(),
+    })),
+    total: Number(totalCount),
+    page,
+    totalPages: Math.ceil(Number(totalCount) / limit),
+  }
 }
 
 export async function getAllProductsAdmin(): Promise<AdminProduct[]> {

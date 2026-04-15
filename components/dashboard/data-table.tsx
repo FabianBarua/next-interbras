@@ -1,89 +1,299 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback, useTransition, type ReactNode } from "react"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
+import { Loader2 } from "lucide-react"
+import { SortTh } from "@/components/dashboard/sort-th"
+import { TablePagination } from "@/components/dashboard/table-pagination"
+import { useBulkSelect } from "@/hooks/use-bulk-select"
+import { BulkBar, type BulkAction } from "@/components/dashboard/bulk-bar"
 
-interface Column<T> {
+/* ------------------------------------------------------------------ */
+/*  Types                                                              */
+/* ------------------------------------------------------------------ */
+
+export interface Column<T> {
   key: string
-  label: string
-  render: (item: T) => React.ReactNode
-  className?: string
+  header: string | ReactNode
   sortable?: boolean
+  align?: "left" | "center" | "right"
+  cell: (row: T) => ReactNode
+  /** Extra classes merged onto every <td> (base is px-3 py-2 + align) */
+  className?: string
+  /** Extra classes merged onto the <th> header cell */
+  headerClassName?: string
 }
 
-interface Props<T> {
-  items: T[]
+export interface DataTableProps<T> {
+  data: T[]
   columns: Column<T>[]
-  getId: (item: T) => string
-  selected?: Set<string>
-  onSelectionChange?: (sel: Set<string>) => void
-  onRowClick?: (item: T) => void
+  getId: (row: T) => string
+
+  /* Sort */
+  sortBy: string
+  sortDir: "asc" | "desc"
+  onSort: (col: string) => void
+
+  /* Bulk actions — enables checkbox column + BulkBar */
+  bulkActions?: BulkAction[]
+
+  /* Toolbar slot (search, filters, etc.) — rendered before flex-1 + BulkBar */
+  toolbar?: ReactNode
+
+  /* Actions column — auto-appended when provided */
+  renderActions?: (
+    row: T,
+    helpers: { handleDelete: (id: string) => void },
+  ) => ReactNode
+
+  /* Delete dialog (built-in when onDelete is provided) */
+  onDelete?: (id: string) => Promise<void>
+  deleteTitle?: string
+  deleteDescription?: string
+
+  /* Pagination */
+  page: number
+  totalPages: number
+  total: number
+  perPage: number
+  onPageChange: (p: number) => void
+  onPerPageChange: (n: number) => void
+
+  /* Empty state */
   emptyMessage?: string
 }
 
-export function DataTable<T>({ items, columns, getId, selected, onSelectionChange, onRowClick, emptyMessage = "Sin resultados." }: Props<T>) {
-  const hasSelection = !!onSelectionChange && !!selected
+/* ------------------------------------------------------------------ */
+/*  Component                                                          */
+/* ------------------------------------------------------------------ */
 
-  const toggleAll = () => {
-    if (!onSelectionChange || !selected) return
-    if (selected.size === items.length) onSelectionChange(new Set())
-    else onSelectionChange(new Set(items.map(getId)))
+export function DataTable<T>({
+  data,
+  columns,
+  getId,
+  sortBy,
+  sortDir,
+  onSort,
+  bulkActions,
+  toolbar,
+  renderActions,
+  onDelete,
+  deleteTitle = "¿Eliminar elemento?",
+  deleteDescription = "Esta acción no se puede deshacer.",
+  page,
+  totalPages,
+  total,
+  perPage,
+  onPageChange,
+  onPerPageChange,
+  emptyMessage = "Sin resultados.",
+}: DataTableProps<T>) {
+  const hasBulk = !!bulkActions?.length
+  const hasActions = !!renderActions
+
+  /* Bulk selection */
+  const ids = data.map(getId)
+  const { selected, allSelected, toggle, toggleAll, clear } = useBulkSelect(ids)
+
+  /* Delete dialog */
+  const [deleteOpen, setDeleteOpen] = useState(false)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [isPending, startTransition] = useTransition()
+
+  const handleDelete = useCallback(
+    (id: string) => {
+      if (!onDelete) return
+      setDeleteId(id)
+      setDeleteOpen(true)
+    },
+    [onDelete],
+  )
+
+  const confirmDelete = () => {
+    if (!deleteId || !onDelete) return
+    startTransition(async () => {
+      await onDelete(deleteId)
+      setDeleteOpen(false)
+      setDeleteId(null)
+    })
   }
 
-  const toggle = (id: string) => {
-    if (!onSelectionChange || !selected) return
-    const s = new Set(selected)
-    s.has(id) ? s.delete(id) : s.add(id)
-    onSelectionChange(s)
-  }
+  const colCount = columns.length + (hasBulk ? 1 : 0) + (hasActions ? 1 : 0)
 
   return (
-    <div className="overflow-x-auto rounded-xl border">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b bg-muted/40">
-            {hasSelection && (
-              <th className="w-10 px-3 py-2.5">
-                <input type="checkbox" checked={items.length > 0 && selected.size === items.length} onChange={toggleAll} className="rounded" />
-              </th>
-            )}
-            {columns.map(col => (
-              <th key={col.key} className={`px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground ${col.className ?? ""}`}>
-                {col.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {items.map(item => {
-            const id = getId(item)
-            return (
-              <tr
-                key={id}
-                className={`border-b last:border-b-0 hover:bg-muted/20 transition-colors ${onRowClick ? "cursor-pointer" : ""}`}
-                onClick={onRowClick ? () => onRowClick(item) : undefined}
-              >
-                {hasSelection && (
-                  <td className="px-3 py-2" onClick={e => e.stopPropagation()}>
-                    <input type="checkbox" checked={selected.has(id)} onChange={() => toggle(id)} className="rounded" />
-                  </td>
-                )}
-                {columns.map(col => (
-                  <td key={col.key} className={`px-3 py-2 ${col.className ?? ""}`}>
-                    {col.render(item)}
-                  </td>
-                ))}
-              </tr>
-            )
-          })}
-          {items.length === 0 && (
-            <tr>
-              <td colSpan={columns.length + (hasSelection ? 1 : 0)} className="text-center py-12 text-muted-foreground">
-                {emptyMessage}
-              </td>
-            </tr>
+    <>
+      {/* ── Toolbar ── */}
+      {(toolbar || hasBulk) && (
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          {toolbar}
+          <div className="flex-1" />
+          {hasBulk && (
+            <BulkBar selected={selected} actions={bulkActions!} onClear={clear} />
           )}
-        </tbody>
-      </table>
-    </div>
+        </div>
+      )}
+
+      {/* ── Table ── */}
+      <div className="overflow-x-auto rounded-lg border">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b bg-muted/50">
+              {hasBulk && (
+                <th className="w-10 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={allSelected}
+                    onChange={toggleAll}
+                    className="size-3.5 rounded border-input"
+                  />
+                </th>
+              )}
+
+              {columns.map((col) =>
+                col.sortable ? (
+                  <SortTh
+                    key={col.key}
+                    col={col.key}
+                    sortBy={sortBy}
+                    sortDir={sortDir}
+                    onSort={onSort}
+                    align={col.align}
+                    className={col.headerClassName}
+                  >
+                    {col.header}
+                  </SortTh>
+                ) : (
+                  <th
+                    key={col.key}
+                    className={cn(
+                      "px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground",
+                      col.align === "center"
+                        ? "text-center"
+                        : col.align === "right"
+                          ? "text-right"
+                          : "text-left",
+                      col.headerClassName,
+                    )}
+                  >
+                    {col.header}
+                  </th>
+                ),
+              )}
+
+              {hasActions && (
+                <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Acciones
+                </th>
+              )}
+            </tr>
+          </thead>
+
+          <tbody>
+            {data.length === 0 && (
+              <tr>
+                <td
+                  colSpan={colCount}
+                  className="px-4 py-12 text-center text-muted-foreground"
+                >
+                  {emptyMessage}
+                </td>
+              </tr>
+            )}
+
+            {data.map((row) => {
+              const id = getId(row)
+              const isSelected = hasBulk && selected.has(id)
+              return (
+                <tr
+                  key={id}
+                  className={cn(
+                    "border-b last:border-b-0 transition-colors",
+                    isSelected ? "bg-primary/5" : "hover:bg-muted/20",
+                  )}
+                >
+                  {hasBulk && (
+                    <td className="px-4 py-3">
+                      <input
+                        type="checkbox"
+                        checked={selected.has(id)}
+                        onChange={() => toggle(id)}
+                        className="size-3.5 rounded border-input"
+                      />
+                    </td>
+                  )}
+
+                  {columns.map((col) => (
+                    <td
+                      key={col.key}
+                      className={cn(
+                        "px-3 py-2",
+                        col.align === "center"
+                          ? "text-center"
+                          : col.align === "right"
+                            ? "text-right"
+                            : "text-left",
+                        col.className,
+                      )}
+                    >
+                      {col.cell(row)}
+                    </td>
+                  ))}
+
+                  {hasActions && (
+                    <td className="px-3 py-2 text-right">
+                      {renderActions!(row, { handleDelete })}
+                    </td>
+                  )}
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ── Pagination ── */}
+      <TablePagination
+        page={page}
+        totalPages={totalPages}
+        total={total}
+        perPage={perPage}
+        onPageChange={onPageChange}
+        onPerPageChange={onPerPageChange}
+      />
+
+      {/* ── Delete dialog ── */}
+      {onDelete && (
+        <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{deleteTitle}</DialogTitle>
+              <DialogDescription>{deleteDescription}</DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteOpen(false)}>
+                Cancelar
+              </Button>
+              <Button
+                variant="destructive"
+                disabled={isPending}
+                onClick={confirmDelete}
+              >
+                {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Eliminar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   )
 }

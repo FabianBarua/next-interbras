@@ -79,6 +79,17 @@ export async function deleteExternalCodeAction(id: string) {
   }
 }
 
+export async function bulkDeleteExternalCodesAction(ids: string[]) {
+  const session = await requireAdmin()
+  for (const id of ids) {
+    const parsed = uuidSchema.safeParse(id)
+    if (!parsed.success) continue
+    await deleteExternalCode(id)
+    logEvent({ category: "admin", action: "external_code.delete", entity: "external_code", entityId: id, userId: session.id })
+  }
+  return { success: true }
+}
+
 export async function searchVariantsBySkuAction(term: string) {
   await requireAdmin()
   if (!term || term.length < 1) return []
