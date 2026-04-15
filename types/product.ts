@@ -15,7 +15,7 @@ export interface ExternalCode {
 export interface ProductImage {
   id: string
   productId: string
-  variantId: string | null
+  variantId: string
   url: string
   alt: string | null
   isMain: boolean

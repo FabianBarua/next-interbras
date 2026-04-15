@@ -7,7 +7,6 @@ import type { Category } from "@/types/category"
 import type { I18nText, I18nRichText, I18nSpecs } from "@/types/common"
 import { updateProductAction } from "@/lib/actions/admin/products"
 import { I18nInput } from "@/components/dashboard/i18n-input"
-import { ImageUpload } from "@/components/dashboard/image-upload"
 
 interface ProductData {
   id: string
@@ -20,7 +19,7 @@ interface ProductData {
   included: I18nRichText | null
   sortOrder: number
   active: boolean
-  images: { id: string; url: string; alt: I18nText | null; variantId: string | null; sortOrder: number }[]
+
 }
 
 export function ProductEditForm({ product, categories }: { product: ProductData; categories: Category[] }) {
@@ -40,9 +39,6 @@ export function ProductEditForm({ product, categories }: { product: ProductData;
   const [includedPt, setIncludedPt] = useState(product.included?.pt ?? "")
   const [sortOrder, setSortOrder] = useState(product.sortOrder)
   const [active, setActive] = useState(product.active)
-  const [images, setImages] = useState<string[]>(
-    product.images.filter(i => !i.variantId).map(i => i.url)
-  )
 
   // Specs editor
   const [specsEs, setSpecsEs] = useState<{ label: string; value: string }[]>(
@@ -85,7 +81,6 @@ export function ProductEditForm({ product, categories }: { product: ProductData;
         included: includedEs || includedPt ? { es: includedEs, pt: includedPt } : undefined,
         sortOrder,
         active,
-        images,
       })
       if ("error" in res) setError(res.error!)
       else {
@@ -127,12 +122,6 @@ export function ProductEditForm({ product, categories }: { product: ProductData;
             </label>
           </div>
         </div>
-      </section>
-
-      {/* Images */}
-      <section className="rounded-2xl border bg-card p-6 space-y-4">
-        <h2 className="font-semibold text-base">Imágenes del producto</h2>
-        <ImageUpload value={images} onChange={setImages} max={15} />
       </section>
 
       {/* Specs */}

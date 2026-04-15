@@ -329,7 +329,7 @@ export const variants = pgTable("variants", {
 export const productImages = pgTable("product_images", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	productId: uuid("product_id").notNull(),
-	variantId: uuid("variant_id"),
+	variantId: uuid("variant_id").notNull(),
 	url: text().notNull(),
 	alt: jsonb(),
 	sortOrder: integer("sort_order").default(0).notNull(),
@@ -345,7 +345,7 @@ export const productImages = pgTable("product_images", {
 			columns: [table.variantId],
 			foreignColumns: [variants.id],
 			name: "product_images_variant_id_variants_id_fk"
-		}).onDelete("set null"),
+		}).onDelete("cascade"),
 ]);
 
 export const addresses = pgTable("addresses", {

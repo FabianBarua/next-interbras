@@ -32,7 +32,6 @@ const createSchema = z.object({
   included: i18nTextSchema.optional(),
   sortOrder: z.number().int().min(0).optional(),
   active: z.boolean().optional(),
-  images: z.array(z.string().max(500)).max(20).optional(),
 })
 
 const updateSchema = createSchema.partial()

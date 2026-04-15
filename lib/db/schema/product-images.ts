@@ -14,7 +14,7 @@ import { variants } from "./variants"
 export const productImages = pgTable("product_images", {
   id: uuid("id").primaryKey().defaultRandom(),
   productId: uuid("product_id").references(() => products.id, { onDelete: "cascade" }).notNull(),
-  variantId: uuid("variant_id").references(() => variants.id, { onDelete: "set null" }),
+  variantId: uuid("variant_id").references(() => variants.id, { onDelete: "cascade" }).notNull(),
   url: text("url").notNull(),
   alt: jsonb("alt").$type<I18nText>(),
   sortOrder: integer("sort_order").default(0).notNull(),

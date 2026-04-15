@@ -48,7 +48,7 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
   const allImages: FrontendImage[] = imgRows.map(img => ({
     id: img.id,
     productId: img.productId,
-    variantId: img.variantId ?? null,
+    variantId: img.variantId,
     url: img.url,
     alt: (img.alt as any)?.es ?? (img.alt as any)?.pt ?? null,
     isMain: img.sortOrder === 0,

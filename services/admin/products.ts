@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { products, categories, productImages } from "@/lib/db/schema"
-import { eq, asc, desc, inArray, count, sql } from "drizzle-orm"
+import { eq, asc, inArray, count } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
 import type { I18nText, I18nRichText, I18nSpecs } from "@/types/common"
 
@@ -81,10 +81,6 @@ export async function getProductByIdAdmin(id: string) {
   if (rows.length === 0) return null
   const p = rows[0]
 
-  const imgs = await db.select().from(productImages)
-    .where(eq(productImages.productId, id))
-    .orderBy(asc(productImages.sortOrder))
-
   return {
     id: p.id,
     categoryId: p.categoryId,
@@ -96,13 +92,6 @@ export async function getProductByIdAdmin(id: string) {
     included: (p.included as I18nRichText) ?? null,
     sortOrder: p.sortOrder,
     active: p.active,
-    images: imgs.map(i => ({
-      id: i.id,
-      url: i.url,
-      alt: i.alt as I18nText | null,
-      variantId: i.variantId,
-      sortOrder: i.sortOrder,
-    })),
   }
 }
 
@@ -116,7 +105,6 @@ export interface CreateProductInput {
   included?: I18nRichText
   sortOrder?: number
   active?: boolean
-  images?: string[]
 }
 
 export async function createProduct(input: CreateProductInput): Promise<string> {
@@ -132,40 +120,13 @@ export async function createProduct(input: CreateProductInput): Promise<string> 
     active: input.active ?? true,
   }).returning({ id: products.id })
 
-  if (input.images?.length) {
-    await db.insert(productImages).values(
-      input.images.map((url, i) => ({
-        productId: row.id,
-        url,
-        sortOrder: i,
-      }))
-    )
-  }
-
   await invalidateCache("products:*", "variants:*", "categories:*")
   return row.id
 }
 
 export async function updateProduct(id: string, input: Partial<CreateProductInput>): Promise<void> {
-  const { images, ...rest } = input
-  if (Object.keys(rest).length > 0) {
-    await db.update(products).set(rest).where(eq(products.id, id))
-  }
-
-  if (images !== undefined) {
-    // Replace all product-level images (variant images untouched)
-    await db.delete(productImages).where(
-      sql`${productImages.productId} = ${id} AND ${productImages.variantId} IS NULL`
-    )
-    if (images.length > 0) {
-      await db.insert(productImages).values(
-        images.map((url, i) => ({
-          productId: id,
-          url,
-          sortOrder: i,
-        }))
-      )
-    }
+  if (Object.keys(input).length > 0) {
+    await db.update(products).set(input).where(eq(products.id, id))
   }
 
   await invalidateCache("products:*", "variants:*")

@@ -1,6 +1,8 @@
 "use client"
 
-import { useState, useMemo, useCallback, useRef, useEffect } from "react"
+import { useState, useMemo, useCallback, useRef, useEffect, createElement } from "react"
+import { createRoot } from "react-dom/client"
+import { flushSync } from "react-dom"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -9,11 +11,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Search, X } from "lucide-react"
-import { icons as lucideIcons } from "lucide-react"
-import * as PhosphorIcons from "@phosphor-icons/react"
-
-type Library = "lucide" | "phosphor"
+import { Search, X, Loader2 } from "lucide-react"
+import type { IconType } from "react-icons"
 
 interface IconPickerProps {
   value: string | null
@@ -21,106 +20,235 @@ interface IconPickerProps {
   onChange: (svg: string | null, meta: { library: string; name: string } | null) => void
 }
 
-const ICONS_PER_PAGE = 120
+const ICONS_PER_PAGE = 150
 
-// Build phosphor icon map once
-const phosphorIconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {}
-for (const [key, val] of Object.entries(PhosphorIcons)) {
-  if (typeof val === "function" && /^[A-Z]/.test(key) && key !== "IconContext" && key !== "IconBase") {
-    phosphorIconMap[key] = val as React.ComponentType<{ size?: number; className?: string }>
+/* ------------------------------------------------------------------ */
+/*  Library registry – lazy-loaded from react-icons                   */
+/* ------------------------------------------------------------------ */
+
+const LIBRARIES = [
+  { id: "lu", label: "Lucide",           loader: () => import("react-icons/lu") },
+  { id: "tb", label: "Tabler",           loader: () => import("react-icons/tb") },
+  { id: "pi", label: "Phosphor",         loader: () => import("react-icons/pi") },
+  { id: "fa6", label: "Font Awesome",    loader: () => import("react-icons/fa6") },
+  { id: "md", label: "Material Design",  loader: () => import("react-icons/md") },
+  { id: "hi2", label: "Heroicons",       loader: () => import("react-icons/hi2") },
+  { id: "bs", label: "Bootstrap",        loader: () => import("react-icons/bs") },
+  { id: "ri", label: "Remix",            loader: () => import("react-icons/ri") },
+] as const
+
+type LibId = (typeof LIBRARIES)[number]["id"]
+
+type IconEntry = { name: string; lib: LibId; Icon: IconType }
+
+const LIB_COLORS: Record<string, string> = {
+  lu: "bg-blue-400",
+  tb: "bg-cyan-400",
+  pi: "bg-emerald-400",
+  fa6: "bg-orange-400",
+  md: "bg-purple-400",
+  hi2: "bg-pink-400",
+  bs: "bg-yellow-400",
+  ri: "bg-red-400",
+}
+
+// Backward-compat mapping for old meta stored as "lucide"/"phosphor"
+const LEGACY_LIB_MAP: Record<string, { lib: LibId; prefix: string }> = {
+  lucide: { lib: "lu", prefix: "Lu" },
+  phosphor: { lib: "pi", prefix: "Pi" },
+}
+
+/* ---------- global cache ------------------------------------------ */
+
+let cachedIcons: IconEntry[] | null = null
+let loadPromise: Promise<IconEntry[]> | null = null
+
+function isComponent(val: unknown): val is IconType {
+  return (
+    typeof val === "function" ||
+    (typeof val === "object" && val !== null && "$$typeof" in val)
+  )
+}
+
+async function loadAllIcons(): Promise<IconEntry[]> {
+  if (cachedIcons) return cachedIcons
+  if (loadPromise) return loadPromise
+
+  loadPromise = Promise.all(
+    LIBRARIES.map(async (lib) => {
+      const mod = await lib.loader()
+      const entries: IconEntry[] = []
+      for (const [name, Component] of Object.entries(mod)) {
+        if (name !== "default" && isComponent(Component)) {
+          entries.push({ name, lib: lib.id, Icon: Component })
+        }
+      }
+      return entries
+    }),
+  ).then((results) => {
+    const all = results.flat().sort((a, b) => a.name.localeCompare(b.name))
+    cachedIcons = all
+    return all
+  })
+
+  return loadPromise
+}
+
+/* ---------- single-icon resolver (for CategoryIcon) --------------- */
+
+const singleIconCache = new Map<string, IconType | null>()
+
+async function resolveIcon(library: string, name: string): Promise<IconType | null> {
+  let lib = library
+  let iconName = name
+
+  // Handle legacy meta format
+  const legacy = LEGACY_LIB_MAP[library]
+  if (legacy) {
+    lib = legacy.lib
+    iconName = name.startsWith(legacy.prefix) ? name : `${legacy.prefix}${name}`
+  }
+
+  const key = `${lib}:${iconName}`
+  if (singleIconCache.has(key)) return singleIconCache.get(key)!
+
+  const libDef = LIBRARIES.find((l) => l.id === lib)
+  if (!libDef) { singleIconCache.set(key, null); return null }
+
+  try {
+    const mod = await libDef.loader()
+    const Component = (mod as Record<string, unknown>)[iconName]
+    const result = isComponent(Component) ? Component : null
+    singleIconCache.set(key, result)
+    return result
+  } catch {
+    singleIconCache.set(key, null)
+    return null
   }
 }
-const phosphorNames = Object.keys(phosphorIconMap).sort()
-const lucideNames = Object.keys(lucideIcons).sort()
 
-export function IconPicker({ value, meta, onChange }: IconPickerProps) {
+/* ================================================================== */
+/*  IconPicker                                                        */
+/* ================================================================== */
+
+export function IconPicker({ meta, onChange }: IconPickerProps) {
   const [open, setOpen] = useState(false)
-  const [tab, setTab] = useState<Library>("lucide")
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(0)
+  const [icons, setIcons] = useState<IconEntry[]>(() => cachedIcons ?? [])
+  const [loadingAsync, setLoadingAsync] = useState(false)
+  const [activeLibs, setActiveLibs] = useState<Set<LibId> | null>(null)
   const gridRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const loadStarted = useRef(false)
+
+  const loading = icons.length === 0 && (loadingAsync || loadStarted.current)
+
+  // Load icons when dialog opens (only if not already cached)
+  useEffect(() => {
+    if (!open || icons.length > 0 || loadStarted.current) return
+    loadStarted.current = true
+    setLoadingAsync(true)
+    loadAllIcons().then((result) => {
+      setIcons(result)
+      setLoadingAsync(false)
+    })
+  }, [open, icons.length])
+
+  // Auto-focus search
+  useEffect(() => {
+    if (open && !loading) setTimeout(() => inputRef.current?.focus(), 50)
+  }, [open, loading])
+
+  const libCounts = useMemo(() => {
+    const counts: Record<string, number> = {}
+    for (const lib of LIBRARIES) counts[lib.id] = 0
+    for (const icon of icons) counts[icon.lib] = (counts[icon.lib] || 0) + 1
+    return counts
+  }, [icons])
 
   const filtered = useMemo(() => {
-    const names = tab === "lucide" ? lucideNames : phosphorNames
-    if (!search) return names
-    const q = search.toLowerCase()
-    return names.filter((n) => n.toLowerCase().includes(q))
-  }, [tab, search])
+    let result = icons
+    if (activeLibs) result = result.filter((i) => activeLibs.has(i.lib))
+    if (search) {
+      const q = search.toLowerCase()
+      result = result.filter((i) => i.name.toLowerCase().includes(q))
+    }
+    return result
+  }, [icons, search, activeLibs])
 
   const totalPages = Math.ceil(filtered.length / ICONS_PER_PAGE)
   const visible = filtered.slice(page * ICONS_PER_PAGE, (page + 1) * ICONS_PER_PAGE)
 
+  // Reset page via scroll effect (non-setState)
+  const scrollKeyRef = useRef({ search, activeLibs })
   useEffect(() => {
-    setPage(0)
-    gridRef.current?.scrollTo(0, 0)
-  }, [search, tab])
+    if (search !== scrollKeyRef.current.search || activeLibs !== scrollKeyRef.current.activeLibs) {
+      scrollKeyRef.current = { search, activeLibs }
+      gridRef.current?.scrollTo(0, 0)
+    }
+  })
 
-  const renderIcon = useCallback(
-    (name: string, size = 20) => {
-      if (tab === "lucide") {
-        const LucideIcon = lucideIcons[name as keyof typeof lucideIcons]
-        return LucideIcon ? <LucideIcon size={size} /> : null
-      }
-      const PhIcon = phosphorIconMap[name]
-      return PhIcon ? <PhIcon size={size} /> : null
-    },
-    [tab],
-  )
+  const toggleLib = useCallback((lib: LibId) => {
+    setActiveLibs((prev) => {
+      if (!prev) return new Set([lib])
+      const next = new Set(prev)
+      if (next.has(lib)) { next.delete(lib); return next.size === 0 ? null : next }
+      next.add(lib)
+      return next
+    })
+    setPage(0)
+  }, [])
 
   const handleSelect = useCallback(
-    (name: string) => {
-      // Render SVG string
-      const el = document.createElement("div")
-      if (tab === "lucide") {
-        const iconData = lucideIcons[name as keyof typeof lucideIcons]
-        if (!iconData) return
-        // Use a temporary render to get SVG
-        const svgNs = "http://www.w3.org/2000/svg"
-        const svg = document.createElementNS(svgNs, "svg")
-        svg.setAttribute("xmlns", svgNs)
-        svg.setAttribute("width", "24")
-        svg.setAttribute("height", "24")
-        svg.setAttribute("viewBox", "0 0 24 24")
-        svg.setAttribute("fill", "none")
-        svg.setAttribute("stroke", "currentColor")
-        svg.setAttribute("stroke-width", "2")
-        svg.setAttribute("stroke-linecap", "round")
-        svg.setAttribute("stroke-linejoin", "round")
-        svg.setAttribute("data-library", "lucide")
-        svg.setAttribute("data-icon", name)
-        // lucideIcons[name] is [tag, attrs] pairs
-        for (const [tag, attrs] of (iconData as any)) {
-          const child = document.createElementNS(svgNs, tag)
-          for (const [k, v] of Object.entries(attrs as Record<string, string>)) {
-            child.setAttribute(k, v)
-          }
-          svg.appendChild(child)
-        }
-        onChange(svg.outerHTML, { library: "lucide", name })
-      } else {
-        // For Phosphor, render to a temp container
-        onChange(null, { library: "phosphor", name })
-        // We'll capture from DOM
-        const PhIcon = phosphorIconMap[name]
-        if (!PhIcon) return
-        // Use a simpler approach: store meta and render dynamically
-        onChange(`<svg data-library="phosphor" data-icon="${name}"></svg>`, { library: "phosphor", name })
+    (entry: IconEntry) => {
+      const container = document.createElement("div")
+      const root = createRoot(container)
+      flushSync(() => {
+        root.render(createElement(entry.Icon, { size: 24 }))
+      })
+      const svg = container.querySelector("svg")
+      if (svg) {
+        svg.setAttribute("data-library", entry.lib)
+        svg.setAttribute("data-icon", entry.name)
+        onChange(svg.outerHTML, { library: entry.lib, name: entry.name })
       }
+      root.unmount()
       setOpen(false)
       setSearch("")
     },
-    [tab, onChange],
+    [onChange],
   )
 
-  const previewIcon = useMemo(() => {
+  /* ---------- preview (button outside dialog) ---------------------- */
+
+  const metaKey = meta ? `${meta.library}:${meta.name}` : null
+
+  // Sync: check global cache
+  const syncPreview = useMemo(() => {
     if (!meta) return null
-    if (meta.library === "lucide") {
-      const LucideIcon = lucideIcons[meta.name as keyof typeof lucideIcons]
-      return LucideIcon ? <LucideIcon size={24} /> : null
-    }
-    const PhIcon = phosphorIconMap[meta.name]
-    return PhIcon ? <PhIcon size={24} /> : null
+    if (!cachedIcons) return null
+    let lib = meta.library
+    let name = meta.name
+    const legacy = LEGACY_LIB_MAP[lib]
+    if (legacy) { lib = legacy.lib; name = name.startsWith(legacy.prefix) ? name : `${legacy.prefix}${name}` }
+    const found = cachedIcons.find((i) => i.lib === lib && i.name === name)
+    return found ? found.Icon : null
   }, [meta])
+
+  // Async: resolve on cache miss
+  const [asyncPreview, setAsyncPreview] = useState<{ key: string; Icon: IconType } | null>(null)
+
+  useEffect(() => {
+    if (!meta || syncPreview) return
+    let cancelled = false
+    resolveIcon(meta.library, meta.name).then((r) => {
+      if (!cancelled && r) setAsyncPreview({ key: `${meta.library}:${meta.name}`, Icon: r })
+    })
+    return () => { cancelled = true }
+  }, [meta, syncPreview])
+
+  const PreviewIcon = syncPreview ?? (asyncPreview?.key === metaKey ? asyncPreview.Icon : null)
 
   return (
     <div className="space-y-2">
@@ -132,7 +260,7 @@ export function IconPicker({ value, meta, onChange }: IconPickerProps) {
           onClick={() => setOpen(true)}
           className="h-12 w-12 p-0"
         >
-          {previewIcon ?? <Search className="size-4 text-muted-foreground" />}
+          {PreviewIcon ? <PreviewIcon size={24} /> : <Search className="size-4 text-muted-foreground" />}
         </Button>
         {meta && (
           <>
@@ -156,85 +284,119 @@ export function IconPicker({ value, meta, onChange }: IconPickerProps) {
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+        <DialogContent className="max-w-3xl h-[75vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Seleccionar ícono</DialogTitle>
+            <p className="text-xs text-muted-foreground">
+              {icons.length.toLocaleString()} íconos de {LIBRARIES.length} librerías
+            </p>
           </DialogHeader>
 
-          {/* Tabs */}
-          <div className="flex gap-1 border-b pb-2">
-            {(["lucide", "phosphor"] as const).map((lib) => (
-              <button
-                key={lib}
-                onClick={() => setTab(lib)}
-                className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                  tab === lib
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted"
-                }`}
-              >
-                {lib === "lucide" ? `Lucide (${lucideNames.length})` : `Phosphor (${phosphorNames.length})`}
-              </button>
-            ))}
-          </div>
-
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar ícono..."
-              className="pl-9"
-            />
-          </div>
-
-          <p className="text-xs text-muted-foreground">
-            {filtered.length} ícono{filtered.length !== 1 ? "s" : ""} encontrado{filtered.length !== 1 ? "s" : ""}
-            {totalPages > 1 && ` — página ${page + 1} de ${totalPages}`}
-          </p>
-
-          {/* Grid */}
-          <div ref={gridRef} className="flex-1 overflow-y-auto min-h-0">
-            <div className="grid grid-cols-8 sm:grid-cols-10 gap-1">
-              {visible.map((name) => (
-                <button
-                  key={name}
-                  type="button"
-                  onClick={() => handleSelect(name)}
-                  title={name}
-                  className={`flex items-center justify-center rounded-md p-2 transition-colors hover:bg-primary/10 ${
-                    meta?.name === name && meta?.library === tab
-                      ? "bg-primary/10 ring-1 ring-primary"
-                      : "hover:bg-muted"
-                  }`}
-                >
-                  {renderIcon(name)}
-                </button>
-              ))}
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-3">
+              <Loader2 className="size-8 animate-spin text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Cargando librerías de íconos…</p>
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Input
+                  ref={inputRef}
+                  value={search}
+                  onChange={(e) => { setSearch(e.target.value); setPage(0) }}
+                  placeholder="Buscar en todas las librerías…"
+                  className="pl-9"
+                />
+              </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center gap-1 pt-2 border-t">
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page === 0}
-                onClick={() => setPage((p) => p - 1)}
-              >
-                Anterior
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                disabled={page >= totalPages - 1}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                Siguiente
-              </Button>
-            </div>
+              {/* Library filter chips */}
+              <div className="flex flex-wrap gap-1.5">
+                {LIBRARIES.map((lib) => {
+                  const active = !activeLibs || activeLibs.has(lib.id)
+                  return (
+                    <button
+                      key={lib.id}
+                      onClick={() => toggleLib(lib.id)}
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 text-xs rounded-full border transition-colors ${
+                        active
+                          ? "bg-primary/10 border-primary/30 text-foreground"
+                          : "border-transparent text-muted-foreground hover:bg-muted"
+                      }`}
+                    >
+                      <span className={`size-2 rounded-full ${LIB_COLORS[lib.id]}`} />
+                      {lib.label}
+                      <span className="text-muted-foreground">
+                        {(libCounts[lib.id] || 0).toLocaleString()}
+                      </span>
+                    </button>
+                  )
+                })}
+                {activeLibs && (
+                  <button
+                    onClick={() => setActiveLibs(null)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-xs rounded-full text-muted-foreground hover:bg-muted"
+                  >
+                    <X className="size-3" /> Limpiar
+                  </button>
+                )}
+              </div>
+
+              <p className="text-xs text-muted-foreground">
+                {filtered.length.toLocaleString()} resultado{filtered.length !== 1 ? "s" : ""}
+                {totalPages > 1 && ` — página ${page + 1} de ${totalPages}`}
+              </p>
+
+              {/* Grid */}
+              <div ref={gridRef} className="flex-1 overflow-auto min-h-56">
+                <div className="grid grid-cols-8 sm:grid-cols-10  gap-1">
+                  {visible.map((entry) => (
+                    <button
+                      key={`${entry.lib}:${entry.name}`}
+                      type="button"
+                      onClick={() => handleSelect(entry)}
+                      title={`${entry.name} (${entry.lib})`}
+                      className={`group relative flex items-center justify-center rounded-md p-2 transition-colors ${
+                        meta?.name === entry.name && meta?.library === entry.lib
+                          ? "bg-primary/10 ring-1 ring-primary"
+                          : "hover:bg-muted"
+                      }`}
+                    >
+                      <entry.Icon size={20} />
+                      <span
+                        className={`absolute top-0.5 right-0.5 size-2 rounded-full ${LIB_COLORS[entry.lib] ?? "bg-gray-400"} opacity-0 group-hover:opacity-100 transition-opacity`}
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-1 pt-2 border-t">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page === 0}
+                    onClick={() => setPage((p) => p - 1)}
+                  >
+                    Anterior
+                  </Button>
+                  <span className="text-xs text-muted-foreground px-2">
+                    {page + 1} / {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page >= totalPages - 1}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    Siguiente
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </DialogContent>
       </Dialog>
@@ -242,7 +404,11 @@ export function IconPicker({ value, meta, onChange }: IconPickerProps) {
   )
 }
 
-/** Render a saved icon from meta (for display in tables/pages) */
+/* ================================================================== */
+/*  CategoryIcon – renders a saved icon from meta via react-icons     */
+/*  Used only in dashboard (admin) for previewing selected icons      */
+/* ================================================================== */
+
 export function CategoryIcon({
   meta,
   size = 20,
@@ -252,11 +418,30 @@ export function CategoryIcon({
   size?: number
   className?: string
 }) {
-  if (!meta) return null
-  if (meta.library === "lucide") {
-    const LucideIcon = lucideIcons[meta.name as keyof typeof lucideIcons]
-    return LucideIcon ? <LucideIcon size={size} className={className} /> : null
-  }
-  const PhIcon = phosphorIconMap[meta.name]
-  return PhIcon ? <PhIcon size={size} className={className} /> : null
+  const metaKey = meta ? `${meta.library}:${meta.name}` : null
+
+  const cachedIcon = useMemo(() => {
+    if (!meta) return null
+    if (!cachedIcons) return null
+    let lib = meta.library
+    let name = meta.name
+    const legacy = LEGACY_LIB_MAP[lib]
+    if (legacy) { lib = legacy.lib; name = name.startsWith(legacy.prefix) ? name : `${legacy.prefix}${name}` }
+    return cachedIcons.find((i) => i.lib === lib && i.name === name)?.Icon ?? null
+  }, [meta])
+
+  const [asyncIcon, setAsyncIcon] = useState<{ key: string; Icon: IconType } | null>(null)
+
+  useEffect(() => {
+    if (!meta || cachedIcon) return
+    let cancelled = false
+    resolveIcon(meta.library, meta.name).then((r) => {
+      if (!cancelled && r) setAsyncIcon({ key: `${meta.library}:${meta.name}`, Icon: r })
+    })
+    return () => { cancelled = true }
+  }, [meta, cachedIcon])
+
+  const Icon = cachedIcon ?? (asyncIcon?.key === metaKey ? asyncIcon.Icon : null)
+  if (!Icon) return null
+  return <Icon size={size} className={className} />
 }

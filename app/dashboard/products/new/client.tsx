@@ -6,7 +6,6 @@ import type { Category } from "@/types/category"
 import type { I18nSpecs } from "@/types/common"
 import { createProductAction } from "@/lib/actions/admin/products"
 import { I18nInput } from "@/components/dashboard/i18n-input"
-import { ImageUpload } from "@/components/dashboard/image-upload"
 import { Breadcrumbs } from "@/components/dashboard/breadcrumbs"
 import { PageHeader } from "@/components/dashboard/page-header"
 
@@ -27,7 +26,6 @@ export function ProductCreateClient({ categories }: { categories: Category[] }) 
   const [includedPt, setIncludedPt] = useState("")
   const [sortOrder, setSortOrder] = useState(0)
   const [active, setActive] = useState(true)
-  const [images, setImages] = useState<string[]>([])
 
   const [specsEs, setSpecsEs] = useState<{ label: string; value: string }[]>([])
   const [specsPt, setSpecsPt] = useState<{ label: string; value: string }[]>([])
@@ -67,7 +65,6 @@ export function ProductCreateClient({ categories }: { categories: Category[] }) 
         included: includedEs || includedPt ? { es: includedEs, pt: includedPt } : undefined,
         sortOrder,
         active,
-        images,
       })
       if ("error" in res) setError(res.error ?? "Error")
       else if ("id" in res) router.push(`/dashboard/products/${res.id}`)
@@ -118,12 +115,6 @@ export function ProductCreateClient({ categories }: { categories: Category[] }) 
               </label>
             </div>
           </div>
-        </section>
-
-        {/* Images */}
-        <section className="rounded-2xl border bg-card p-6 space-y-4">
-          <h2 className="font-semibold text-base">Imágenes del producto</h2>
-          <ImageUpload value={images} onChange={setImages} max={15} />
         </section>
 
         {/* Specs */}

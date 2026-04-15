@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import type { Category } from "@/types/category"
 import { Menu, Search, ChevronDown, Home, ShoppingBag, Download, Headphones, Users, User } from "lucide-react"
+import { CategoryIcon } from "./category-icon"
 
 export function MobileMenu({ categories }: { categories: Category[] }) {
   const [mounted, setMounted] = useState(false)
@@ -87,8 +88,9 @@ export function MobileMenu({ categories }: { categories: Category[] }) {
                       key={cat.id}
                       href={`/productos/${cat.slug}`}
                       onClick={close}
-                      className="block rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                     >
+                      <CategoryIcon svgIcon={cat.svgIcon} size={16} className="shrink-0" />
                       {cat.name[locale] || cat.name.es}
                     </Link>
                   ))}
