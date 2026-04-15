@@ -1,8 +1,6 @@
-import { emptyCartMock } from "../mock/cart"
 import type { Cart } from "../types/cart"
 
-const DELAY = 300
-
+// Cart is managed client-side via Zustand (cart-store.ts)
 export async function getCart(): Promise<Cart> {
-  return new Promise((resolve) => setTimeout(() => resolve(emptyCartMock), DELAY))
+  return { items: [], totalItems: 0, subtotal: 0 }
 }

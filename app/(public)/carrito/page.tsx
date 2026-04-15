@@ -6,12 +6,14 @@ import { useCartStore } from "@/store/cart-store"
 import { useDictionary } from "@/i18n/context"
 import { useEcommerce } from "@/components/store/ecommerce-context"
 import { getVariantMainImage } from "@/lib/variant-images"
+import { toVariantSlug } from "@/lib/variant-slug"
 import { Breadcrumbs } from "@/components/store/breadcrumbs"
 import { QuantitySelector } from "@/components/store/quantity-selector"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { isVoltageMismatch, LOCALE_COUNTRY } from "@/data/voltage-rules"
 
 export default function CartPage() {
   const ecommerce = useEcommerce()
@@ -84,13 +86,16 @@ export default function CartPage() {
               const priceUsd = item.variant?.externalCode?.priceUsd || 0
               const itemTotal = priceUsd * item.quantity
               const catSlug = item.product.category?.slug || "cat"
+              const productUrl = `/productos/${catSlug}/${toVariantSlug(item.product, item.variant)}`
+              const itemVoltage = item.variant?.attributes?.voltage as string | undefined
+              const itemVoltageMismatch = itemVoltage ? isVoltageMismatch(itemVoltage, locale) : false
 
               return (
                 <div key={item.id}>
                   <div className="flex gap-4 py-5">
                     {/* Image */}
                     <Link
-                      href={`/productos/${catSlug}/${item.product.slug}`}
+                      href={productUrl}
                       className="relative w-24 h-24 sm:w-28 sm:h-28 bg-muted/20 rounded-xl overflow-hidden shrink-0 border hover:border-primary/30 transition-colors"
                     >
                       {img && (
@@ -103,7 +108,7 @@ export default function CartPage() {
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
                           <Link
-                            href={`/productos/${catSlug}/${item.product.slug}`}
+                            href={productUrl}
                             className="font-medium text-sm sm:text-base hover:text-primary transition-colors line-clamp-2"
                           >
                             {name}
@@ -112,6 +117,14 @@ export default function CartPage() {
                             <Badge variant="secondary" className="mt-1.5 text-[10px] font-normal">
                               {variantName}
                             </Badge>
+                          )}
+                          {itemVoltageMismatch && (
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                              <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 dark:bg-amber-900/60 px-2 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 256 256" fill="currentColor"><path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17Z"/></svg>
+                                {dict.products.voltageWarning.cartWarning.replace("{country}", LOCALE_COUNTRY[locale][locale])}
+                              </span>
+                            </div>
                           )}
                         </div>
                         <button

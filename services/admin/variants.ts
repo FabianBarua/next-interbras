@@ -2,7 +2,7 @@ import { db } from "@/lib/db"
 import { variants, externalCodes, productImages } from "@/lib/db/schema"
 import { eq, asc, inArray, and, sql } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
-import { resolveVariantImageMap } from "@/lib/variant-images"
+
 import type { I18nText } from "@/types/common"
 
 export interface AdminVariant {
@@ -42,26 +42,15 @@ export async function getAllVariantsForProduct(productId: string): Promise<Admin
     .where(eq(productImages.productId, productId))
     .orderBy(asc(productImages.sortOrder))
 
-  // Separate variant-specific and product-level images
-  const imgByVariant = new Map<string, AdminVariant["images"]>()
-  const productLevelImgs: AdminVariant["images"] = []
+  // Group images by variantId (direct only, no fallback)
+  const imgMap = new Map<string, AdminVariant["images"]>()
   for (const img of imgRows) {
+    if (!img.variantId) continue
     const mapped = { id: img.id, url: img.url, alt: img.alt as I18nText | null, sortOrder: img.sortOrder }
-    if (img.variantId) {
-      const arr = imgByVariant.get(img.variantId) ?? []
-      arr.push(mapped)
-      imgByVariant.set(img.variantId, arr)
-    } else {
-      productLevelImgs.push(mapped)
-    }
+    const arr = imgMap.get(img.variantId) ?? []
+    arr.push(mapped)
+    imgMap.set(img.variantId, arr)
   }
-
-  // Resolve images with sibling/product-level fallback
-  const imgMap = resolveVariantImageMap(
-    rows.map(r => ({ id: r.id, options: r.options as Record<string, string> })),
-    imgByVariant,
-    productLevelImgs,
-  )
 
   // Load external codes
   const ecRows = await db.select().from(externalCodes)

@@ -11,7 +11,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
-import { categoriesMock } from "@/mock/categories"
+import type { Category } from "@/types/category"
 import { useDictionary } from "@/i18n/context"
 
 // Map category slugs to lucide-style SVG icons
@@ -37,9 +37,8 @@ const categoryIcons: Record<string, React.ReactNode> = {
 
 const defaultIcon = <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
 
-export function NavCategories() {
+export function NavCategories({ categories }: { categories: Category[] }) {
   const { dict, locale } = useDictionary()
-  const categories = categoriesMock.filter(c => c.active)
 
   return (
     <NavigationMenu>

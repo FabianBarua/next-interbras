@@ -228,6 +228,18 @@ const es = {
     buyNow: "Comprar ahora",
     freeShippingNote: "Envío gratis arriba de US$ 100",
     securePayment: "Pago 100% seguro",
+    voltageWarning: {
+      banner: "Este producto es {voltage} — no es el estándar en {country}.",
+      learnMore: "Más info",
+      dialogTitle: "Aviso de voltaje",
+      dialogDesc: "Estás viendo un producto de {voltage}, pero el voltaje estándar en {country} es {nativeVoltage}.",
+      explanation: "Los equipos de {voltage} no funcionan correctamente con la red eléctrica de {country} ({nativeVoltage}). Usar un voltaje incorrecto puede dañar el equipo.",
+      switchVariant: "Ver versión {voltage}",
+      understood: "Entendido",
+      addAnyway: "Agregar de todas formas",
+      cancel: "Cancelar",
+      cartWarning: "Voltaje no compatible con {country}",
+    },
   },
   search: {
     placeholder: "Buscar productos...",
@@ -350,7 +362,8 @@ const es = {
     terms: "Términos y Condiciones",
     warranty: "Políticas de Garantía",
     copyright: "© {year} Interbras. Todos los derechos reservados.",
-    madeWith: "Desarrollado con ♥ por el equipo de tecnología",
+    madeWith: "Desarrollado con ♥ por",
+    madeWithBrand: "CodexNova",
   },
   cta: {
     title: "¿Necesitás ayuda con",

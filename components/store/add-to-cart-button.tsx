@@ -6,6 +6,16 @@ import { useState, useCallback } from "react"
 import { useDictionary, useLocalePath } from "@/i18n/context"
 import { CheckCircle, ShoppingCart } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { isVoltageMismatch, LOCALE_VOLTAGE, LOCALE_COUNTRY } from "@/data/voltage-rules"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
+import { LightningIcon, ArrowsClockwiseIcon } from "@phosphor-icons/react"
 
 export function AddToCartButton({ product, variant, quantity = 1, className = "" }: { product: Product; variant?: Variant; quantity?: number; className?: string }) {
   const { addItem } = useCartStore()
@@ -13,12 +23,16 @@ export function AddToCartButton({ product, variant, quantity = 1, className = ""
   const localePath = useLocalePath()
   const router = useRouter()
   const [animating, setAnimating] = useState(false)
+  const [showVoltageDialog, setShowVoltageDialog] = useState(false)
   const outOfStock = variant?.stock === 0
 
-  const handleAddToCart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (outOfStock) return
+  const voltage = variant?.attributes?.voltage as string | undefined
+  const mismatch = voltage ? isVoltageMismatch(voltage, locale) : false
+  const nativeVoltage = LOCALE_VOLTAGE[locale]
+  const country = LOCALE_COUNTRY[locale]
+  const countryName = country[locale]
+
+  const doAdd = useCallback(() => {
     addItem(product, quantity, variant)
     const name = product.name[locale] || product.name.es || "Producto"
     toast.custom(
@@ -43,12 +57,25 @@ export function AddToCartButton({ product, variant, quantity = 1, className = ""
       ),
       { duration: 4000 },
     )
-
     setAnimating(true)
     setTimeout(() => setAnimating(false), 600)
-  }, [addItem, product, quantity, variant, outOfStock, locale, dict])
+  }, [addItem, product, quantity, variant, locale, dict, router, localePath])
+
+  const handleAddToCart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (outOfStock) return
+    if (mismatch) {
+      setShowVoltageDialog(true)
+    } else {
+      doAdd()
+    }
+  }, [outOfStock, mismatch, doAdd])
+
+  const t = dict.products.voltageWarning
 
   return (
+    <>
     <button 
       onClick={handleAddToCart}
       disabled={outOfStock}
@@ -62,5 +89,50 @@ export function AddToCartButton({ product, variant, quantity = 1, className = ""
         {animating ? dict.products.added : outOfStock ? dict.products.outOfStock : dict.products.addToCart}
       </span>
     </button>
+
+    {/* Voltage mismatch confirmation dialog */}
+    <Dialog open={showVoltageDialog} onOpenChange={setShowVoltageDialog}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2.5">
+            <span className="flex items-center justify-center size-8 rounded-full bg-amber-100 dark:bg-amber-900/60">
+              <LightningIcon className="size-4 text-amber-600 dark:text-amber-400" weight="fill" />
+            </span>
+            {t.dialogTitle}
+          </DialogTitle>
+          <DialogDescription className="pt-1">
+            {voltage && t.dialogDesc
+              .replace("{voltage}", voltage)
+              .replace("{nativeVoltage}", nativeVoltage)
+              .replace("{country}", countryName)}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3 pt-1">
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {voltage && t.explanation
+              .replace("{voltage}", voltage)
+              .replace("{nativeVoltage}", nativeVoltage)
+              .replace("{country}", countryName)}
+          </p>
+          <Button
+            className="w-full"
+            onClick={() => {
+              setShowVoltageDialog(false)
+              doAdd()
+            }}
+          >
+            {t.addAnyway}
+          </Button>
+          <Button
+            variant="ghost"
+            className="w-full text-muted-foreground"
+            onClick={() => setShowVoltageDialog(false)}
+          >
+            {t.cancel}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   )
 }

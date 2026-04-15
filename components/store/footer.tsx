@@ -56,7 +56,7 @@ export async function Footer({ ecommerceEnabled = false }: { ecommerceEnabled?: 
           <p>{t.copyright.replace("{year}", new Date().getFullYear().toString())}</p>
           <div className="flex items-center gap-6">
             <LanguageSwitcherInline />
-            <span>{t.madeWith}</span>
+            <span>{t.madeWith}{" "}<a href="https://codexnova.org" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-primary transition-colors">{t.madeWithBrand}</a></span>
           </div>
         </div>
       </div>

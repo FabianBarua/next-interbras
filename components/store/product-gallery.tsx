@@ -47,8 +47,10 @@ export function ProductGallery({ variant, alt }: { variant?: Variant; alt: strin
 
   if (sorted.length === 0) {
     return (
-      <div className="aspect-square max-w-md rounded-xl border bg-muted/20 flex items-center justify-center text-muted-foreground text-sm">
-        {dict.products.noImage}
+      <div className="w-full">
+        <div className="relative aspect-square p-9 rounded-xl border bg-muted/5 overflow-hidden flex items-center justify-center text-muted-foreground text-sm">
+          {dict.products.noImage}
+        </div>
       </div>
     )
   }

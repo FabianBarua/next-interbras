@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import type { Product, Variant } from "@/types/product"
 import { PriceDisplay } from "@/components/store/price-display"
@@ -28,6 +28,20 @@ export function ProductInfo({ product, initialVariantId, categorySlug, onVariant
     initialVariantId || product.variants[0]?.id
   )
   const [quantity, setQuantity] = useState(1)
+
+  // Sync when parent changes the variant (e.g. voltage warning switch)
+  useEffect(() => {
+    if (initialVariantId && initialVariantId !== selectedId) {
+      setSelectedId(initialVariantId)
+      setQuantity(1)
+      const newVariant = product.variants.find((x) => x.id === initialVariantId)
+      if (newVariant && categorySlug) {
+        const newSlug = toVariantSlug(product, newVariant)
+        window.history.replaceState(null, "", `/${locale}/productos/${categorySlug}/${newSlug}`)
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialVariantId])
   const v = product.variants.find((x) => x.id === selectedId) || product.variants[0]
   const name = product.name[locale] || product.name.es
   const stock = v?.stock ?? null
@@ -41,9 +55,9 @@ export function ProductInfo({ product, initialVariantId, categorySlug, onVariant
     const newVariant = product.variants.find((x) => x.id === variantId)
     if (newVariant && categorySlug) {
       const newSlug = toVariantSlug(product, newVariant)
-      window.history.replaceState(null, "", `/productos/${categorySlug}/${newSlug}`)
+      window.history.replaceState(null, "", `/${locale}/productos/${categorySlug}/${newSlug}`)
     }
-  }, [product, categorySlug, onVariantChange])
+  }, [product, categorySlug, onVariantChange, locale])
 
   const handleBuyNow = useCallback(() => {
     if (v?.stock === 0) return

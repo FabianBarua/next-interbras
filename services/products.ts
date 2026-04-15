@@ -3,7 +3,6 @@ import { products, categories, variants, productImages, externalCodes } from "@/
 import { eq, and, desc, asc, ne, sql, inArray } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
 import { toVariantSlug } from "@/lib/variant-slug"
-import { resolveVariantImageMap } from "@/lib/variant-images"
 import type { Product, Variant, ProductImage as FrontendImage, ExternalCode } from "@/types/product"
 import type { Category } from "@/types/category"
 
@@ -56,41 +55,17 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
     sortOrder: img.sortOrder,
   }))
 
-  // Group images: variant-specific (by variantId) and product-level (variantId=null, by productId)
+  // Group images by variant
   const imgByVariant = new Map<string, FrontendImage[]>()
-  const imgByProduct = new Map<string, FrontendImage[]>()
   for (const img of allImages) {
     if (img.variantId) {
       const list = imgByVariant.get(img.variantId) ?? []
       list.push(img)
       imgByVariant.set(img.variantId, list)
-    } else {
-      const list = imgByProduct.get(img.productId) ?? []
-      list.push(img)
-      imgByProduct.set(img.productId, list)
     }
   }
 
-  // ---- Resolve images per-product using shared fallback logic ----
-  const variantsByProduct = new Map<string, { id: string; options: Record<string, string> }[]>()
-  for (const { v } of varRows) {
-    const list = variantsByProduct.get(v.productId) ?? []
-    list.push({ id: v.id, options: (v.options ?? {}) as Record<string, string> })
-    variantsByProduct.set(v.productId, list)
-  }
-
-  const resolvedImgMap = new Map<string, FrontendImage[]>()
-  for (const [pid, pVars] of variantsByProduct) {
-    const pVarIds = new Set(pVars.map(x => x.id))
-    const pImgByVariant = new Map<string, FrontendImage[]>()
-    for (const [vId, imgs] of imgByVariant) {
-      if (pVarIds.has(vId)) pImgByVariant.set(vId, imgs)
-    }
-    const resolved = resolveVariantImageMap(pVars, pImgByVariant, imgByProduct.get(pid) ?? [])
-    for (const [vId, imgs] of resolved) resolvedImgMap.set(vId, imgs)
-  }
-
-  // ---- Build variants: skip CEC-less, add stock + images ----
+  // ---- Build variants: skip CEC-less, add stock + images (direct only) ----
   const varMap = new Map<string, Variant[]>()
   for (const { v, ec } of varRows) {
     if (!v.active) continue
@@ -105,7 +80,7 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
       name: null,
       attributes: attrs,
       stock: v.stock ?? null,
-      images: resolvedImgMap.get(v.id) ?? [],
+      images: imgByVariant.get(v.id) ?? [],
       externalCode: {
         id: ec.id,
         system: ec.system,
@@ -209,6 +184,24 @@ export async function getProductByVariantSlug(variantSlug: string): Promise<Vari
     for (const variant of product.variants) {
       if (toVariantSlug(product, variant) === variantSlug) {
         return { product, variant }
+      }
+    }
+  }
+  return null
+}
+
+/**
+ * Resolve an external code string to the public product URL path.
+ * Returns e.g. "/productos/camaras/slug-sku-code" or null.
+ */
+export async function resolveExternalCodeUrl(code: string): Promise<string | null> {
+  const allProducts = await getProducts()
+  for (const product of allProducts) {
+    for (const variant of product.variants) {
+      if (variant.externalCode?.code?.toLowerCase() === code.toLowerCase()) {
+        const catSlug = product.category?.slug ?? "productos"
+        const vSlug = toVariantSlug(product, variant)
+        return `/productos/${catSlug}/${vSlug}`
       }
     }
   }

@@ -5,16 +5,15 @@ import { useDictionary } from "@/i18n/context"
 import { LanguageSwitcherInline } from "./language-switcher"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
-import { categoriesMock } from "@/mock/categories"
+import type { Category } from "@/types/category"
 import { Menu, Search, ChevronDown, Home, ShoppingBag, Download, Headphones, Users, User } from "lucide-react"
 
-export function MobileMenu() {
+export function MobileMenu({ categories }: { categories: Category[] }) {
   const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
   const [productsOpen, setProductsOpen] = useState(false)
   const { dict, locale } = useDictionary()
   const t = dict.nav
-  const categories = categoriesMock.filter(c => c.active)
 
   const close = () => setOpen(false)
 

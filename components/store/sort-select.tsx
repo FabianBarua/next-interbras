@@ -18,7 +18,7 @@ const OPTIONS: { value: SortOption; labelKey: string }[] = [
 
 export function SortSelect({ value, onChange }: SortSelectProps) {
   const { dict } = useDictionary()
-  const t = dict.products as Record<string, string>
+  const t = dict.products as Record<string, unknown>
 
   return (
     <div className="flex items-center gap-2 min-w-0">
@@ -32,7 +32,7 @@ export function SortSelect({ value, onChange }: SortSelectProps) {
       >
         {OPTIONS.map((opt) => (
           <option key={opt.value} value={opt.value}>
-            {t[opt.labelKey] ?? opt.value}
+            {(t[opt.labelKey] as string) ?? opt.value}
           </option>
         ))}
       </select>

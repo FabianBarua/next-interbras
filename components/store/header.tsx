@@ -2,12 +2,15 @@ import Link from "@/i18n/link"
 import { MobileMenu } from "./mobile-menu"
 import { LanguageSwitcher } from "./language-switcher"
 import { NavCategories } from "./nav-categories"
+import { getCategories } from "@/services/categories"
 import { CartPreview } from "./cart-preview"
 import { AccountMenu } from "./account-menu"
 import { InterbrasLogo } from "./interbras-logo"
 import { SearchDialog, SearchTrigger } from "./search-dialog"
 
 export async function Header({ ecommerceEnabled = false }: { ecommerceEnabled?: boolean }) {
+  const categories = await getCategories()
+
   return (
     <header className="sticky top-0 z-50 w-full">
       {/* Animated gradient accent strip */}
@@ -21,7 +24,7 @@ export async function Header({ ecommerceEnabled = false }: { ecommerceEnabled?: 
         <div className="container relative flex h-14 items-center gap-3">
           {/* Mobile hamburger */}
           <div className="flex md:hidden">
-            <MobileMenu />
+            <MobileMenu categories={categories} />
           </div>
 
           {/* Logo with hover glow */}
@@ -35,7 +38,7 @@ export async function Header({ ecommerceEnabled = false }: { ecommerceEnabled?: 
 
           {/* Desktop nav — centered */}
           <nav className="hidden md:flex flex-1 items-center justify-center">
-            <NavCategories />
+            <NavCategories categories={categories} />
           </nav>
 
           {/* Right actions */}
