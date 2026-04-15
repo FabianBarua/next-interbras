@@ -246,24 +246,34 @@ export function ExternalCodesTable({
                   {ec.externalName ?? "—"}
                 </td>
                 <td className="px-3 py-2">
-                  <Link
-                    href={`/dashboard/products/${ec.productId}/variants`}
-                    className="font-mono text-xs text-primary hover:underline"
-                  >
-                    {ec.variantSku}
-                  </Link>
+                  {ec.productId && ec.variantSku ? (
+                    <Link
+                      href={`/dashboard/products/${ec.productId}/variants`}
+                      className="font-mono text-xs text-primary hover:underline"
+                    >
+                      {ec.variantSku}
+                    </Link>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">—</span>
+                  )}
                 </td>
                 <td className="px-3 py-2">
-                  <Link
-                    href={`/dashboard/products/${ec.productId}`}
-                    className="text-xs hover:underline"
-                  >
-                    {ec.productName.es ?? ec.productSlug}
-                  </Link>
-                  {ec.categoryName && (
-                    <span className="ml-1 text-[10px] text-muted-foreground">
-                      ({ec.categoryName.es})
-                    </span>
+                  {ec.productId && ec.productName ? (
+                    <>
+                      <Link
+                        href={`/dashboard/products/${ec.productId}`}
+                        className="text-xs hover:underline"
+                      >
+                        {ec.productName.es ?? ec.productSlug}
+                      </Link>
+                      {ec.categoryName && (
+                        <span className="ml-1 text-[10px] text-muted-foreground">
+                          ({ec.categoryName.es})
+                        </span>
+                      )}
+                    </>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Sin vincular</span>
                   )}
                 </td>
                 <td className="px-3 py-2 text-right font-mono text-xs tabular-nums">

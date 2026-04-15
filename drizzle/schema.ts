@@ -209,7 +209,7 @@ export const externalCodes = pgTable("external_codes", {
 	system: varchar({ length: 50 }).notNull(),
 	code: varchar({ length: 100 }).notNull(),
 	externalName: varchar("external_name", { length: 255 }),
-	variantId: uuid("variant_id").notNull(),
+	variantId: uuid("variant_id"),
 	priceUsd: numeric("price_usd", { precision: 10, scale:  2 }),
 	priceGs: numeric("price_gs", { precision: 12, scale:  0 }),
 	priceBrl: numeric("price_brl", { precision: 10, scale:  2 }),

@@ -71,22 +71,28 @@ export function ExternalCodeEditForm({ ec }: { ec: AdminExternalCode }) {
       </Link>
 
       {/* Variant info (read-only) */}
-      <div className="rounded-lg border bg-muted/30 px-4 py-3 text-sm">
-        <span className="text-muted-foreground">Variante: </span>
-        <Link
-          href={`/dashboard/products/${ec.productId}/variants`}
-          className="font-mono text-primary hover:underline"
-        >
-          {ec.variantSku}
-        </Link>
-        <span className="text-muted-foreground"> · Producto: </span>
-        <Link
-          href={`/dashboard/products/${ec.productId}`}
-          className="hover:underline"
-        >
-          {ec.productName.es ?? ec.productSlug}
-        </Link>
-      </div>
+      {ec.variantId ? (
+        <div className="rounded-lg border bg-muted/30 px-4 py-3 text-sm">
+          <span className="text-muted-foreground">Variante: </span>
+          <Link
+            href={`/dashboard/products/${ec.productId}/variants`}
+            className="font-mono text-primary hover:underline"
+          >
+            {ec.variantSku}
+          </Link>
+          <span className="text-muted-foreground"> · Producto: </span>
+          <Link
+            href={`/dashboard/products/${ec.productId}`}
+            className="hover:underline"
+          >
+            {ec.productName?.es ?? ec.productSlug}
+          </Link>
+        </div>
+      ) : (
+        <div className="rounded-lg border border-orange-300/50 bg-orange-50 px-4 py-3 text-sm text-orange-700 dark:border-orange-500/30 dark:bg-orange-950/30 dark:text-orange-400">
+          Sin variante vinculada
+        </div>
+      )}
 
       {error && (
         <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-2 text-sm text-destructive">

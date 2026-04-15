@@ -15,7 +15,7 @@ export const externalCodes = pgTable("external_codes", {
   system: varchar("system", { length: 50 }).notNull(),
   code: varchar("code", { length: 100 }).notNull(),
   externalName: varchar("external_name", { length: 255 }),
-  variantId: uuid("variant_id").references(() => variants.id, { onDelete: "cascade" }).notNull(),
+  variantId: uuid("variant_id").references(() => variants.id, { onDelete: "cascade" }),
   priceUsd: decimal("price_usd", { precision: 10, scale: 2 }),
   priceGs: decimal("price_gs", { precision: 12, scale: 0 }),
   priceBrl: decimal("price_brl", { precision: 10, scale: 2 }),

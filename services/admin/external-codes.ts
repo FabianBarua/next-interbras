@@ -12,11 +12,11 @@ export interface AdminExternalCode {
   priceUsd: string | null
   priceGs: string | null
   priceBrl: string | null
-  variantId: string
-  variantSku: string
-  productId: string
-  productName: I18nText
-  productSlug: string
+  variantId: string | null
+  variantSku: string | null
+  productId: string | null
+  productName: I18nText | null
+  productSlug: string | null
   categoryName: I18nText | null
   createdAt: string
   updatedAt: string
@@ -32,8 +32,8 @@ export async function getAllExternalCodesAdmin(opts?: { search?: string; system?
     categoryName: categories.name,
   })
     .from(externalCodes)
-    .innerJoin(variants, eq(externalCodes.variantId, variants.id))
-    .innerJoin(products, eq(variants.productId, products.id))
+    .leftJoin(variants, eq(externalCodes.variantId, variants.id))
+    .leftJoin(products, eq(variants.productId, products.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
     .orderBy(desc(externalCodes.updatedAt))
     .$dynamic()
@@ -53,11 +53,11 @@ export async function getAllExternalCodesAdmin(opts?: { search?: string; system?
     priceGs: ec.priceGs,
     priceBrl: ec.priceBrl,
     variantId: ec.variantId,
-    variantSku,
-    productId,
-    productName: productName as I18nText,
-    productSlug,
-    categoryName: categoryName as I18nText | null,
+    variantSku: variantSku ?? null,
+    productId: productId ?? null,
+    productName: (productName as I18nText) ?? null,
+    productSlug: productSlug ?? null,
+    categoryName: (categoryName as I18nText) ?? null,
     createdAt: ec.createdAt.toISOString(),
     updatedAt: ec.updatedAt.toISOString(),
   }))
@@ -66,10 +66,10 @@ export async function getAllExternalCodesAdmin(opts?: { search?: string; system?
     const s = opts.search.toLowerCase()
     result = result.filter(r =>
       r.code.toLowerCase().includes(s) ||
-      r.variantSku.toLowerCase().includes(s) ||
+      r.variantSku?.toLowerCase().includes(s) ||
       (r.externalName?.toLowerCase().includes(s)) ||
-      (r.productName.es?.toLowerCase().includes(s)) ||
-      r.productSlug.toLowerCase().includes(s)
+      (r.productName?.es?.toLowerCase().includes(s)) ||
+      r.productSlug?.toLowerCase().includes(s)
     )
   }
 
@@ -86,8 +86,8 @@ export async function getExternalCodeByIdAdmin(id: string): Promise<AdminExterna
     categoryName: categories.name,
   })
     .from(externalCodes)
-    .innerJoin(variants, eq(externalCodes.variantId, variants.id))
-    .innerJoin(products, eq(variants.productId, products.id))
+    .leftJoin(variants, eq(externalCodes.variantId, variants.id))
+    .leftJoin(products, eq(variants.productId, products.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
     .where(eq(externalCodes.id, id))
     .limit(1)
@@ -103,11 +103,11 @@ export async function getExternalCodeByIdAdmin(id: string): Promise<AdminExterna
     priceGs: ec.priceGs,
     priceBrl: ec.priceBrl,
     variantId: ec.variantId,
-    variantSku,
-    productId,
-    productName: productName as I18nText,
-    productSlug,
-    categoryName: categoryName as I18nText | null,
+    variantSku: variantSku ?? null,
+    productId: productId ?? null,
+    productName: (productName as I18nText) ?? null,
+    productSlug: productSlug ?? null,
+    categoryName: (categoryName as I18nText) ?? null,
     createdAt: ec.createdAt.toISOString(),
     updatedAt: ec.updatedAt.toISOString(),
   }
@@ -211,14 +211,14 @@ export async function searchExternalCodes({
     categoryName: categories.name,
   })
     .from(externalCodes)
-    .innerJoin(variants, eq(externalCodes.variantId, variants.id))
-    .innerJoin(products, eq(variants.productId, products.id))
+    .leftJoin(variants, eq(externalCodes.variantId, variants.id))
+    .leftJoin(products, eq(variants.productId, products.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
 
   const countQuery = db.select({ total: count() })
     .from(externalCodes)
-    .innerJoin(variants, eq(externalCodes.variantId, variants.id))
-    .innerJoin(products, eq(variants.productId, products.id))
+    .leftJoin(variants, eq(externalCodes.variantId, variants.id))
+    .leftJoin(products, eq(variants.productId, products.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
 
   const [rows, [{ total: totalCount }]] = await Promise.all([
@@ -236,11 +236,11 @@ export async function searchExternalCodes({
       priceGs: ec.priceGs,
       priceBrl: ec.priceBrl,
       variantId: ec.variantId,
-      variantSku,
-      productId,
-      productName: productName as I18nText,
-      productSlug,
-      categoryName: categoryName as I18nText | null,
+      variantSku: variantSku ?? null,
+      productId: productId ?? null,
+      productName: (productName as I18nText) ?? null,
+      productSlug: productSlug ?? null,
+      categoryName: (categoryName as I18nText) ?? null,
       createdAt: ec.createdAt.toISOString(),
       updatedAt: ec.updatedAt.toISOString(),
     })),
