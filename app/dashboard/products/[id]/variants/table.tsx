@@ -90,7 +90,6 @@ export function VariantsTable({
               <th className="px-3 py-2 text-left font-medium">Img</th>
               <th className="px-3 py-2 text-left font-medium">SKU</th>
               <th className="px-3 py-2 text-left font-medium">Opciones</th>
-              <th className="px-3 py-2 text-right font-medium">Stock</th>
               <th className="px-3 py-2 text-right font-medium">Uds/Caja</th>
               <th className="px-3 py-2 text-right font-medium">USD</th>
               <th className="px-3 py-2 text-right font-medium">Gs</th>
@@ -121,7 +120,6 @@ export function VariantsTable({
                     {Object.keys(v.options).length === 0 && <span className="text-xs text-muted-foreground">—</span>}
                   </div>
                 </td>
-                <td className="px-3 py-2 text-right tabular-nums">{v.stock ?? "—"}</td>
                 <td className="px-3 py-2 text-right tabular-nums">{v.unitsPerBox ?? "—"}</td>
                 <td className="px-3 py-2 text-right tabular-nums">{v.externalCode?.priceUsd ?? "—"}</td>
                 <td className="px-3 py-2 text-right tabular-nums">{v.externalCode?.priceGs ?? "—"}</td>
@@ -148,7 +146,7 @@ export function VariantsTable({
               </tr>
             ))}
             {items.length === 0 && (
-              <tr><td colSpan={11} className="text-center py-8 text-muted-foreground">No hay variantes.</td></tr>
+              <tr><td colSpan={10} className="text-center py-8 text-muted-foreground">No hay variantes.</td></tr>
             )}
           </tbody>
         </table>

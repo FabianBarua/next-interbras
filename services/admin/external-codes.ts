@@ -1,6 +1,6 @@
 import { db } from "@/lib/db"
 import { externalCodes, variants, products, categories } from "@/lib/db/schema"
-import { eq, asc, desc, sql, like, or, ilike, count, inArray } from "drizzle-orm"
+import { eq, asc, desc, sql, like, or, ilike, count, inArray, isNull, and } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
 import type { I18nText } from "@/types/common"
 
@@ -12,6 +12,7 @@ export interface AdminExternalCode {
   priceUsd: string | null
   priceGs: string | null
   priceBrl: string | null
+  stock: number | null
   variantId: string | null
   variantSku: string | null
   productId: string | null
@@ -52,6 +53,7 @@ export async function getAllExternalCodesAdmin(opts?: { search?: string; system?
     priceUsd: ec.priceUsd,
     priceGs: ec.priceGs,
     priceBrl: ec.priceBrl,
+    stock: ec.stock,
     variantId: ec.variantId,
     variantSku: variantSku ?? null,
     productId: productId ?? null,
@@ -102,6 +104,7 @@ export async function getExternalCodeByIdAdmin(id: string): Promise<AdminExterna
     priceUsd: ec.priceUsd,
     priceGs: ec.priceGs,
     priceBrl: ec.priceBrl,
+    stock: ec.stock,
     variantId: ec.variantId,
     variantSku: variantSku ?? null,
     productId: productId ?? null,
@@ -120,6 +123,7 @@ export interface UpdateExternalCodeInput {
   priceUsd?: string | null
   priceGs?: string | null
   priceBrl?: string | null
+  stock?: number | null
 }
 
 export async function updateExternalCode(id: string, input: UpdateExternalCodeInput): Promise<void> {
@@ -149,24 +153,26 @@ export async function bulkUpdatePrices(updates: { id: string; priceUsd?: string;
 }
 
 export interface CreateExternalCodeInput {
-  variantId: string
+  variantId?: string | null
   system: string
   code: string
   externalName?: string | null
   priceUsd?: string | null
   priceGs?: string | null
   priceBrl?: string | null
+  stock?: number | null
 }
 
 export async function createExternalCode(input: CreateExternalCodeInput): Promise<string> {
   const [row] = await db.insert(externalCodes).values({
-    variantId: input.variantId,
+    variantId: input.variantId ?? null,
     system: input.system,
     code: input.code,
     externalName: input.externalName ?? null,
     priceUsd: input.priceUsd ?? null,
     priceGs: input.priceGs ?? null,
     priceBrl: input.priceBrl ?? null,
+    stock: input.stock ?? null,
   }).returning({ id: externalCodes.id })
   await invalidateCache("products:*", "variants:*")
   return row.id
@@ -235,6 +241,7 @@ export async function searchExternalCodes({
       priceUsd: ec.priceUsd,
       priceGs: ec.priceGs,
       priceBrl: ec.priceBrl,
+      stock: ec.stock,
       variantId: ec.variantId,
       variantSku: variantSku ?? null,
       productId: productId ?? null,
@@ -253,4 +260,37 @@ export async function searchExternalCodes({
 export async function getDistinctSystems(): Promise<string[]> {
   const rows = await db.selectDistinct({ system: externalCodes.system }).from(externalCodes).orderBy(asc(externalCodes.system))
   return rows.map(r => r.system)
+}
+
+export interface UnlinkedEC {
+  id: string
+  system: string
+  code: string
+  externalName: string | null
+  stock: number | null
+}
+
+export async function searchUnlinkedExternalCodes(search?: string): Promise<UnlinkedEC[]> {
+  const conds: any[] = [isNull(externalCodes.variantId)]
+  if (search) {
+    const term = `%${search}%`
+    conds.push(or(ilike(externalCodes.code, term), ilike(externalCodes.externalName, term))!)
+  }
+  const rows = await db
+    .select({ id: externalCodes.id, system: externalCodes.system, code: externalCodes.code, externalName: externalCodes.externalName, stock: externalCodes.stock })
+    .from(externalCodes)
+    .where(and(...conds))
+    .orderBy(asc(externalCodes.code))
+    .limit(20)
+  return rows
+}
+
+export async function linkVariant(ecId: string, variantId: string): Promise<void> {
+  await db.update(externalCodes).set({ variantId }).where(eq(externalCodes.id, ecId))
+  await invalidateCache("products:*", "variants:*")
+}
+
+export async function unlinkVariant(ecId: string): Promise<void> {
+  await db.update(externalCodes).set({ variantId: null }).where(eq(externalCodes.id, ecId))
+  await invalidateCache("products:*", "variants:*")
 }

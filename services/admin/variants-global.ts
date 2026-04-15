@@ -11,7 +11,6 @@ export interface AdminVariantGlobal {
   categoryName: I18nText | null
   sku: string
   options: Record<string, string>
-  stock: number | null
   unitsPerBox: number | null
   sortOrder: number
   active: boolean
@@ -60,7 +59,7 @@ export async function getAllVariantsGlobal(opts?: { search?: string; categoryId?
 
   const priceMap = new Map<string, { priceUsd: string | null; priceGs: string | null; priceBrl: string | null }>()
   for (const ec of ecRows) {
-    if (!priceMap.has(ec.variantId)) {
+    if (ec.variantId && !priceMap.has(ec.variantId)) {
       priceMap.set(ec.variantId, { priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl })
     }
   }
@@ -75,7 +74,6 @@ export async function getAllVariantsGlobal(opts?: { search?: string; categoryId?
       categoryName: categoryName as I18nText | null,
       sku: v.sku,
       options: v.options,
-      stock: v.stock,
       unitsPerBox: v.unitsPerBox,
       sortOrder: v.sortOrder,
       active: v.active,
@@ -164,7 +162,7 @@ export async function searchVariantsGlobal({
 
   const priceMap = new Map<string, { priceUsd: string | null; priceGs: string | null; priceBrl: string | null }>()
   for (const ec of ecRows) {
-    if (!priceMap.has(ec.variantId)) {
+    if (ec.variantId && !priceMap.has(ec.variantId)) {
       priceMap.set(ec.variantId, { priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl })
     }
   }
@@ -179,7 +177,6 @@ export async function searchVariantsGlobal({
       categoryName: categoryName as I18nText | null,
       sku: v.sku,
       options: v.options,
-      stock: v.stock,
       unitsPerBox: v.unitsPerBox,
       sortOrder: v.sortOrder,
       active: v.active,

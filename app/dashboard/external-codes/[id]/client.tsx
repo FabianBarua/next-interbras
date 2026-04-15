@@ -1,12 +1,15 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState, useTransition, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import type { AdminExternalCode } from "@/services/admin/external-codes"
 import {
   updateExternalCodeAction,
   deleteExternalCodeAction,
+  searchVariantsBySkuAction,
+  linkVariantAction,
+  unlinkVariantAction,
 } from "@/lib/actions/admin/external-codes"
 import { Button } from "@/components/ui/button"
 import {
@@ -17,7 +20,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { Loader2, ArrowLeft, Trash2 } from "lucide-react"
+import { Loader2, ArrowLeft, Trash2, LinkIcon, Unlink } from "lucide-react"
 
 const inputCls =
   "h-9 w-full rounded-lg border border-input bg-background px-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30"
@@ -34,6 +37,44 @@ export function ExternalCodeEditForm({ ec }: { ec: AdminExternalCode }) {
   const [priceUsd, setPriceUsd] = useState(ec.priceUsd ?? "")
   const [priceGs, setPriceGs] = useState(ec.priceGs ?? "")
   const [priceBrl, setPriceBrl] = useState(ec.priceBrl ?? "")
+  const [stock, setStock] = useState(ec.stock?.toString() ?? "")
+
+  // Variant search state
+  const [variantSearch, setVariantSearch] = useState("")
+  const [variantResults, setVariantResults] = useState<{ id: string; sku: string; productName: string }[]>([])
+  const [searching, setSearching] = useState(false)
+
+  const doSearch = useCallback(
+    async (term: string) => {
+      setVariantSearch(term)
+      if (term.length < 1) { setVariantResults([]); return }
+      setSearching(true)
+      const res = await searchVariantsBySkuAction(term)
+      setVariantResults(res)
+      setSearching(false)
+    },
+    [],
+  )
+
+  const handleLink = (variantId: string) => {
+    setError(null)
+    startTransition(async () => {
+      const res = await linkVariantAction(ec.id, variantId)
+      if ("error" in res) setError(res.error!)
+      else router.refresh()
+    })
+    setVariantSearch("")
+    setVariantResults([])
+  }
+
+  const handleUnlink = () => {
+    setError(null)
+    startTransition(async () => {
+      const res = await unlinkVariantAction(ec.id)
+      if ("error" in res) setError(res.error!)
+      else router.refresh()
+    })
+  }
 
   const handleSave = () => {
     setError(null)
@@ -45,6 +86,7 @@ export function ExternalCodeEditForm({ ec }: { ec: AdminExternalCode }) {
         priceUsd: priceUsd || null,
         priceGs: priceGs || null,
         priceBrl: priceBrl || null,
+        stock: stock !== "" ? parseInt(stock, 10) : null,
       })
       if ("error" in res) {
         setError(res.error!)
@@ -70,29 +112,6 @@ export function ExternalCodeEditForm({ ec }: { ec: AdminExternalCode }) {
         <ArrowLeft className="size-3.5" /> Volver a códigos externos
       </Link>
 
-      {/* Variant info (read-only) */}
-      {ec.variantId ? (
-        <div className="rounded-lg border bg-muted/30 px-4 py-3 text-sm">
-          <span className="text-muted-foreground">Variante: </span>
-          <Link
-            href={`/dashboard/products/${ec.productId}/variants`}
-            className="font-mono text-primary hover:underline"
-          >
-            {ec.variantSku}
-          </Link>
-          <span className="text-muted-foreground"> · Producto: </span>
-          <Link
-            href={`/dashboard/products/${ec.productId}`}
-            className="hover:underline"
-          >
-            {ec.productName?.es ?? ec.productSlug}
-          </Link>
-        </div>
-      ) : (
-        <div className="rounded-lg border border-orange-300/50 bg-orange-50 px-4 py-3 text-sm text-orange-700 dark:border-orange-500/30 dark:bg-orange-950/30 dark:text-orange-400">
-          Sin variante vinculada
-        </div>
-      )}
 
       {error && (
         <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-2 text-sm text-destructive">
@@ -170,7 +189,82 @@ export function ExternalCodeEditForm({ ec }: { ec: AdminExternalCode }) {
             />
           </div>
         </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            Stock
+          </label>
+          <input
+            type="number"
+            min="0"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+            placeholder="—"
+            className={inputCls + " w-32 font-mono"}
+          />
+        </div>
       </div>
+
+      {/* Variant info + link/unlink */}
+      {ec.variantId ? (
+        <div className="flex items-center gap-3 rounded-lg border bg-muted/30 px-4 py-3 text-sm">
+          <div className="flex-1">
+            <span className="text-muted-foreground">Variante: </span>
+            <Link
+              href={`/dashboard/products/${ec.productId}/variants/${ec.variantId}`}
+              className="font-mono text-primary hover:underline"
+            >
+              {ec.variantSku}
+            </Link>
+            <span className="text-muted-foreground"> · Producto: </span>
+            <Link
+              href={`/dashboard/products/${ec.productId}`}
+              className="hover:underline"
+            >
+              {ec.productName?.es ?? ec.productSlug}
+            </Link>
+          </div>
+          <Button variant="ghost" size="sm" onClick={handleUnlink} disabled={isPending}>
+            <Unlink className="mr-1 size-3.5" /> Desvincular
+          </Button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+
+          <div className="relative">
+            <div className="flex items-center gap-2">
+              <input
+                value={variantSearch}
+                onChange={(e) => doSearch(e.target.value)}
+                placeholder="Buscar variante por SKU..."
+                className={inputCls}
+              />
+              {searching && <Loader2 className="size-3.5 animate-spin text-muted-foreground" />}
+                            <LinkIcon className="size-3.5 text-muted-foreground" />
+
+            </div>
+            {variantResults.length > 0 && (
+              <ul className="absolute z-20 mt-1 max-h-48 w-full overflow-auto rounded-lg border bg-popover p-1 shadow-md">
+                {variantResults.map((v) => (
+                  <li key={v.id}>
+                    <button
+                      type="button"
+                      onClick={() => handleLink(v.id)}
+                      className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-accent"
+                    >
+                      <span className="font-mono">{v.sku}</span>
+                      <span className="text-muted-foreground">— {v.productName}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+            <div className="rounded-lg border border-orange-300/50 bg-orange-50 px-4 py-3 text-sm text-orange-700 dark:border-orange-500/30 dark:bg-orange-950/30 dark:text-orange-400">
+            Sin variante vinculada
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center gap-3 pt-2">
         <Button

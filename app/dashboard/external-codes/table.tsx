@@ -209,6 +209,9 @@ export function ExternalCodesTable({
                 Producto
               </th>
               <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase text-muted-foreground">
+                Stock
+              </th>
+              <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase text-muted-foreground">
                 USD
               </th>
               <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase text-muted-foreground">
@@ -277,6 +280,9 @@ export function ExternalCodesTable({
                   )}
                 </td>
                 <td className="px-3 py-2 text-right font-mono text-xs tabular-nums">
+                  {ec.stock ?? "—"}
+                </td>
+                <td className="px-3 py-2 text-right font-mono text-xs tabular-nums">
                   {ec.priceUsd ?? "—"}
                 </td>
                 <td className="px-3 py-2 text-right font-mono text-xs tabular-nums">
@@ -308,7 +314,7 @@ export function ExternalCodesTable({
             {codes.length === 0 && (
               <tr>
                 <td
-                  colSpan={10}
+                  colSpan={11}
                   className="py-12 text-center text-muted-foreground"
                 >
                   {searchValue || currentSystem

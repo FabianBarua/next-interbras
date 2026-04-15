@@ -70,7 +70,6 @@ function SingleVariantForm({ productId, attributeDefs }: { productId: string; at
 
   const [sku, setSku] = useState("")
   const [options, setOptions] = useState<{ key: string; value: string }[]>([{ key: "", value: "" }])
-  const [stock, setStock] = useState("")
   const [unitsPerBox, setUnitsPerBox] = useState("")
   const [sortOrder, setSortOrder] = useState(0)
   const [active, setActive] = useState(true)
@@ -116,7 +115,6 @@ function SingleVariantForm({ productId, attributeDefs }: { productId: string; at
         productId,
         sku,
         options: optionsObj,
-        stock: stock ? parseInt(stock) : null,
         unitsPerBox: unitsPerBox ? parseInt(unitsPerBox) : null,
         sortOrder,
         active,
@@ -149,12 +147,8 @@ function SingleVariantForm({ productId, attributeDefs }: { productId: string; at
       {/* Options with attribute picker */}
       <AttributePicker options={options} attributeDefs={attributeDefs} onAdd={addOption} onRemove={removeOption} onUpdate={updateOption} getValuesForKey={getValuesForKey} />
 
-      {/* Stock & Units */}
+      {/* Units & Status */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Stock</label>
-          <input type="number" value={stock} onChange={e => setStock(e.target.value)} placeholder="—" className={inputCls} />
-        </div>
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-muted-foreground">Uds/Caja</label>
           <input type="number" value={unitsPerBox} onChange={e => setUnitsPerBox(e.target.value)} placeholder="—" className={inputCls} />
@@ -201,7 +195,6 @@ interface BulkRow {
   sku: string
   optionKey: string
   optionValue: string
-  stock: string
   unitsPerBox: string
   ecSystem: string
   ecCode: string
@@ -211,7 +204,7 @@ interface BulkRow {
 }
 
 function emptyRow(): BulkRow {
-  return { sku: "", optionKey: "", optionValue: "", stock: "", unitsPerBox: "", ecSystem: "", ecCode: "", priceUsd: "", priceGs: "", priceBrl: "" }
+  return { sku: "", optionKey: "", optionValue: "", unitsPerBox: "", ecSystem: "", ecCode: "", priceUsd: "", priceGs: "", priceBrl: "" }
 }
 
 function BulkVariantForm({ productId, attributeDefs }: { productId: string; attributeDefs: AttrDef[] }) {
@@ -247,7 +240,6 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
       productId,
       sku: r.sku.trim(),
       options: r.optionKey.trim() ? { [r.optionKey.trim()]: r.optionValue.trim() } : {},
-      stock: r.stock ? parseInt(r.stock) : null,
       unitsPerBox: r.unitsPerBox ? parseInt(r.unitsPerBox) : null,
       sortOrder: i,
       active: true,
@@ -307,7 +299,6 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
               <th className="px-2 py-2 text-left font-semibold">SKU *</th>
               <th className="px-2 py-2 text-left font-semibold">Opción clave</th>
               <th className="px-2 py-2 text-left font-semibold">Opción valor</th>
-              <th className="px-2 py-2 text-left font-semibold">Stock</th>
               <th className="px-2 py-2 text-left font-semibold">Uds/Caja</th>
               <th className="px-2 py-2 text-left font-semibold">Sistema</th>
               <th className="px-2 py-2 text-left font-semibold">Cód. ext.</th>
@@ -335,7 +326,6 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
                     <input value={r.optionValue} onChange={e => updateRow(i, "optionValue", e.target.value)} placeholder="Valor" className={smallCls} />
                   )}
                 </td>
-                <td className="px-1 py-1"><input value={r.stock} onChange={e => updateRow(i, "stock", e.target.value)} placeholder="—" className={smallCls} /></td>
                 <td className="px-1 py-1"><input value={r.unitsPerBox} onChange={e => updateRow(i, "unitsPerBox", e.target.value)} placeholder="—" className={smallCls} /></td>
                 <td className="px-1 py-1"><input value={r.ecSystem} onChange={e => updateRow(i, "ecSystem", e.target.value)} placeholder="Sistema" className={smallCls} /></td>
                 <td className="px-1 py-1"><input value={r.ecCode} onChange={e => updateRow(i, "ecCode", e.target.value)} placeholder="Código" className={smallCls} /></td>

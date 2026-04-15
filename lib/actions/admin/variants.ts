@@ -28,7 +28,6 @@ const createSchema = z.object({
   productId: z.string().uuid(),
   sku: z.string().min(1).max(100),
   options: z.record(z.string(), z.string()),
-  stock: z.number().int().min(0).nullable().optional(),
   unitsPerBox: z.number().int().min(1).nullable().optional(),
   sortOrder: z.number().int().min(0).optional(),
   active: z.boolean().optional(),

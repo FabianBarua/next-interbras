@@ -79,7 +79,7 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
       sku: v.sku,
       name: null,
       attributes: attrs,
-      stock: v.stock ?? null,
+      stock: ec.stock ?? null,
       images: imgByVariant.get(v.id) ?? [],
       externalCode: {
         id: ec.id,

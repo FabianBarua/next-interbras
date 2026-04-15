@@ -216,7 +216,7 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
       sku: row.v.sku,
       price: row.ec?.priceUsd ? Number(row.ec.priceUsd) : 0,
       productName: row.pName,
-      stock: row.v.stock,
+      stock: row.ec?.stock ?? null,
     })
   }
 
@@ -237,23 +237,15 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
   const flow = await resolveFlow(input.shippingMethodId ?? null, input.gatewayType ?? null)
 
   const orderId = await db.transaction(async (tx) => {
-    // Decrement stock for each variant (with atomic check)
+    // Decrement stock for each variant's external code (with atomic check)
     for (const item of input.items) {
       const v = variantMap.get(item.variantId)!
       if (v.stock !== null) {
-        const result = await tx.update(variantsTable)
-          .set({ stock: sql`${variantsTable.stock} - ${item.quantity}` })
-          .where(and(eq(variantsTable.id, item.variantId), sql`${variantsTable.stock} >= ${item.quantity}`))
+        const result = await tx.update(externalCodes)
+          .set({ stock: sql`${externalCodes.stock} - ${item.quantity}` })
+          .where(and(eq(externalCodes.variantId, item.variantId), sql`${externalCodes.stock} >= ${item.quantity}`))
 
-        // Verify the row was actually updated (stock was sufficient)
-        const [check] = await tx.select({ stock: variantsTable.stock })
-          .from(variantsTable)
-          .where(eq(variantsTable.id, item.variantId))
-        if (check && check.stock !== null && check.stock < 0) {
-          throw new Error(`Stock insuficiente para ${v.sku}`)
-        }
         // If no row was matched by the WHERE clause, stock was insufficient
-        // postgres-js returns count of affected rows
         if ((result as any)?.rowCount === 0 || (result as any)?.count === 0) {
           throw new Error(`Stock insuficiente para ${v.sku}. Disponible: ${v.stock}, solicitado: ${item.quantity}`)
         }

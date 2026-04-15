@@ -93,7 +93,6 @@ export function VariantsTable({ variants, total, page, totalPages, categories }:
                 <th className="text-left px-4 py-3 font-medium">Producto</th>
                 <th className="text-left px-4 py-3 font-medium">Categoría</th>
                 <th className="text-left px-4 py-3 font-medium">Opciones</th>
-                <th className="text-center px-4 py-3 font-medium">Stock</th>
                 <th className="text-right px-4 py-3 font-medium">USD</th>
                 <th className="text-center px-4 py-3 font-medium">Estado</th>
                 <th className="w-10" />
@@ -101,7 +100,7 @@ export function VariantsTable({ variants, total, page, totalPages, categories }:
             </thead>
             <tbody>
               {variants.length === 0 && (
-                <tr><td colSpan={9} className="px-4 py-12 text-center text-muted-foreground">No se encontraron variantes.</td></tr>
+                <tr><td colSpan={8} className="px-4 py-12 text-center text-muted-foreground">No se encontraron variantes.</td></tr>
               )}
               {variants.map((v) => (
                 <tr key={v.id} className="border-b last:border-0 hover:bg-muted/30">
@@ -126,7 +125,6 @@ export function VariantsTable({ variants, total, page, totalPages, categories }:
                       ))}
                     </div>
                   </td>
-                  <td className="px-4 py-2 text-center tabular-nums">{v.stock ?? "—"}</td>
                   <td className="px-4 py-2 text-right tabular-nums text-xs">
                     {v.priceUsd ? `$${fmtAmount(v.priceUsd)}` : "—"}
                   </td>

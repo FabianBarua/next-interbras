@@ -3,6 +3,7 @@ import {
   uuid,
   varchar,
   jsonb,
+  integer,
   decimal,
   timestamp,
   uniqueIndex,
@@ -19,10 +20,12 @@ export const externalCodes = pgTable("external_codes", {
   priceUsd: decimal("price_usd", { precision: 10, scale: 2 }),
   priceGs: decimal("price_gs", { precision: 12, scale: 0 }),
   priceBrl: decimal("price_brl", { precision: 10, scale: 2 }),
+  stock: integer("stock"),
   metadata: jsonb("metadata"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull().$onUpdateFn(() => new Date()),
 }, (t) => [
   uniqueIndex("external_codes_system_code_idx").on(t.system, t.code),
+  uniqueIndex("external_codes_variant_id_unique").on(t.variantId),
   index("external_codes_variant_id_idx").on(t.variantId),
 ])

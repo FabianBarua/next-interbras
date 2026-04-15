@@ -1,13 +1,15 @@
 "use client"
 
-import { useState, useTransition } from "react"
+import { useState, useTransition, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import type { AdminVariant } from "@/services/admin/variants"
 import type { I18nText } from "@/types/common"
 import { updateVariantAction, deleteVariantAction } from "@/lib/actions/admin/variants"
+import { linkVariantAction, unlinkVariantAction, searchUnlinkedECsAction } from "@/lib/actions/admin/external-codes"
 import { ImageUpload } from "@/components/dashboard/image-upload"
 import { Breadcrumbs } from "@/components/dashboard/breadcrumbs"
 import { PageHeader } from "@/components/dashboard/page-header"
+import Link from "next/link"
 
 type AttrDef = { id: string; slug: string; name: I18nText; values: { id: string; slug: string; name: I18nText }[] }
 
@@ -33,19 +35,47 @@ export function VariantEditClient({
       ? Object.entries(variant.options).map(([key, value]) => ({ key, value }))
       : [{ key: "", value: "" }]
   )
-  const [stock, setStock] = useState(variant.stock?.toString() ?? "")
   const [unitsPerBox, setUnitsPerBox] = useState(variant.unitsPerBox?.toString() ?? "")
   const [sortOrder, setSortOrder] = useState(variant.sortOrder)
   const [active, setActive] = useState(variant.active)
   const [images, setImages] = useState<string[]>(variant.images.map(i => i.url))
 
-  // External code
-  const [ecSystem, setEcSystem] = useState(variant.externalCode?.system ?? "")
-  const [ecCode, setEcCode] = useState(variant.externalCode?.code ?? "")
-  const [ecName, setEcName] = useState(variant.externalCode?.externalName ?? "")
-  const [priceUsd, setPriceUsd] = useState(variant.externalCode?.priceUsd ?? "")
-  const [priceGs, setPriceGs] = useState(variant.externalCode?.priceGs ?? "")
-  const [priceBrl, setPriceBrl] = useState(variant.externalCode?.priceBrl ?? "")
+  // EC link search
+  type ECResult = { id: string; system: string; code: string; externalName: string | null; stock: number | null }
+  const [ecSearch, setEcSearch] = useState("")
+  const [ecResults, setEcResults] = useState<ECResult[]>([])
+  const [ecSearching, setEcSearching] = useState(false)
+  const [ecLinking, setEcLinking] = useState(false)
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (searchTimer.current) clearTimeout(searchTimer.current)
+    if (!ecSearch.trim()) { setEcResults([]); return }
+    searchTimer.current = setTimeout(async () => {
+      setEcSearching(true)
+      const res = await searchUnlinkedECsAction(ecSearch)
+      setEcResults(res.items)
+      setEcSearching(false)
+    }, 300)
+    return () => { if (searchTimer.current) clearTimeout(searchTimer.current) }
+  }, [ecSearch])
+
+  const handleLink = async (ecId: string) => {
+    setEcLinking(true)
+    await linkVariantAction(ecId, variant.id)
+    setEcSearch("")
+    setEcResults([])
+    setEcLinking(false)
+    router.refresh()
+  }
+
+  const handleUnlink = async (ecId: string) => {
+    if (!confirm("¿Desvincular este código externo?")) return
+    setEcLinking(true)
+    await unlinkVariantAction(ecId)
+    setEcLinking(false)
+    router.refresh()
+  }
 
   const addOption = () => setOptions([...options, { key: "", value: "" }])
   const removeOption = (i: number) => setOptions(options.filter((_, idx) => idx !== i))
@@ -70,26 +100,14 @@ export function VariantEditClient({
       if (o.key.trim()) optionsObj[o.key.trim()] = o.value.trim()
     }
 
-    const hasEc = ecCode.trim()
-    const ecData = hasEc ? {
-      system: ecSystem,
-      code: ecCode.trim(),
-      externalName: ecName || undefined,
-      priceUsd: priceUsd || undefined,
-      priceGs: priceGs || undefined,
-      priceBrl: priceBrl || undefined,
-    } : undefined
-
     startTransition(async () => {
       const res = await updateVariantAction(variant.id, productId, {
         sku,
         options: optionsObj,
-        stock: stock ? parseInt(stock) : null,
         unitsPerBox: unitsPerBox ? parseInt(unitsPerBox) : null,
         sortOrder,
         active,
         images,
-        externalCode: ecData,
       })
       if (res.error) setError(res.error)
       else {
@@ -200,12 +218,8 @@ export function VariantEditClient({
         })}
       </div>
 
-      {/* Stock & Units */}
+      {/* Units & Status */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="space-y-1.5">
-          <label className="text-xs font-medium text-muted-foreground">Stock</label>
-          <input type="number" value={stock} onChange={e => setStock(e.target.value)} placeholder="—" className={inputCls} />
-        </div>
         <div className="space-y-1.5">
           <label className="text-xs font-medium text-muted-foreground">Uds/Caja</label>
           <input type="number" value={unitsPerBox} onChange={e => setUnitsPerBox(e.target.value)} placeholder="—" className={inputCls} />
@@ -219,37 +233,85 @@ export function VariantEditClient({
         </div>
       </div>
 
-      {/* External Code & Prices */}
+      {/* Código externo vinculado */}
       <div className="rounded-lg border p-4 space-y-3">
-        <h3 className="text-xs font-semibold uppercase text-muted-foreground">Código externo / Precios</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Sistema</label>
-            <input value={ecSystem} onChange={e => setEcSystem(e.target.value)} placeholder="Sistema externo" className={inputCls} />
+        <h3 className="text-xs font-semibold uppercase text-muted-foreground">Código externo</h3>
+        {variant.externalCode ? (
+          <div className="space-y-2">
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div>
+                  <span className="text-[10px] uppercase text-muted-foreground block">Sistema</span>
+                  <span className="font-mono text-xs">{variant.externalCode.system}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase text-muted-foreground block">Código</span>
+                  <span className="font-mono text-xs">{variant.externalCode.code}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase text-muted-foreground block">Nombre</span>
+                  <span className="font-mono text-xs">{variant.externalCode.externalName ?? "—"}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] uppercase text-muted-foreground block">Stock</span>
+                  <span className="font-mono text-xs">{variant.externalCode.stock ?? "—"}</span>
+                </div>
+              </div>
+              <div className="shrink-0 flex gap-2">
+                <Link
+                  href={`/dashboard/external-codes/${variant.externalCode.id}`}
+                  className="h-8 px-3 inline-flex items-center rounded-md border text-xs font-medium hover:bg-muted transition-colors"
+                >
+                  Ver / Editar
+                </Link>
+                <button
+                  type="button"
+                  disabled={ecLinking}
+                  onClick={() => handleUnlink(variant.externalCode!.id)}
+                  className="h-8 px-3 inline-flex items-center rounded-md border border-destructive text-destructive text-xs font-medium hover:bg-destructive/10 disabled:opacity-50 transition-colors"
+                >
+                  Desvincular
+                </button>
+              </div>
+            </div>
           </div>
-          <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Código</label>
-            <input value={ecCode} onChange={e => setEcCode(e.target.value)} placeholder="Código externo" className={inputCls} />
+        ) : (
+          <div className="space-y-2">
+            <div className="relative">
+              <input
+                value={ecSearch}
+                onChange={e => setEcSearch(e.target.value)}
+                placeholder="Buscar por código o nombre externo..."
+                className={inputCls}
+              />
+              {ecSearching && <span className="absolute right-3 top-2 text-xs text-muted-foreground">Buscando...</span>}
+            </div>
+            {ecResults.length > 0 && (
+              <div className="border rounded-md divide-y text-sm">
+                {ecResults.map(ec => (
+                  <div key={ec.id} className="flex items-center justify-between px-3 py-2 hover:bg-muted/50">
+                    <div className="flex gap-4 text-xs">
+                      <span className="font-mono font-medium">{ec.code}</span>
+                      <span className="text-muted-foreground">{ec.externalName ?? "—"}</span>
+                      <span className="text-muted-foreground">Stock: {ec.stock ?? "—"}</span>
+                    </div>
+                    <button
+                      type="button"
+                      disabled={ecLinking}
+                      onClick={() => handleLink(ec.id)}
+                      className="h-7 px-3 rounded border border-primary text-primary text-xs font-medium hover:bg-primary/10 disabled:opacity-50 transition-colors"
+                    >
+                      Vincular
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            {ecSearch.trim() && !ecSearching && ecResults.length === 0 && (
+              <p className="text-xs text-muted-foreground">Sin resultados sin vincular.</p>
+            )}
           </div>
-          <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Nombre externo</label>
-            <input value={ecName} onChange={e => setEcName(e.target.value)} placeholder="Nombre en sistema externo" className={inputCls} />
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-3">
-          <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Precio USD</label>
-            <input value={priceUsd} onChange={e => setPriceUsd(e.target.value)} placeholder="0.00" className={inputCls} />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Precio Gs</label>
-            <input value={priceGs} onChange={e => setPriceGs(e.target.value)} placeholder="0" className={inputCls} />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-xs text-muted-foreground">Precio BRL</label>
-            <input value={priceBrl} onChange={e => setPriceBrl(e.target.value)} placeholder="0.00" className={inputCls} />
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Images */}

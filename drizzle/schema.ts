@@ -213,11 +213,13 @@ export const externalCodes = pgTable("external_codes", {
 	priceUsd: numeric("price_usd", { precision: 10, scale:  2 }),
 	priceGs: numeric("price_gs", { precision: 12, scale:  0 }),
 	priceBrl: numeric("price_brl", { precision: 10, scale:  2 }),
+	stock: integer(),
 	metadata: jsonb(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 }, (table) => [
 	uniqueIndex("external_codes_system_code_idx").using("btree", table.system.asc().nullsLast().op("text_ops"), table.code.asc().nullsLast().op("text_ops")),
+	uniqueIndex("external_codes_variant_id_unique").on(table.variantId),
 	index("external_codes_variant_id_idx").using("btree", table.variantId.asc().nullsLast().op("uuid_ops")),
 	foreignKey({
 			columns: [table.variantId],
@@ -310,7 +312,6 @@ export const variants = pgTable("variants", {
 	productId: uuid("product_id").notNull(),
 	sku: varchar({ length: 100 }).notNull(),
 	options: jsonb().notNull(),
-	stock: integer(),
 	unitsPerBox: integer("units_per_box"),
 	sortOrder: integer("sort_order").default(0).notNull(),
 	active: boolean().default(true).notNull(),

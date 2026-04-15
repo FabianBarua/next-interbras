@@ -26,6 +26,7 @@ export function ExternalCodeCreateForm() {
   const [priceUsd, setPriceUsd] = useState("")
   const [priceGs, setPriceGs] = useState("")
   const [priceBrl, setPriceBrl] = useState("")
+  const [stock, setStock] = useState("")
 
   // Variant search
   const [skuSearch, setSkuSearch] = useState("")
@@ -68,19 +69,16 @@ export function ExternalCodeCreateForm() {
 
   const handleSubmit = () => {
     setError(null)
-    if (!variantId) {
-      setError("Seleccione una variante.")
-      return
-    }
     startTransition(async () => {
       const res = await createExternalCodeAction({
-        variantId,
+        variantId: variantId || null,
         system,
         code,
         externalName: externalName || null,
         priceUsd: priceUsd || null,
         priceGs: priceGs || null,
         priceBrl: priceBrl || null,
+        stock: stock !== "" ? parseInt(stock, 10) : null,
       })
       if ("error" in res) {
         setError(res.error!)
@@ -234,12 +232,26 @@ export function ExternalCodeCreateForm() {
             />
           </div>
         </div>
+
+        <div className="space-y-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            Stock
+          </label>
+          <input
+            type="number"
+            min="0"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+            placeholder="—"
+            className={inputCls + " w-32 font-mono"}
+          />
+        </div>
       </div>
 
       <div className="flex gap-3 pt-2">
         <Button
           onClick={handleSubmit}
-          disabled={isPending || !variantId || !system || !code}
+          disabled={isPending || !system || !code}
         >
           {isPending && <Loader2 className="mr-2 size-3.5 animate-spin" />}
           Crear código externo

@@ -15,7 +15,6 @@ export const variants = pgTable("variants", {
   productId: uuid("product_id").references(() => products.id, { onDelete: "cascade" }).notNull(),
   sku: varchar("sku", { length: 100 }).unique().notNull(),
   options: jsonb("options").$type<Record<string, string>>().notNull(),
-  stock: integer("stock"),
   unitsPerBox: integer("units_per_box"),
   sortOrder: integer("sort_order").default(0).notNull(),
   active: boolean("active").default(true).notNull(),

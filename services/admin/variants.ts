@@ -10,7 +10,6 @@ export interface AdminVariant {
   productId: string
   sku: string
   options: Record<string, string>
-  stock: number | null
   unitsPerBox: number | null
   sortOrder: number
   active: boolean
@@ -20,6 +19,7 @@ export interface AdminVariant {
     system: string
     code: string
     externalName: string | null
+    stock: number | null
     priceUsd: string | null
     priceGs: string | null
     priceBrl: string | null
@@ -59,12 +59,13 @@ export async function getAllVariantsForProduct(productId: string): Promise<Admin
   const ecMap = new Map<string, AdminVariant["externalCode"]>()
   for (const ec of ecRows) {
     // Take the first one per variant
-    if (!ecMap.has(ec.variantId)) {
+    if (ec.variantId && !ecMap.has(ec.variantId)) {
       ecMap.set(ec.variantId, {
         id: ec.id,
         system: ec.system,
         code: ec.code,
         externalName: ec.externalName,
+        stock: ec.stock,
         priceUsd: ec.priceUsd,
         priceGs: ec.priceGs,
         priceBrl: ec.priceBrl,
@@ -77,7 +78,6 @@ export async function getAllVariantsForProduct(productId: string): Promise<Admin
     productId: r.productId,
     sku: r.sku,
     options: r.options,
-    stock: r.stock,
     unitsPerBox: r.unitsPerBox,
     sortOrder: r.sortOrder,
     active: r.active,
@@ -108,7 +108,6 @@ export async function getVariantById(variantId: string): Promise<AdminVariant | 
     productId: r.productId,
     sku: r.sku,
     options: r.options,
-    stock: r.stock,
     unitsPerBox: r.unitsPerBox,
     sortOrder: r.sortOrder,
     active: r.active,
@@ -118,6 +117,7 @@ export async function getVariantById(variantId: string): Promise<AdminVariant | 
       system: ec.system,
       code: ec.code,
       externalName: ec.externalName,
+      stock: ec.stock,
       priceUsd: ec.priceUsd,
       priceGs: ec.priceGs,
       priceBrl: ec.priceBrl,
@@ -131,7 +131,6 @@ export interface CreateVariantInput {
   productId: string
   sku: string
   options: Record<string, string>
-  stock?: number | null
   unitsPerBox?: number | null
   sortOrder?: number
   active?: boolean
@@ -151,7 +150,6 @@ export async function createVariant(input: CreateVariantInput): Promise<string> 
     productId: input.productId,
     sku: input.sku,
     options: input.options,
-    stock: input.stock ?? null,
     unitsPerBox: input.unitsPerBox ?? null,
     sortOrder: input.sortOrder ?? 0,
     active: input.active ?? true,

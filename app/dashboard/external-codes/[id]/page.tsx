@@ -14,7 +14,7 @@ export default async function EditarCodigoExternoPage({
   if (!ec) notFound()
   return (
     <div>
-      <h1 className="mb-6 text-xl font-bold">Editar código externo</h1>
+      <h1 className="mb-6 text-xl font-bold">Editar código externo {ec.code}</h1>
       <ExternalCodeEditForm ec={ec} />
     </div>
   )

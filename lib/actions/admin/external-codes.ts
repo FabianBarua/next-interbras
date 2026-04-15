@@ -7,19 +7,23 @@ import {
   updateExternalCode,
   deleteExternalCode,
   bulkUpdatePrices,
+  linkVariant,
+  unlinkVariant,
+  searchUnlinkedExternalCodes,
 } from "@/services/admin/external-codes"
 import { logEvent } from "@/lib/logging"
 
 const uuidSchema = z.string().uuid()
 
 const createSchema = z.object({
-  variantId: z.string().uuid(),
+  variantId: z.string().uuid().nullable().optional(),
   system: z.string().min(1).max(50),
   code: z.string().min(1).max(100),
   externalName: z.string().max(255).nullable().optional(),
   priceUsd: z.string().max(20).nullable().optional(),
   priceGs: z.string().max(20).nullable().optional(),
   priceBrl: z.string().max(20).nullable().optional(),
+  stock: z.number().int().min(0).nullable().optional(),
 })
 
 const updateSchema = z.object({
@@ -29,6 +33,7 @@ const updateSchema = z.object({
   priceUsd: z.string().max(20).nullable().optional(),
   priceGs: z.string().max(20).nullable().optional(),
   priceBrl: z.string().max(20).nullable().optional(),
+  stock: z.number().int().min(0).nullable().optional(),
 })
 
 export async function createExternalCodeAction(data: unknown) {
@@ -113,5 +118,40 @@ export async function bulkUpdatePricesAction(data: unknown) {
     return { updated }
   } catch {
     return { error: "Error al actualizar precios." }
+  }
+}
+
+export async function searchUnlinkedECsAction(search: string) {
+  await requireAdmin()
+  const s = search.trim().slice(0, 100)
+  const items = await searchUnlinkedExternalCodes(s || undefined)
+  return { items }
+}
+
+export async function linkVariantAction(ecId: string, variantId: string) {
+  const session = await requireAdmin()
+  const ecParsed = uuidSchema.safeParse(ecId)
+  const varParsed = uuidSchema.safeParse(variantId)
+  if (!ecParsed.success || !varParsed.success) return { error: "ID inválido." }
+  try {
+    await linkVariant(ecId, variantId)
+    logEvent({ category: "admin", action: "external_code.link_variant", entity: "external_code", entityId: ecId, userId: session.id })
+    return { success: true }
+  } catch (err: any) {
+    if (err?.code === "23505") return { error: "Esa variante ya está vinculada a otro código externo." }
+    return { error: "Error al vincular variante." }
+  }
+}
+
+export async function unlinkVariantAction(ecId: string) {
+  const session = await requireAdmin()
+  const ecParsed = uuidSchema.safeParse(ecId)
+  if (!ecParsed.success) return { error: "ID inválido." }
+  try {
+    await unlinkVariant(ecId)
+    logEvent({ category: "admin", action: "external_code.unlink_variant", entity: "external_code", entityId: ecId, userId: session.id })
+    return { success: true }
+  } catch {
+    return { error: "Error al desvincular variante." }
   }
 }
