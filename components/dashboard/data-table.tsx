@@ -102,7 +102,7 @@ export function DataTable<T>({
 
   /* Bulk selection */
   const ids = data.map(getId)
-  const { selected, allSelected, toggle, toggleAll, clear } = useBulkSelect(ids)
+  const { selected, allSelected, toggle, toggleAll, clear, handleClick } = useBulkSelect(ids)
 
   /* Delete dialog */
   const [deleteOpen, setDeleteOpen] = useState(false)
@@ -218,7 +218,20 @@ export function DataTable<T>({
                   className={cn(
                     "border-b last:border-b-0 transition-colors",
                     isSelected ? "bg-primary/5" : "hover:bg-muted/20",
+                    hasBulk && "cursor-pointer select-none",
                   )}
+                  onClick={
+                    hasBulk
+                      ? (e: React.MouseEvent) => {
+                          // don't select when clicking actions / links / buttons / inputs
+                          const tag = (e.target as HTMLElement).closest(
+                            "a, button, input, [role=\"button\"]",
+                          )
+                          if (tag) return
+                          handleClick(id, e)
+                        }
+                      : undefined
+                  }
                 >
                   {hasBulk && (
                     <td className="px-4 py-3">
@@ -226,6 +239,7 @@ export function DataTable<T>({
                         type="checkbox"
                         checked={selected.has(id)}
                         onChange={() => toggle(id)}
+                        onClick={(e) => e.stopPropagation()}
                         className="size-3.5 rounded border-input"
                       />
                     </td>
