@@ -107,7 +107,7 @@ export function ExternalCodesTable({
       key: "externalName",
       header: "Nombre ext.",
       cell: (ec) => (
-        <span className="text-xs text-muted-foreground max-w-[150px] truncate block">
+        <span className="text-xs text-muted-foreground truncate block">
           {ec.externalName ?? "—"}
         </span>
       ),
@@ -191,6 +191,8 @@ export function ExternalCodesTable({
   return (
     <>
       <DataTable
+      tableId="external-codes"
+      resizable
       data={codes}
       columns={columns}
       getId={(ec) => ec.id}

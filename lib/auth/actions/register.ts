@@ -9,15 +9,11 @@ import { rateLimit } from "@/lib/rate-limit"
 import { sendEmail } from "@/lib/email/send"
 import { getRequestUrl } from "@/lib/get-base-url"
 import { signIn } from "@/lib/auth"
-import { headers } from "next/headers"
+import { getClientIp } from "@/lib/get-client-ip"
 import { logEvent } from "@/lib/logging"
 
 export async function register(formData: FormData) {
-  const headersList = await headers()
-  const forwarded = headersList.get("x-forwarded-for")
-  const ip = headersList.get("x-real-ip")
-    || (forwarded ? forwarded.split(",").pop()?.trim() : null)
-    || "unknown"
+  const ip = await getClientIp()
   const rl = await rateLimit(`register:${ip}`, 5, 300)
   if (!rl.success) {
     return { error: `Muitas tentativas. Tente novamente em ${rl.retryAfter}s.` }

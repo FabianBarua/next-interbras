@@ -1,5 +1,10 @@
 import { sql, type SQL, type AnyColumn } from "drizzle-orm"
 
+/** Escape SQL LIKE special characters (%, _, \) */
+export function escapeLike(value: string): string {
+  return value.replace(/[%_\\]/g, "\\$&")
+}
+
 /**
  * Build a SQL condition where **every keyword** must match **at least one** of
  * the provided columns (ILIKE, case-insensitive).
@@ -36,7 +41,7 @@ export function multiSearch(
 
   const conditions = keywords.map((kw) => {
     // escape SQL LIKE special chars
-    const escaped = kw.replace(/[%_\\]/g, "\\$&")
+    const escaped = escapeLike(kw)
     const pattern = `%${escaped}%`
 
     const colMatches = columns.map((col) =>

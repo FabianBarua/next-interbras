@@ -56,6 +56,9 @@ export async function updatePasswordAction(data: unknown) {
   const user = await requireAuth()
   const userId = user.id
 
+  const rl = await rateLimit(`change-password:${userId}`, 5, 300)
+  if (!rl.success) return { error: `Demasiados intentos. Intente en ${rl.retryAfter}s.` }
+
   const parsed = passwordSchema.safeParse(data)
   if (!parsed.success) {
     return { error: parsed.error.issues[0].message }

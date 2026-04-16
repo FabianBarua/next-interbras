@@ -17,9 +17,17 @@ export async function getRequestUrl(): Promise<string> {
     const h = await headers()
     const host = h.get("x-forwarded-host") ?? h.get("host")
     const proto = h.get("x-forwarded-proto") ?? "https"
-    if (host) return `${proto}://${host}`
+    if (host && isAllowedHost(host)) return `${proto}://${host}`
   } catch {
     // Not in a request context
   }
   return getSiteUrl()
+}
+
+/** Validate that the host matches one of the configured allowed hosts. */
+function isAllowedHost(host: string): boolean {
+  const raw = process.env.ALLOWED_HOSTS
+  if (!raw) return true // no restriction configured
+  const normalized = host.toLowerCase().split(":")[0]
+  return raw.split(",").some((h) => h.trim().toLowerCase() === normalized)
 }

@@ -4,15 +4,11 @@ import { signIn } from "@/lib/auth"
 import { loginSchema } from "@/lib/auth/schemas"
 import { AuthError } from "next-auth"
 import { rateLimit } from "@/lib/rate-limit"
-import { headers } from "next/headers"
+import { getClientIp } from "@/lib/get-client-ip"
 import { logEvent } from "@/lib/logging"
 
 export async function login(formData: FormData) {
-  const headersList = await headers()
-  const forwarded = headersList.get("x-forwarded-for")
-  const ip = headersList.get("x-real-ip")
-    || (forwarded ? forwarded.split(",").pop()?.trim() : null)
-    || "unknown"
+  const ip = await getClientIp()
   const rl = await rateLimit(`login:${ip}`, 5, 300)
   if (!rl.success) {
     return { error: `Muitas tentativas. Tente novamente em ${rl.retryAfter}s.` }

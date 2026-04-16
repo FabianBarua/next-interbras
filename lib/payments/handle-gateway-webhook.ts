@@ -3,11 +3,12 @@ import { eq, and, inArray } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { payments, gatewayConfig } from "@/lib/db/schema"
 import { getGateway } from "@/lib/payments/registry"
-import { getGatewayInstanceBySlug } from "@/lib/actions/admin/gateway-config"
+import { getGatewayInstanceBySlugInternal } from "@/lib/payments/get-gateway-creds"
 import { processWebhookEvent } from "@/lib/payments/process-webhook-event"
 import "@/lib/payments/init"
 import { rateLimit } from "@/lib/rate-limit"
 import { logEvent } from "@/lib/logging"
+import { getClientIpFromHeaders } from "@/lib/get-client-ip"
 
 /**
  * Shared handler for per-gateway webhook routes.
@@ -15,7 +16,7 @@ import { logEvent } from "@/lib/logging"
  */
 export async function handleGatewayWebhook(req: NextRequest, gatewayName: string) {
   const cat = `webhook-${gatewayName}`
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] ?? "unknown"
+  const ip = getClientIpFromHeaders(req.headers)
 
   const rl = await rateLimit(`webhook:${ip}`, 100, 60)
   if (!rl.success) {
@@ -61,8 +62,8 @@ export async function handleGatewayWebhook(req: NextRequest, gatewayName: string
     return NextResponse.json({ ok: true }, { status: 200 })
   }
 
-  // getGatewayInstanceBySlug doesn't filter by active — fine for webhooks
-  const instance = await getGatewayInstanceBySlug(payment.gateway)
+  // getGatewayInstanceBySlugInternal doesn't filter by active — fine for webhooks
+  const instance = await getGatewayInstanceBySlugInternal(payment.gateway)
   if (!instance) {
     await logEvent({ category: cat, level: "error", action: "unknown-gateway", message: `Instance not found: ${payment.gateway}`, entity: "payment", entityId: payment.id })
     return NextResponse.json({ ok: true }, { status: 200 })

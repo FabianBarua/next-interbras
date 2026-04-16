@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { variants, products, categories, externalCodes, productImages } from "@/lib/db/schema"
 import { eq, asc, desc, inArray, ilike, or, sql, count } from "drizzle-orm"
+import { escapeLike } from "@/lib/db/multi-search"
 import type { I18nText } from "@/types/common"
 
 export interface AdminVariantGlobal {
@@ -119,7 +120,7 @@ export async function searchVariantsGlobal({
     conditions.push(eq(products.categoryId, categoryId))
   }
   if (search) {
-    const term = `%${search}%`
+    const term = `%${escapeLike(search)}%`
     conditions.push(
       or(
         ilike(variants.sku, term),

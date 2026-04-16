@@ -105,20 +105,22 @@ export async function setFlowSteps(
   flowId: string,
   steps: { statusSlug: string; autoTransition: boolean; notifyCustomer: boolean }[],
 ): Promise<void> {
-  // Delete existing steps, then insert new ones
-  await db.delete(orderFlowSteps).where(eq(orderFlowSteps.flowId, flowId))
+  await db.transaction(async (tx) => {
+    // Delete existing steps, then insert new ones
+    await tx.delete(orderFlowSteps).where(eq(orderFlowSteps.flowId, flowId))
 
-  if (steps.length > 0) {
-    await db.insert(orderFlowSteps).values(
-      steps.map((s, i) => ({
-        flowId,
-        statusSlug: s.statusSlug,
-        stepOrder: i,
-        autoTransition: s.autoTransition,
-        notifyCustomer: s.notifyCustomer,
-      })),
-    )
-  }
+    if (steps.length > 0) {
+      await tx.insert(orderFlowSteps).values(
+        steps.map((s, i) => ({
+          flowId,
+          statusSlug: s.statusSlug,
+          stepOrder: i,
+          autoTransition: s.autoTransition,
+          notifyCustomer: s.notifyCustomer,
+        })),
+      )
+    }
+  })
 
   await invalidateCache("order-flows:*")
 }

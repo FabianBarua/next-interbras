@@ -5,6 +5,7 @@ import {
   variants as variantsTable,
   products as productsTable,
   externalCodes,
+  shippingMethods,
 } from "@/lib/db/schema"
 import { eq, desc, sql, and, inArray, count } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
@@ -232,6 +233,19 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
   }
   const total = subtotal + input.shippingCost
 
+  // Verify shipping cost from DB if a shipping method ID is provided
+  let verifiedShippingCost = input.shippingCost
+  if (input.shippingMethodId) {
+    const method = await db.query.shippingMethods.findFirst({
+      where: eq(shippingMethods.id, input.shippingMethodId),
+      columns: { price: true },
+    })
+    if (method) {
+      verifiedShippingCost = Number(method.price)
+    }
+  }
+  const verifiedTotal = subtotal + verifiedShippingCost
+
   // Insert in transaction
   // Resolve order flow before transaction
   const flow = await resolveFlow(input.shippingMethodId ?? null, input.gatewayType ?? null)
@@ -244,9 +258,10 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
         const result = await tx.update(externalCodes)
           .set({ stock: sql`${externalCodes.stock} - ${item.quantity}` })
           .where(and(eq(externalCodes.variantId, item.variantId), sql`${externalCodes.stock} >= ${item.quantity}`))
+          .returning({ id: externalCodes.id })
 
-        // If no row was matched by the WHERE clause, stock was insufficient
-        if ((result as any)?.rowCount === 0 || (result as any)?.count === 0) {
+        // If no row was returned, stock was insufficient
+        if (result.length === 0) {
           throw new Error(`Stock insuficiente para ${v.sku}. Disponible: ${v.stock}, solicitado: ${item.quantity}`)
         }
       }
@@ -258,9 +273,9 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
       flowId: flow?.id ?? null,
       paymentMethod: input.paymentMethod,
       shippingMethod: input.shippingMethod,
-      shippingCost: String(input.shippingCost),
+      shippingCost: String(verifiedShippingCost),
       subtotal: String(subtotal),
-      total: String(total),
+      total: String(verifiedTotal),
       currency: "USD",
       customerName: input.customerName,
       customerEmail: input.customerEmail,

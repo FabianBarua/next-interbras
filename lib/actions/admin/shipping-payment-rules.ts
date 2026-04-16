@@ -11,6 +11,7 @@ import { logEvent } from "@/lib/logging"
 const uuidSchema = z.string().uuid()
 
 export async function getPaymentRulesForShippingMethod(shippingMethodId: string) {
+  await requireAdmin()
   const rows = await db
     .select({ gatewayType: shippingPaymentRules.gatewayType })
     .from(shippingPaymentRules)
@@ -19,6 +20,7 @@ export async function getPaymentRulesForShippingMethod(shippingMethodId: string)
 }
 
 export async function getAllGatewayTypes() {
+  await requireAdmin()
   const rows = await db
     .selectDistinct({ type: gatewayConfig.type, displayName: gatewayConfig.displayName })
     .from(gatewayConfig)

@@ -89,6 +89,9 @@ export async function upsertSeoPage(data: SeoData) {
     } catch {
       return { error: "JSON-LD inválido. Verifique la sintaxis del JSON." }
     }
+    if (/<\/script/i.test(structuredData)) {
+      return { error: "JSON-LD no puede contener etiquetas script." }
+    }
   }
 
   const existing = await db.query.seoPages.findFirst({

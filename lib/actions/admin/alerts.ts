@@ -44,6 +44,7 @@ export async function markAllAlertsRead() {
 }
 
 export async function getUnreadAlertCount(): Promise<number> {
+  await requireAdmin()
   const result = await db
     .select({ count: sql<number>`count(*)` })
     .from(adminAlerts)

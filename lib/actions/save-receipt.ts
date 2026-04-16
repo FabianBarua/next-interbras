@@ -20,6 +20,7 @@ export async function saveReceiptAction(
   if (!session?.user?.id) return { error: "No autenticado" }
   if (!UUID_RE.test(orderId)) return { error: "ID de pedido inválido" }
   if (!receiptUrl.startsWith("/uploads/receipts/")) return { error: "URL de comprobante inválida" }
+  if (receiptUrl.includes("..")) return { error: "URL de comprobante inválida" }
 
   const order = await db.query.orders.findFirst({
     where: and(eq(orders.id, orderId), eq(orders.userId, session.user.id)),

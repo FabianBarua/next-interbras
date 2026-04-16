@@ -144,7 +144,16 @@
     }
   html {
     @apply font-serif;
+    color-scheme: light;
     }
+  .dark {
+    color-scheme: dark;
+  }
+  /* Safety net: native <option> elements in dark mode */
+  select option {
+    background-color: Canvas;
+    color: CanvasText;
+  }
 }
 
 @keyframes cartPulse {

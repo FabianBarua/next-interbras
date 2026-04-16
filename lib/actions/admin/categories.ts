@@ -1,6 +1,7 @@
 "use server"
 
 import { z } from "zod"
+import DOMPurify from "isomorphic-dompurify"
 import { requireAdmin } from "@/lib/auth/get-session"
 import {
   createCategory,
@@ -37,8 +38,12 @@ export async function createCategoryAction(data: unknown) {
   const session = await requireAdmin()
   const parsed = createSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
+  const cleanData = {
+    ...parsed.data,
+    ...(parsed.data.svgIcon ? { svgIcon: DOMPurify.sanitize(parsed.data.svgIcon, { USE_PROFILES: { svg: true, svgFilters: true } }) } : {}),
+  }
   try {
-    const id = await createCategory(parsed.data)
+    const id = await createCategory(cleanData)
     logEvent({ category: "admin", action: "category.create", entity: "category", entityId: id, userId: session.id })
     return { id }
   } catch (err: any) {
@@ -53,8 +58,12 @@ export async function updateCategoryAction(id: string, data: unknown) {
   if (!idParsed.success) return { error: "ID inválido." }
   const parsed = updateSchema.safeParse(data)
   if (!parsed.success) return { error: "Datos inválidos." }
+  const cleanData = {
+    ...parsed.data,
+    ...(parsed.data.svgIcon ? { svgIcon: DOMPurify.sanitize(parsed.data.svgIcon, { USE_PROFILES: { svg: true, svgFilters: true } }) } : {}),
+  }
   try {
-    await updateCategory(id, parsed.data)
+    await updateCategory(id, cleanData)
     logEvent({ category: "admin", action: "category.update", entity: "category", entityId: id, userId: session.id })
     return { success: true }
   } catch (err: any) {

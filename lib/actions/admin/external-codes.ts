@@ -81,6 +81,7 @@ export async function deleteExternalCodeAction(id: string) {
 
 export async function bulkDeleteExternalCodesAction(ids: string[]) {
   const session = await requireAdmin()
+  if (ids.length > 200) return { error: "Máximo 200 items por operación." }
   for (const id of ids) {
     const parsed = uuidSchema.safeParse(id)
     if (!parsed.success) continue
@@ -96,6 +97,7 @@ export async function searchVariantsBySkuAction(term: string) {
   const { db } = await import("@/lib/db")
   const { variants, products } = await import("@/lib/db/schema")
   const { ilike, eq } = await import("drizzle-orm")
+  const { escapeLike } = await import("@/lib/db/multi-search")
   const rows = await db
     .select({
       id: variants.id,
@@ -104,7 +106,7 @@ export async function searchVariantsBySkuAction(term: string) {
     })
     .from(variants)
     .innerJoin(products, eq(variants.productId, products.id))
-    .where(ilike(variants.sku, `%${term}%`))
+    .where(ilike(variants.sku, `%${escapeLike(term)}%`))
     .limit(20)
   return rows.map((r) => ({
     id: r.id,

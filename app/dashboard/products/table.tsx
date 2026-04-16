@@ -139,6 +139,8 @@ export function ProductsTable({ items, categories, total, totalPages, perPage: d
     <>
       {error && <p className="text-sm text-destructive">{error}</p>}
       <DataTable
+        tableId="products"
+        resizable
         data={items}
         columns={columns}
         getId={(item) => item.id}

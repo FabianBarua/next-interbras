@@ -213,6 +213,7 @@ export async function getDecryptedCredentials(
 }
 
 export async function getGatewayInstanceBySlug(slug: string) {
+  await requireAdmin()
   const config = await db.query.gatewayConfig.findFirst({
     where: eq(gatewayConfig.slug, slug),
   })

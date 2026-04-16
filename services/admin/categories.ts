@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { categories } from "@/lib/db/schema"
 import { eq, asc, count, inArray, ilike, or, sql } from "drizzle-orm"
+import { escapeLike } from "@/lib/db/multi-search"
 import { invalidateCache } from "@/lib/cache"
 import type { Category } from "@/types/category"
 import type { I18nText, I18nRichText } from "@/types/common"
@@ -99,7 +100,7 @@ export async function searchCategories({
   const conditions: ReturnType<typeof eq>[] = []
 
   if (search) {
-    const term = `%${search}%`
+    const term = `%${escapeLike(search)}%`
     conditions.push(
       or(
         ilike(categories.slug, term),

@@ -189,42 +189,44 @@ export async function updateVariant(
 ): Promise<void> {
   const { images, externalCode, ...rest } = input
 
-  if (Object.keys(rest).length > 0) {
-    await db.update(variants).set(rest).where(eq(variants.id, id))
-  }
+  await db.transaction(async (tx) => {
+    if (Object.keys(rest).length > 0) {
+      await tx.update(variants).set(rest).where(eq(variants.id, id))
+    }
 
-  if (images !== undefined) {
-    // Replace all variant-level images
-    await db.delete(productImages).where(
-      sql`${productImages.productId} = ${productId} AND ${productImages.variantId} = ${id}`
-    )
-    if (images.length > 0) {
-      await db.insert(productImages).values(
-        images.map((url, i) => ({
-          productId,
-          variantId: id,
-          url,
-          sortOrder: i,
-        }))
+    if (images !== undefined) {
+      // Replace all variant-level images
+      await tx.delete(productImages).where(
+        sql`${productImages.productId} = ${productId} AND ${productImages.variantId} = ${id}`
       )
+      if (images.length > 0) {
+        await tx.insert(productImages).values(
+          images.map((url, i) => ({
+            productId,
+            variantId: id,
+            url,
+            sortOrder: i,
+          }))
+        )
+      }
     }
-  }
 
-  if (externalCode !== undefined) {
-    // Delete existing external codes for this variant, then re-insert
-    await db.delete(externalCodes).where(eq(externalCodes.variantId, id))
-    if (externalCode) {
-      await db.insert(externalCodes).values({
-        variantId: id,
-        system: externalCode.system,
-        code: externalCode.code,
-        externalName: externalCode.externalName,
-        priceUsd: externalCode.priceUsd,
-        priceGs: externalCode.priceGs,
-        priceBrl: externalCode.priceBrl,
-      })
+    if (externalCode !== undefined) {
+      // Delete existing external codes for this variant, then re-insert
+      await tx.delete(externalCodes).where(eq(externalCodes.variantId, id))
+      if (externalCode) {
+        await tx.insert(externalCodes).values({
+          variantId: id,
+          system: externalCode.system,
+          code: externalCode.code,
+          externalName: externalCode.externalName,
+          priceUsd: externalCode.priceUsd,
+          priceGs: externalCode.priceGs,
+          priceBrl: externalCode.priceBrl,
+        })
+      }
     }
-  }
+  })
 
   await invalidateCache("products:*", "variants:*")
 }

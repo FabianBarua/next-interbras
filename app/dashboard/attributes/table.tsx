@@ -102,6 +102,8 @@ export function AttributesTable({ attributes, total, totalPages, perPage: defaul
 
   return (
     <DataTable
+      tableId="attributes"
+      resizable
       data={attributes}
       columns={columns}
       getId={(attr) => attr.id}

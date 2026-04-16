@@ -159,6 +159,8 @@ export function VariantsTable({
 
   return (
     <DataTable
+      tableId="product-variants"
+      resizable
       data={paged}
       columns={columns}
       getId={(v) => v.id}

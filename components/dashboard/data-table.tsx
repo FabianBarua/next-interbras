@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useTransition, type ReactNode } from "react"
+import { useState, useCallback, useRef, useTransition, type ReactNode } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -11,11 +11,12 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { Loader2 } from "lucide-react"
+import { Loader2, SlidersHorizontal, RotateCcw } from "lucide-react"
 import { SortTh } from "@/components/dashboard/sort-th"
 import { TablePagination } from "@/components/dashboard/table-pagination"
 import { useBulkSelect } from "@/hooks/use-bulk-select"
 import { BulkBar, type BulkAction } from "@/components/dashboard/bulk-bar"
+import { useColumnSettings } from "@/hooks/use-column-settings"
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -70,6 +71,12 @@ export interface DataTableProps<T> {
 
   /* Empty state */
   emptyMessage?: string
+
+  /** Unique table ID — enables column visibility & resize persisted in localStorage */
+  tableId?: string
+
+  /* Column resize — enables drag-to-resize handles on headers */
+  resizable?: boolean
 }
 
 /* ------------------------------------------------------------------ */
@@ -96,9 +103,55 @@ export function DataTable<T>({
   onPageChange,
   onPerPageChange,
   emptyMessage = "Sin resultados.",
+  tableId,
+  resizable = false,
 }: DataTableProps<T>) {
   const hasBulk = !!bulkActions?.length
   const hasActions = !!renderActions
+
+  /* Column visibility & widths (persisted per tableId) */
+  const {
+    hiddenCols,
+    colWidths,
+    toggleColumn,
+    setColWidths,
+    resetAll,
+  } = useColumnSettings(tableId)
+
+  const visibleColumns = tableId
+    ? columns.filter((c) => !hiddenCols.has(c.key))
+    : columns
+
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
+  /* Column resize */
+  const resizingRef = useRef<{ key: string; startX: number; startW: number } | null>(null)
+
+  const onResizeStart = useCallback(
+    (key: string, e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      const th = (e.target as HTMLElement).closest("th")
+      if (!th) return
+      const startW = colWidths[key] || th.offsetWidth
+      resizingRef.current = { key, startX: e.clientX, startW }
+
+      const onMove = (ev: MouseEvent) => {
+        if (!resizingRef.current) return
+        const diff = ev.clientX - resizingRef.current.startX
+        const newW = Math.max(50, resizingRef.current.startW + diff)
+        setColWidths((prev) => ({ ...prev, [resizingRef.current!.key]: newW }))
+      }
+      const onUp = () => {
+        resizingRef.current = null
+        document.removeEventListener("mousemove", onMove)
+        document.removeEventListener("mouseup", onUp)
+      }
+      document.addEventListener("mousemove", onMove)
+      document.addEventListener("mouseup", onUp)
+    },
+    [colWidths, setColWidths],
+  )
 
   /* Bulk selection */
   const ids = data.map(getId)
@@ -127,15 +180,26 @@ export function DataTable<T>({
     })
   }
 
-  const colCount = columns.length + (hasBulk ? 1 : 0) + (hasActions ? 1 : 0)
+  const colCount = visibleColumns.length + (hasBulk ? 1 : 0) + (hasActions ? 1 : 0)
 
   return (
     <>
       {/* ── Toolbar ── */}
-      {(toolbar || hasBulk) && (
+      {(toolbar || hasBulk || tableId) && (
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           {toolbar}
           <div className="flex-1" />
+          {tableId && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              onClick={() => setSettingsOpen(true)}
+            >
+              <SlidersHorizontal className="size-3.5" />
+              Columnas
+            </Button>
+          )}
           {hasBulk && (
             <BulkBar selected={selected} actions={bulkActions!} onClear={clear} />
           )}
@@ -144,7 +208,7 @@ export function DataTable<T>({
 
       {/* ── Table ── */}
       <div className="overflow-x-auto rounded-lg border">
-        <table className="w-full text-sm">
+        <table className={cn("w-full text-sm", resizable && "table-fixed")}>
           <thead>
             <tr className="border-b bg-muted/50">
               {hasBulk && (
@@ -158,8 +222,19 @@ export function DataTable<T>({
                 </th>
               )}
 
-              {columns.map((col) =>
-                col.sortable ? (
+              {visibleColumns.map((col) => {
+                const widthStyle = resizable && colWidths[col.key]
+                  ? { width: colWidths[col.key], minWidth: 50, maxWidth: colWidths[col.key] }
+                  : undefined
+
+                const resizeHandle = resizable && (
+                  <span
+                    onMouseDown={(e) => onResizeStart(col.key, e)}
+                    className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/30 active:bg-primary/50"
+                  />
+                )
+
+                return col.sortable ? (
                   <SortTh
                     key={col.key}
                     col={col.key}
@@ -167,15 +242,18 @@ export function DataTable<T>({
                     sortDir={sortDir}
                     onSort={onSort}
                     align={col.align}
-                    className={col.headerClassName}
+                    className={cn("relative overflow-hidden", col.headerClassName)}
+                    style={widthStyle}
                   >
                     {col.header}
+                    {resizeHandle}
                   </SortTh>
                 ) : (
                   <th
                     key={col.key}
+                    style={widthStyle}
                     className={cn(
-                      "px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground",
+                      "relative overflow-hidden px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground",
                       col.align === "center"
                         ? "text-center"
                         : col.align === "right"
@@ -185,9 +263,10 @@ export function DataTable<T>({
                     )}
                   >
                     {col.header}
+                    {resizeHandle}
                   </th>
-                ),
-              )}
+                )
+              })}
 
               {hasActions && (
                 <th className="px-3 py-2.5 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -245,11 +324,16 @@ export function DataTable<T>({
                     </td>
                   )}
 
-                  {columns.map((col) => (
+                  {visibleColumns.map((col) => (
                     <td
                       key={col.key}
+                      style={
+                        resizable && colWidths[col.key]
+                          ? { width: colWidths[col.key], maxWidth: colWidths[col.key] }
+                          : undefined
+                      }
                       className={cn(
-                        "px-3 py-2",
+                        "px-3 py-2 overflow-hidden",
                         col.align === "center"
                           ? "text-center"
                           : col.align === "right"
@@ -258,7 +342,9 @@ export function DataTable<T>({
                         col.className,
                       )}
                     >
-                      {col.cell(row)}
+                      <div className="truncate">
+                        {col.cell(row)}
+                      </div>
                     </td>
                   ))}
 
@@ -303,6 +389,52 @@ export function DataTable<T>({
               >
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Eliminar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* ── Column settings dialog ── */}
+      {tableId && (
+        <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Configurar columnas</DialogTitle>
+              <DialogDescription>
+                Elige qué columnas mostrar en la tabla.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-1 py-2 max-h-[60vh] overflow-y-auto">
+              {columns.map((col) => (
+                <label
+                  key={col.key}
+                  className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-muted/50 cursor-pointer select-none"
+                >
+                  <input
+                    type="checkbox"
+                    checked={!hiddenCols.has(col.key)}
+                    onChange={() => toggleColumn(col.key)}
+                    className="size-4 rounded border-input"
+                  />
+                  <span className="text-sm">
+                    {typeof col.header === "string" ? col.header : col.key}
+                  </span>
+                </label>
+              ))}
+            </div>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-1.5"
+                onClick={resetAll}
+              >
+                <RotateCcw className="size-3.5" />
+                Restablecer
+              </Button>
+              <Button size="sm" onClick={() => setSettingsOpen(false)}>
+                Listo
               </Button>
             </DialogFooter>
           </DialogContent>

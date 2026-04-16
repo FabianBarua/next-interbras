@@ -14,7 +14,7 @@ async function seed() {
   console.log("⏳ Seeding database...")
 
   // 1. Create admin user
-  const adminEmail = "admin@interbras.com"
+  const adminEmail = process.env.ADMIN_EMAIL ?? "admin@interbras.com"
   const adminPassword = process.env.SEED_ADMIN_PASSWORD
   if (!adminPassword) {
     console.error("❌ SEED_ADMIN_PASSWORD env var is required")

@@ -8,6 +8,7 @@ interface Props {
   children: React.ReactNode
   className?: string
   align?: "left" | "center" | "right"
+  style?: React.CSSProperties
 }
 
 export function SortTh({
@@ -18,12 +19,14 @@ export function SortTh({
   children,
   className,
   align = "left",
+  style,
 }: Props) {
   const active = sortBy === col
   const alignCls =
     align === "center" ? "text-center" : align === "right" ? "text-right" : "text-left"
   return (
     <th
+      style={style}
       className={`px-3 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground ${alignCls} ${className ?? ""}`}
     >
       <button

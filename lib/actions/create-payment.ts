@@ -8,8 +8,9 @@ import { auth } from "@/lib/auth"
 import { rateLimit } from "@/lib/rate-limit"
 import { logEvent } from "@/lib/logging"
 import { getSiteUrl } from "@/lib/get-base-url"
-import { getGatewayInstanceBySlug } from "@/lib/actions/admin/gateway-config"
+import { getGatewayInstanceBySlugInternal } from "@/lib/payments/get-gateway-creds"
 import { getFlowForOrder } from "@/lib/order-flow-resolver"
+import { acquireLock, releaseLock } from "@/lib/redis"
 import "@/lib/payments/init"
 import type { CreatePaymentInput } from "@/lib/payments/types"
 
@@ -32,7 +33,7 @@ export async function createPayment(
   if (!rl.success) return { error: "Demasiados intentos. Espere un momento." }
 
   // Load gateway instance by slug
-  const instance = await getGatewayInstanceBySlug(gatewaySlug)
+  const instance = await getGatewayInstanceBySlugInternal(gatewaySlug)
   if (!instance) return { error: "Gateway no encontrado o inactivo" }
 
   const gateway = getGateway(instance.type)
@@ -48,14 +49,10 @@ export async function createPayment(
     return { error: "El pedido no está pendiente" }
   }
 
-  // Atomic lock: set order status to prevent concurrent payment creation
-  const [locked] = await db
-    .update(orders)
-    .set({ status: "pending" })
-    .where(and(eq(orders.id, orderId), eq(orders.status, "pending")))
-    .returning({ id: orders.id })
-
-  if (!locked) {
+  // Distributed lock to prevent concurrent payment creation for the same order
+  const lockKey = `lock:payment:${orderId}`
+  const lockToken = await acquireLock(lockKey, 30)
+  if (!lockToken) {
     return { error: "El pedido ya está siendo procesado" }
   }
 
@@ -88,11 +85,8 @@ export async function createPayment(
     result = await gateway.createPayment(input, instance.decryptedCredentials)
   } catch (err) {
     await logEvent({ category: "pedidos", level: "error", action: "payment-create-error", message: `Gateway error: ${(err as Error).message}`, entityId: orderId, meta: { orderId, gateway: gatewaySlug, error: (err as Error).message } })
-    // Cancel the order to avoid orphaned orders
-    await db
-      .update(orders)
-      .set({ status: "cancelled" })
-      .where(eq(orders.id, orderId))
+    // Release lock — order stays "pending" so user can retry
+    await releaseLock(lockKey, lockToken)
     const userMsg = (err as Error & { userMessage?: string }).userMessage
     return { error: userMsg || "Error al crear el pago en el gateway. Intente de nuevo." }
   }
@@ -139,6 +133,9 @@ export async function createPayment(
       userId: session.user.id,
     })
   }
+
+  // Release distributed lock
+  await releaseLock(lockKey, lockToken)
 
   return {
     success: true,

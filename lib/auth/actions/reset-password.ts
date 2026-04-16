@@ -7,7 +7,7 @@ import { db } from "@/lib/db"
 import { users, passwordResetTokens } from "@/lib/db/schema"
 import { resetPasswordSchema } from "@/lib/auth/schemas"
 import { rateLimit } from "@/lib/rate-limit"
-import { headers } from "next/headers"
+import { getClientIp } from "@/lib/get-client-ip"
 import { signIn } from "@/lib/auth"
 import { AuthError } from "next-auth"
 
@@ -16,11 +16,7 @@ function hashToken(token: string): string {
 }
 
 export async function resetPassword(formData: FormData) {
-  const headersList = await headers()
-  const forwarded = headersList.get("x-forwarded-for")
-  const ip = headersList.get("x-real-ip")
-    || (forwarded ? forwarded.split(",").pop()?.trim() : null)
-    || "unknown"
+  const ip = await getClientIp()
   const rl = await rateLimit(`reset-password:${ip}`, 5, 300)
   if (!rl.success) {
     return { error: `Muitas tentativas. Tente novamente em ${rl.retryAfter}s.` }

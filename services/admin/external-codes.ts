@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { externalCodes, variants, products, categories } from "@/lib/db/schema"
 import { eq, asc, desc, sql, like, or, ilike, count, inArray, isNull, and } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
+import { escapeLike } from "@/lib/db/multi-search"
 import type { I18nText } from "@/types/common"
 
 export interface AdminExternalCode {
@@ -197,7 +198,7 @@ export async function searchExternalCodes({
 
   if (system) conditions.push(eq(externalCodes.system, system))
   if (search) {
-    const term = `%${search}%`
+    const term = `%${escapeLike(search)}%`
     conditions.push(
       or(
         ilike(externalCodes.code, term),
@@ -287,7 +288,7 @@ export interface UnlinkedEC {
 export async function searchUnlinkedExternalCodes(search?: string): Promise<UnlinkedEC[]> {
   const conds: any[] = [isNull(externalCodes.variantId)]
   if (search) {
-    const term = `%${search}%`
+    const term = `%${escapeLike(search)}%`
     conds.push(or(ilike(externalCodes.code, term), ilike(externalCodes.externalName, term))!)
   }
   const rows = await db

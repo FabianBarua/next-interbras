@@ -141,6 +141,8 @@ export function VariantsTable({ variants, total, totalPages, perPage: defaultPer
 
   return (
     <DataTable
+      tableId="variants"
+      resizable
       data={variants}
       columns={columns}
       getId={(v) => v.id}
@@ -162,7 +164,7 @@ export function VariantsTable({ variants, total, totalPages, perPage: defaultPer
           <select
             value={categoryId}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="h-9 rounded-lg border px-3 text-sm"
+            className="h-9 rounded-lg border border-input bg-background px-3 text-sm"
           >
             <option value="">Todas las categorías</option>
             {categories.map((c) => (

@@ -136,6 +136,8 @@ export function CategoriesTable({
 
   return (
     <DataTable
+      tableId="categories"
+      resizable
       data={categories}
       columns={columns}
       getId={(cat) => cat.id}

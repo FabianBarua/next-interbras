@@ -11,6 +11,7 @@ import { logEvent } from "@/lib/logging"
 const uuidSchema = z.string().uuid()
 
 export async function getCountriesForShippingMethod(shippingMethodId: string) {
+  await requireAdmin()
   const rows = await db
     .select({ countryId: shippingMethodCountries.countryId, code: countries.code })
     .from(shippingMethodCountries)

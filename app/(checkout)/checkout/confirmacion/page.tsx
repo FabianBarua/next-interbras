@@ -14,7 +14,20 @@ function ConfirmacionContent() {
   useEffect(() => { setMounted(true) }, [])
   if (!mounted) return null
 
-  const orderId = searchParams.get("orderId") ?? `INT-${Date.now().toString().slice(-8)}`
+  const orderId = searchParams.get("orderId")
+
+  // Validate orderId looks like a UUID
+  const isValidId = orderId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(orderId)
+  const displayOrderId = isValidId ? orderId : null
+
+  if (!displayOrderId) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-16 text-center">
+        <p className="text-muted-foreground">Pedido no encontrado.</p>
+        <Link href="/" className="text-primary underline mt-4 inline-block">Volver al inicio</Link>
+      </div>
+    )
+  }
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-16">
@@ -37,7 +50,7 @@ function ConfirmacionContent() {
         <div className="w-full rounded-xl bg-muted/40 border p-5 space-y-3 text-sm mb-8">
           <div className="flex justify-between">
             <span className="text-muted-foreground">{dict.confirmation.orderNumber}</span>
-            <span className="font-bold font-mono">{orderId}</span>
+            <span className="font-bold font-mono">{displayOrderId.slice(0, 8).toUpperCase()}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">{dict.confirmation.status}</span>
@@ -52,7 +65,7 @@ function ConfirmacionContent() {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">{dict.confirmation.emailLabel}</span>
-            <span className="font-medium">{searchParams.get("email") ?? "—"}</span>
+            <span className="font-medium">—</span>
           </div>
         </div>
 
@@ -80,7 +93,7 @@ function ConfirmacionContent() {
             {dict.confirmation.trackDesc}
           </p>
           <a
-            href={`https://wa.me/?text=${encodeURIComponent(`${dict.confirmation.whatsappText} ${typeof window !== "undefined" ? window.location.origin : ""}/tracking/${orderId}`)}`}
+            href={`https://wa.me/?text=${encodeURIComponent(`${dict.confirmation.whatsappText} ${typeof window !== "undefined" ? window.location.origin : ""}/tracking/${displayOrderId}`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 inline-flex items-center gap-2 h-12 px-8 rounded-full bg-[#25D366] text-white font-bold hover:bg-[#128C7E] transition-all hover:scale-105 shadow-lg shadow-[#25D366]/20"

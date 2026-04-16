@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import { products, categories, productImages } from "@/lib/db/schema"
 import { eq, asc, desc, inArray, count, ilike, or, sql, and } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
+import { escapeLike } from "@/lib/db/multi-search"
 import type { I18nText, I18nRichText, I18nSpecs } from "@/types/common"
 
 export interface AdminProduct {
@@ -36,7 +37,7 @@ export async function searchProductsAdmin(opts?: {
 
   const conditions: ReturnType<typeof eq>[] = []
   if (opts?.search) {
-    const term = `%${opts.search}%`
+    const term = `%${escapeLike(opts.search)}%`
     conditions.push(
       or(
         ilike(products.slug, term),

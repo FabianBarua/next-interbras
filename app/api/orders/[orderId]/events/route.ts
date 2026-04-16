@@ -4,8 +4,11 @@ import { db } from "@/lib/db"
 import { orders } from "@/lib/db/schema"
 import { eq } from "drizzle-orm"
 import Redis from "ioredis"
+import { redis } from "@/lib/redis"
 
 export const dynamic = "force-dynamic"
+
+const MAX_SSE_PER_USER = 5
 
 export async function GET(
   req: NextRequest,
@@ -22,6 +25,15 @@ export async function GET(
 
   if (!session?.user?.id || !order || order.userId !== session.user.id) {
     return new Response("Not found", { status: 404 })
+  }
+
+  // SSE connection limit per user
+  const sseKey = `sse:conn:${session.user.id}`
+  const current = await redis.incr(sseKey)
+  if (current === 1) await redis.expire(sseKey, 2400) // 40 min TTL
+  if (current > MAX_SSE_PER_USER) {
+    await redis.decr(sseKey)
+    return new Response("Too many connections", { status: 429 })
   }
 
   // Create a dedicated Redis subscriber (cannot reuse shared connection)
@@ -52,6 +64,7 @@ export async function GET(
             setTimeout(() => {
               subscriber.unsubscribe(channel).catch(() => {})
               subscriber.quit().catch(() => {})
+              redis.decr(sseKey).catch(() => {})
               controller.close()
             }, 500)
           }
@@ -64,6 +77,7 @@ export async function GET(
       setTimeout(() => {
         subscriber.unsubscribe(channel).catch(() => {})
         subscriber.quit().catch(() => {})
+        redis.decr(sseKey).catch(() => {})
         try {
           controller.close()
         } catch {
@@ -74,6 +88,7 @@ export async function GET(
     cancel() {
       subscriber.unsubscribe(channel).catch(() => {})
       subscriber.quit().catch(() => {})
+      redis.decr(sseKey).catch(() => {})
     },
   })
 
