@@ -1,6 +1,8 @@
 import { requireAdmin } from "@/lib/auth/get-session"
 import { getProductByIdAdmin } from "@/services/admin/products"
 import { getAllCategoriesAdmin } from "@/services/admin/categories"
+import { getAllVariantsForProduct } from "@/services/admin/variants"
+import { getAttributesWithValues } from "@/services/admin/attributes"
 import { notFound } from "next/navigation"
 import { ProductEditForm } from "./edit-form"
 import { Breadcrumbs } from "@/components/dashboard/breadcrumbs"
@@ -8,9 +10,11 @@ import { Breadcrumbs } from "@/components/dashboard/breadcrumbs"
 export default async function ProductEditPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin()
   const { id } = await params
-  const [product, categories] = await Promise.all([
+  const [product, categories, variants, attributeDefs] = await Promise.all([
     getProductByIdAdmin(id),
     getAllCategoriesAdmin(),
+    getAllVariantsForProduct(id),
+    getAttributesWithValues(),
   ])
   if (!product) notFound()
 
@@ -26,7 +30,7 @@ export default async function ProductEditPage({ params }: { params: Promise<{ id
           Variantes →
         </a>
       </div>
-      <ProductEditForm product={product} categories={categories} />
+      <ProductEditForm product={product} categories={categories} variants={variants} attributeDefs={attributeDefs} />
     </div>
   )
 }
