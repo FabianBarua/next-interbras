@@ -23,7 +23,7 @@ export default async function CheckoutLayout({
   return (
     <div className="min-h-screen bg-background">
       {/* Minimal header */}
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur-sm">
+      <header className="border-b sticky top-0  border-border/40 bg-background/95 backdrop-blur-sm">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4 sm:px-6">
           <Link
             href="/"
