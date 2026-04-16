@@ -2,8 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-
-export const PER_PAGE_OPTIONS = [10, 25, 50, 100] as const
+import { PER_PAGE_OPTIONS } from "@/lib/pagination"
 
 interface Props {
   page: number
@@ -22,8 +21,9 @@ export function TablePagination({
   onPageChange,
   onPerPageChange,
 }: Props) {
-  const from = total === 0 ? 0 : (page - 1) * perPage + 1
-  const to = Math.min(page * perPage, total)
+  const isAll = perPage === 0
+  const from = total === 0 ? 0 : isAll ? 1 : (page - 1) * perPage + 1
+  const to = isAll ? total : Math.min(page * perPage, total)
 
   return (
     <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
@@ -36,7 +36,7 @@ export function TablePagination({
         >
           {PER_PAGE_OPTIONS.map((n) => (
             <option key={n} value={n}>
-              {n} / pág.
+              {n === 0 ? "Todos" : `${n} / pág.`}
             </option>
           ))}
         </select>

@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth/get-session"
 import { searchAttributes } from "@/services/admin/attributes"
 import { AttributesTable } from "./table"
+import { parsePerPage, perPageToLimit } from "@/lib/pagination"
 import Link from "next/link"
 
 export default async function AtributosPage({
@@ -13,12 +14,12 @@ export default async function AtributosPage({
   const str = (k: string) => (typeof sp[k] === "string" ? sp[k] : "") ?? ""
 
   const page = Math.max(1, Number(str("page")) || 1)
-  const perPage = Math.min(100, Math.max(10, Number(str("perPage")) || 50))
+  const perPage = parsePerPage(str("perPage"))
   const search = str("search") || undefined
   const sortBy = str("sortBy") || "sortOrder"
   const sortDir = str("sortDir") || "asc"
 
-  const result = await searchAttributes({ page, limit: perPage, search, sortBy, sortOrder: sortDir })
+  const result = await searchAttributes({ page, limit: perPageToLimit(perPage), search, sortBy, sortOrder: sortDir })
 
   return (
     <div>

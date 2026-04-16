@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth/get-session"
 import { searchExternalCodes, getDistinctSystems } from "@/services/admin/external-codes"
 import { ExternalCodesTable } from "./table"
+import { parsePerPage, perPageToLimit } from "@/lib/pagination"
 import Link from "next/link"
 
 export default async function ExternoPage({
@@ -13,14 +14,14 @@ export default async function ExternoPage({
   const str = (k: string) => (typeof sp[k] === "string" ? sp[k] : "") ?? ""
 
   const page = Math.max(1, Number(str("page")) || 1)
-  const perPage = Math.min(100, Math.max(10, Number(str("perPage")) || 50))
+  const perPage = parsePerPage(str("perPage"))
   const search = str("search") || undefined
   const system = str("system") || undefined
   const sortBy = str("sortBy") || "updatedAt"
   const sortDir = str("sortDir") || "desc"
 
   const [result, systems] = await Promise.all([
-    searchExternalCodes({ page, limit: perPage, search, system, sortBy, sortDir }),
+    searchExternalCodes({ page, limit: perPageToLimit(perPage), search, system, sortBy, sortDir }),
     getDistinctSystems(),
   ])
 

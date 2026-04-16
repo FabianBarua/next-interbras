@@ -3,7 +3,8 @@
 import { useCallback, useTransition } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 
-export const PER_PAGE_OPTIONS = [10, 25, 50, 100] as const
+export { PER_PAGE_OPTIONS, parsePerPage, perPageToLimit } from "@/lib/pagination"
+import { parsePerPage } from "@/lib/pagination"
 
 export function useTableParams(
   defaults: {
@@ -18,7 +19,8 @@ export function useTableParams(
   const [isPending, startTransition] = useTransition()
 
   const page = Math.max(1, Number(sp.get("page")) || 1)
-  const perPage = Number(sp.get("perPage")) || defaults.perPage || 50
+  const rawPerPage = sp.get("perPage")
+  const perPage = rawPerPage !== null ? parsePerPage(rawPerPage, defaults.perPage ?? 50) : (defaults.perPage ?? 50)
   const sortBy = sp.get("sortBy") || defaults.sortBy || ""
   const sortDir = (sp.get("sortDir") as "asc" | "desc") || defaults.sortDir || "asc"
 

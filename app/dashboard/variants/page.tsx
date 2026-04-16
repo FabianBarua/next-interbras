@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/auth/get-session"
 import { searchVariantsGlobal } from "@/services/admin/variants-global"
 import { getAllCategoriesAdmin } from "@/services/admin/categories"
 import { VariantsTable } from "./table"
+import { parsePerPage, perPageToLimit } from "@/lib/pagination"
 
 export default async function VariantesGlobalPage({
   searchParams,
@@ -13,14 +14,14 @@ export default async function VariantesGlobalPage({
   const str = (k: string) => (typeof sp[k] === "string" ? sp[k] : "") ?? ""
 
   const page = Math.max(1, Number(str("page")) || 1)
-  const perPage = Math.min(100, Math.max(10, Number(str("perPage")) || 50))
+  const perPage = parsePerPage(str("perPage"))
   const search = str("search") || undefined
   const categoryId = str("categoryId") || undefined
   const sortBy = str("sortBy") || "product"
   const sortDir = str("sortDir") || "asc"
 
   const [result, categories] = await Promise.all([
-    searchVariantsGlobal({ page, limit: perPage, search, categoryId, sortBy, sortOrder: sortDir }),
+    searchVariantsGlobal({ page, limit: perPageToLimit(perPage), search, categoryId, sortBy, sortOrder: sortDir }),
     getAllCategoriesAdmin(),
   ])
 

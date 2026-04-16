@@ -2,6 +2,7 @@ import { requireAdmin } from "@/lib/auth/get-session"
 import { searchProductsAdmin } from "@/services/admin/products"
 import { getAllCategoriesAdmin } from "@/services/admin/categories"
 import { ProductsTable } from "./table"
+import { parsePerPage, perPageToLimit } from "@/lib/pagination"
 import Link from "next/link"
 
 export default async function ProductsPage({
@@ -14,14 +15,14 @@ export default async function ProductsPage({
   const str = (k: string) => (typeof sp[k] === "string" ? sp[k] : "") ?? ""
 
   const page = Math.max(1, Number(str("page")) || 1)
-  const perPage = Math.min(100, Math.max(10, Number(str("perPage")) || 50))
+  const perPage = parsePerPage(str("perPage"))
   const search = str("search") || undefined
   const categoryId = str("categoryId") || undefined
   const sortBy = str("sortBy") || "sortOrder"
   const sortDir = str("sortDir") || "asc"
 
   const [result, categories] = await Promise.all([
-    searchProductsAdmin({ page, limit: perPage, search, categoryId, sortBy, sortDir }),
+    searchProductsAdmin({ page, limit: perPageToLimit(perPage), search, categoryId, sortBy, sortDir }),
     getAllCategoriesAdmin(),
   ])
 

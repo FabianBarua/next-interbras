@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/auth/get-session"
 import { searchCategories } from "@/services/admin/categories"
 import { CategoriesTable } from "./table"
+import { parsePerPage, perPageToLimit } from "@/lib/pagination"
 import Link from "next/link"
 
 export default async function CategoriesPage({
@@ -13,7 +14,7 @@ export default async function CategoriesPage({
   const str = (k: string) => (typeof sp[k] === "string" ? sp[k] : "") ?? ""
 
   const page = Math.max(1, Number(str("page")) || 1)
-  const perPage = Math.min(100, Math.max(10, Number(str("perPage")) || 50))
+  const perPage = parsePerPage(str("perPage"))
   const search = str("search") || undefined
   const activeFilter = str("active")
   const sortBy = str("sortBy") || "sortOrder"
@@ -21,7 +22,7 @@ export default async function CategoriesPage({
 
   const result = await searchCategories({
     page,
-    limit: perPage,
+    limit: perPageToLimit(perPage),
     search,
     active: activeFilter === "true" ? true : activeFilter === "false" ? false : undefined,
     sortBy,

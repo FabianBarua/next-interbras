@@ -12,7 +12,7 @@ import {
   bulkToggleVariantsAction,
 } from "@/lib/actions/admin/variants"
 import { Pencil, Trash2 } from "lucide-react"
-import { PER_PAGE_OPTIONS } from "@/components/dashboard/table-pagination"
+import { PER_PAGE_OPTIONS } from "@/hooks/use-table-params"
 import { DataTable, type Column } from "@/components/dashboard/data-table"
 import { bulkDelete, bulkActivate, bulkDeactivate } from "@/components/dashboard/bulk-bar"
 
