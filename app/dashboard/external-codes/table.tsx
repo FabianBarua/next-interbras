@@ -1,6 +1,6 @@
 "use client"
 
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import type { AdminExternalCode } from "@/services/admin/external-codes"
@@ -9,11 +9,15 @@ import {
   bulkDeleteExternalCodesAction,
 } from "@/lib/actions/admin/external-codes"
 import { Badge } from "@/components/ui/badge"
-import { Search, Pencil, Trash2 } from "lucide-react"
+import { Search, Pencil, Trash2, Zap } from "lucide-react"
 import { useTableParams } from "@/hooks/use-table-params"
 import { useSearch } from "@/hooks/use-search"
 import { DataTable, type Column } from "@/components/dashboard/data-table"
-import { bulkDelete } from "@/components/dashboard/bulk-bar"
+import { bulkDelete, type BulkAction } from "@/components/dashboard/bulk-bar"
+import {
+  FastAssignModal,
+  type FastAssignItem,
+} from "@/components/dashboard/fast-assign-modal"
 
 interface Props {
   codes: AdminExternalCode[]
@@ -44,6 +48,10 @@ export function ExternalCodesTable({
 
   const search = useSearch()
 
+  // Fast-assign modal state
+  const [fastAssignItems, setFastAssignItems] = useState<FastAssignItem[]>([])
+  const fastAssignOpen = fastAssignItems.length > 0
+
   // System filter
   const currentSystem = searchParams.get("system") ?? ""
   const setSystemFilter = (val: string) => {
@@ -54,7 +62,27 @@ export function ExternalCodesTable({
     startTransition(() => router.push(`${pathname}?${params.toString()}`))
   }
 
-  const bulkActions = [
+  const bulkActions: BulkAction[] = [
+    {
+      key: "fast-assign",
+      label: "Fast Assign",
+      variant: "default",
+      icon: <Zap className="size-3.5" />,
+      onExecute: async (ids) => {
+        const items: FastAssignItem[] = ids
+          .map((id) => codes.find((c) => c.id === id))
+          .filter(Boolean)
+          .map((ec) => ({
+            id: ec!.id,
+            system: ec!.system,
+            code: ec!.code,
+            externalName: ec!.externalName,
+            currentVariantId: ec!.variantId,
+            currentVariantSku: ec!.variantSku,
+          }))
+        setFastAssignItems(items)
+      },
+    },
     bulkDelete(async (ids) => { await bulkDeleteExternalCodesAction(ids); router.refresh() }, { entityName: "código(s)" }),
   ]
 
@@ -161,7 +189,8 @@ export function ExternalCodesTable({
   }
 
   return (
-    <DataTable
+    <>
+      <DataTable
       data={codes}
       columns={columns}
       getId={(ec) => ec.id}
@@ -237,5 +266,12 @@ export function ExternalCodesTable({
           : "No hay códigos externos."
       }
     />
+    <FastAssignModal
+      open={fastAssignOpen}
+      onClose={() => setFastAssignItems([])}
+      items={fastAssignItems}
+      onComplete={() => router.refresh()}
+    />
+    </>
   )
 }

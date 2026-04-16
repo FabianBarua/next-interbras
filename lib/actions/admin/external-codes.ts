@@ -166,3 +166,75 @@ export async function unlinkVariantAction(ecId: string) {
     return { error: "Error al desvincular variante." }
   }
 }
+
+/* ------------------------------------------------------------------ */
+/*  Fast-assign: search available variants + bulk link                 */
+/* ------------------------------------------------------------------ */
+
+export async function searchAvailableVariantsAction(term: string) {
+  await requireAdmin()
+  if (!term || term.trim().length < 1) return []
+  const { db } = await import("@/lib/db")
+  const { variants, products, externalCodes } = await import("@/lib/db/schema")
+  const { eq, isNull, and, sql } = await import("drizzle-orm")
+  const { multiSearch } = await import("@/lib/db/multi-search")
+
+  const searchCond = multiSearch(term, [
+    variants.sku,
+    sql`${products.name}->>'es'`,
+    sql`${products.name}->>'pt'`,
+  ])
+  if (!searchCond) return []
+
+  const rows = await db
+    .select({
+      id: variants.id,
+      sku: variants.sku,
+      productName: products.name,
+      options: variants.options,
+    })
+    .from(variants)
+    .innerJoin(products, eq(variants.productId, products.id))
+    .leftJoin(externalCodes, eq(externalCodes.variantId, variants.id))
+    .where(and(searchCond, isNull(externalCodes.id)))
+    .limit(20)
+
+  return rows.map((r) => ({
+    id: r.id,
+    sku: r.sku,
+    productName: (r.productName as Record<string, string>)?.es ?? "",
+    options: r.options as Record<string, string>,
+  }))
+}
+
+const bulkLinkSchema = z.array(z.object({
+  ecId: z.string().uuid(),
+  variantId: z.string().uuid().nullable(),
+})).min(1).max(500)
+
+export async function bulkLinkVariantsAction(data: unknown) {
+  const session = await requireAdmin()
+  const parsed = bulkLinkSchema.safeParse(data)
+  if (!parsed.success) return { error: "Datos inválidos." }
+
+  const results: { ecId: string; ok: boolean; error?: string }[] = []
+  for (const { ecId, variantId } of parsed.data) {
+    try {
+      if (variantId) {
+        await linkVariant(ecId, variantId)
+        logEvent({ category: "admin", action: "external_code.link_variant", entity: "external_code", entityId: ecId, userId: session.id })
+      } else {
+        await unlinkVariant(ecId)
+        logEvent({ category: "admin", action: "external_code.unlink_variant", entity: "external_code", entityId: ecId, userId: session.id })
+      }
+      results.push({ ecId, ok: true })
+    } catch (err: any) {
+      results.push({
+        ecId,
+        ok: false,
+        error: err?.code === "23505" ? "Variante ya vinculada" : "Error",
+      })
+    }
+  }
+  return { results }
+}
