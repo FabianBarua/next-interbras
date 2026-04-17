@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { orders, payments } from "@/lib/db/schema"
 import { logEvent } from "@/lib/logging"
+import { invalidateCache } from "@/lib/cache"
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -60,6 +61,9 @@ export async function saveReceiptAction(
     userId: session.user.id,
     meta: { receiptUrl },
   })
+
+  // Invalidate cached order detail so the receipt shows immediately
+  await invalidateCache(`order-detail:${orderId}`)
 
   return {}
 }

@@ -122,7 +122,8 @@ export async function getFlowForOrder(orderId: string): Promise<OrderFlow | null
 
 /**
  * Get the valid next status slugs for an order based on its flow.
- * Returns the statuses that come after the current step in the flow.
+ * Returns ALL statuses that come after the current step in the flow,
+ * so the admin can advance to any future step (not just the next one).
  * Always includes "cancelled" as a valid transition.
  */
 export async function getNextStatuses(orderId: string): Promise<string[]> {
@@ -140,12 +141,10 @@ export async function getNextStatuses(orderId: string): Promise<string[]> {
   const currentIdx = flow.steps.findIndex((s) => s.statusSlug === order.status)
   if (currentIdx === -1) return []
 
-  const nextStatuses: string[] = []
-
-  // Next step in sequence
-  if (currentIdx + 1 < flow.steps.length) {
-    nextStatuses.push(flow.steps[currentIdx + 1].statusSlug)
-  }
+  // All future steps in the flow (admin can skip steps)
+  const nextStatuses = flow.steps
+    .slice(currentIdx + 1)
+    .map((s) => s.statusSlug)
 
   // Always allow cancellation unless already final
   const currentStep = flow.steps[currentIdx]

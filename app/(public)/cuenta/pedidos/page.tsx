@@ -5,22 +5,7 @@ import { redirect } from "next/navigation"
 import Link from "@/i18n/link"
 import { getDictionary, getLocale } from "@/i18n/get-dictionary"
 import { getAllStatusesForDisplay } from "@/lib/order-status-helpers"
-
-const PAYMENT_STATUS_LABELS: Record<string, string> = {
-  pending: "Pago pendiente",
-  processing: "Procesando pago",
-  succeeded: "Pagado",
-  failed: "Pago fallido",
-  refunded: "Reembolsado",
-}
-
-const PAYMENT_STATUS_COLORS: Record<string, string> = {
-  pending: "#f59e0b",
-  processing: "#3b82f6",
-  succeeded: "#22c55e",
-  failed: "#ef4444",
-  refunded: "#8b5cf6",
-}
+import { PAYMENT_STATUS_LABELS_CLIENT, PAYMENT_STATUS_COLORS } from "@/lib/order-constants"
 
 export default async function OrdersPage() {
   if (!(await isEcommerceEnabled())) redirect("/")
@@ -75,7 +60,7 @@ export default async function OrdersPage() {
                           color: PAYMENT_STATUS_COLORS[paymentInfo.status] ?? "#6b7280",
                         }}
                       >
-                        {PAYMENT_STATUS_LABELS[paymentInfo.status] ?? paymentInfo.status}
+                        {PAYMENT_STATUS_LABELS_CLIENT[paymentInfo.status] ?? paymentInfo.status}
                       </span>
                     )}
                   </div>

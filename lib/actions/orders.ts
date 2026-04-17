@@ -29,7 +29,7 @@ import {
 import { requireAdmin, requireSupport } from "@/lib/auth/get-session"
 import { sendEmail } from "@/lib/email/send"
 import { getSiteUrl } from "@/lib/get-base-url"
-import { isValidTransition, getFlowForOrder } from "@/lib/order-flow-resolver"
+import { isValidTransition, getFlowForOrder, getNextStatuses } from "@/lib/order-flow-resolver"
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
@@ -744,4 +744,28 @@ export async function getOrderPaymentInfo(orderId: string) {
     columns: { id: true, status: true, gateway: true, paidAt: true, metadata: true },
   })
   return payment ?? null
+}
+
+// ───────── Valid statuses for order (flow-aware) ─────────
+
+export async function getValidStatusesForOrder(orderId: string) {
+  await requireAdmin()
+  if (!UUID_RE.test(orderId)) return []
+
+  const order = await db.query.orders.findFirst({
+    where: eq(orders.id, orderId),
+    columns: { status: true },
+  })
+  if (!order) return []
+
+  const { getAllStatusesForDisplay } = await import("@/lib/order-status-helpers")
+  const [nextSlugs, allStatuses] = await Promise.all([
+    getNextStatuses(orderId),
+    getAllStatusesForDisplay("es"),
+  ])
+
+  const validSlugs = new Set([order.status, ...nextSlugs])
+  return allStatuses
+    .filter((s) => validSlugs.has(s.slug))
+    .map((s) => ({ slug: s.slug, label: s.label, color: s.color }))
 }

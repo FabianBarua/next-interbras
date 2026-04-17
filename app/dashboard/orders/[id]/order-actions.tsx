@@ -3,9 +3,11 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { registerRefund, confirmPaymentManually, cancelOrderAdmin } from "@/lib/actions/orders"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface Props {
   orderId: string
@@ -19,15 +21,14 @@ export function OrderActions({ orderId, orderStatus, paymentStatus, paymentMetho
   const [activeAction, setActiveAction] = useState<"refund" | "cancel" | null>(null)
   const [reason, setReason] = useState("")
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState<{
-    type: "success" | "error"
-    text: string
-  } | null>(null)
+  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
   const canRefund = ["confirmed", "shipped", "delivered"].includes(orderStatus)
   const canCancel = !["cancelled", "refunded", "delivered"].includes(orderStatus)
   const canConfirmPayment =
     paymentStatus === "pending" || paymentStatus === "failed" || paymentStatus === "processing"
+
+  const noActions = !canRefund && !canCancel && !canConfirmPayment
 
   async function handleRefund() {
     setLoading(true)
@@ -72,32 +73,24 @@ export function OrderActions({ orderId, orderStatus, paymentStatus, paymentMetho
     }
   }
 
-  const noActions = !canRefund && !canCancel && !canConfirmPayment
-
   return (
-    <div>
-      <h2 className="mb-3 text-base font-semibold">Acciones</h2>
+    <Card>
+      <CardHeader>
+        <CardTitle>Acciones</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {noActions && (
+          <p className="text-sm text-muted-foreground">
+            Ninguna accion disponible para este estado.
+          </p>
+        )}
 
-      {noActions && (
-        <p className="text-sm text-muted-foreground">
-          Ninguna acción disponible para este estado.
-        </p>
-      )}
-
-      <div className="flex flex-col gap-2">
-        {/* Confirm payment manually */}
         {canConfirmPayment && (
-          <Button
-            size="sm"
-            className="w-full"
-            onClick={handleConfirmPayment}
-            disabled={loading}
-          >
+          <Button size="sm" className="w-full" onClick={handleConfirmPayment} disabled={loading}>
             {loading ? "Procesando..." : "Confirmar pago manualmente"}
           </Button>
         )}
 
-        {/* Refund */}
         {canRefund && activeAction !== "refund" && (
           <Button
             variant="outline"
@@ -109,7 +102,6 @@ export function OrderActions({ orderId, orderStatus, paymentStatus, paymentMetho
           </Button>
         )}
 
-        {/* Cancel */}
         {canCancel && activeAction !== "cancel" && (
           <Button
             variant="destructive"
@@ -120,91 +112,75 @@ export function OrderActions({ orderId, orderStatus, paymentStatus, paymentMetho
             Cancelar pedido
           </Button>
         )}
-      </div>
 
-      {/* Refund form */}
-      {activeAction === "refund" && (
-        <div className="mt-4 rounded-md border p-4">
-          <p className="mb-1 text-sm font-medium">Registrar reembolso manual</p>
-          <p className="mb-3 text-xs text-muted-foreground">
-            Esto solo registra el reembolso en el sistema. Realice el reembolso
-            manualmente en el gateway.
-          </p>
-          <div className="mb-3 space-y-2">
-            <Label htmlFor="refund-reason">Motivo</Label>
-            <Textarea
-              id="refund-reason"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder="Motivo del reembolso..."
-              rows={3}
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={handleRefund}
-              disabled={loading}
-            >
-              {loading ? "Procesando..." : "Confirmar reembolso"}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => { setActiveAction(null); setReason("") }}
-            >
-              Cancelar
-            </Button>
-          </div>
-        </div>
-      )}
+        {/* Refund confirmation */}
+        {activeAction === "refund" && (
+          <Alert>
+            <AlertDescription>
+              <p className="mb-1 text-sm font-medium">Registrar reembolso manual</p>
+              <p className="mb-3 text-xs text-muted-foreground">
+                Esto solo registra el reembolso en el sistema. Realice el reembolso manualmente en el gateway.
+              </p>
+              <div className="mb-3 space-y-2">
+                <Label htmlFor="refund-reason">Motivo</Label>
+                <Textarea
+                  id="refund-reason"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder="Motivo del reembolso..."
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant="destructive" onClick={handleRefund} disabled={loading}>
+                  {loading ? "Procesando..." : "Confirmar reembolso"}
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => { setActiveAction(null); setReason("") }}>
+                  Cancelar
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
 
-      {/* Cancel form */}
-      {activeAction === "cancel" && (
-        <div className="mt-4 rounded-md border p-4">
-          <p className="mb-1 text-sm font-medium">Cancelar pedido</p>
-          <p className="mb-3 text-xs text-muted-foreground">
-            Esto cancelará el pedido y notificará al cliente por email.
-            Los pagos pendientes se marcarán como fallidos.
-          </p>
-          <div className="mb-3 space-y-2">
-            <Label htmlFor="cancel-reason">Motivo</Label>
-            <Textarea
-              id="cancel-reason"
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              placeholder="Motivo de la cancelación..."
-              rows={3}
-            />
-          </div>
-          <div className="flex gap-2">
-            <Button
-              size="sm"
-              variant="destructive"
-              onClick={handleCancel}
-              disabled={loading}
-            >
-              {loading ? "Procesando..." : "Confirmar cancelación"}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => { setActiveAction(null); setReason("") }}
-            >
-              Volver
-            </Button>
-          </div>
-        </div>
-      )}
+        {/* Cancel confirmation */}
+        {activeAction === "cancel" && (
+          <Alert variant="destructive">
+            <AlertDescription>
+              <p className="mb-1 text-sm font-medium">Cancelar pedido</p>
+              <p className="mb-3 text-xs text-muted-foreground">
+                Esto cancelara el pedido y notificara al cliente por email. Los pagos pendientes se marcaran como fallidos.
+              </p>
+              <div className="mb-3 space-y-2">
+                <Label htmlFor="cancel-reason">Motivo</Label>
+                <Textarea
+                  id="cancel-reason"
+                  value={reason}
+                  onChange={(e) => setReason(e.target.value)}
+                  placeholder="Motivo de la cancelacion..."
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button size="sm" variant="destructive" onClick={handleCancel} disabled={loading}>
+                  {loading ? "Procesando..." : "Confirmar cancelacion"}
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => { setActiveAction(null); setReason("") }}>
+                  Volver
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
 
-      {message && (
-        <p
-          className={`mt-3 text-sm ${message.type === "error" ? "text-destructive" : "text-green-600 dark:text-green-400"}`}
-        >
-          {message.text}
-        </p>
-      )}
-    </div>
+        {message && (
+          <Alert variant={message.type === "error" ? "destructive" : "default"}>
+            <AlertDescription className={message.type === "success" ? "text-green-600 dark:text-green-400" : ""}>
+              {message.text}
+            </AlertDescription>
+          </Alert>
+        )}
+      </CardContent>
+    </Card>
   )
 }

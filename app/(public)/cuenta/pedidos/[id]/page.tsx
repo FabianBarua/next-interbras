@@ -9,44 +9,13 @@ import { getFlowForOrder } from "@/lib/order-flow-resolver"
 import { getAllStatusesForDisplay, getStatusLabel, getStatusColor } from "@/lib/order-status-helpers"
 import { getLocale } from "@/i18n/get-dictionary"
 import { getRequestUrl } from "@/lib/get-base-url"
-
-const PAYMENT_LABELS: Record<string, string> = {
-  cash: "Efectivo",
-  card: "Tarjeta",
-  transfer: "Transferencia",
-  pix: "PIX",
-}
-
-const PAYMENT_STATUS_LABELS: Record<string, string> = {
-  pending: "Pendiente",
-  processing: "Procesando",
-  succeeded: "Pagado",
-  failed: "Fallido",
-  refunded: "Reembolsado",
-}
-
-const PAYMENT_STATUS_COLORS: Record<string, string> = {
-  pending: "#f59e0b",
-  processing: "#3b82f6",
-  succeeded: "#22c55e",
-  failed: "#ef4444",
-  refunded: "#8b5cf6",
-}
-
-const PAYMENT_ICONS: Record<string, React.ReactNode> = {
-  cash: (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><line x1="12" x2="12" y1="1" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
-  ),
-  card: (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
-  ),
-  transfer: (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><path d="M4 19h16" /><path d="M4 15h16" /><path d="M4 11h16" /><path d="M4 7h4" /><path d="M12 7h8" /></svg>
-  ),
-  pix: (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><path d="m7.5 4.27 9 5.15" /><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>
-  ),
-}
+import {
+  PAYMENT_METHOD_LABELS,
+  PAYMENT_STATUS_LABELS,
+  PAYMENT_STATUS_COLORS,
+  formatUSD,
+  formatDateShort,
+} from "@/lib/order-constants"
 
 export default async function OrderDetailPage(
   { params }: { params: Promise<{ id: string }> }
@@ -61,9 +30,6 @@ export default async function OrderDetailPage(
   if (!order || order.userId !== user.id) {
     notFound()
   }
-
-  const fmt = (n: number) =>
-    n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const createdDate = new Date(order.createdAt).toLocaleDateString("es-PY", {
     day: "numeric",
@@ -131,7 +97,7 @@ export default async function OrderDetailPage(
       {/* Order meta */}
       <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
         <span>Fecha: <strong className="text-foreground">{createdDate}</strong></span>
-        <span>Total: <strong className="text-foreground">US$ {fmt(total)}</strong></span>
+        <span>Total: <strong className="text-foreground">{formatUSD(total)}</strong></span>
         <span>{order.items.length} artículo{order.items.length > 1 ? "s" : ""}</span>
         {order.trackingCode && (
           <span>Tracking: <strong className="text-foreground font-mono">{order.trackingCode}</strong></span>
@@ -209,11 +175,11 @@ export default async function OrderDetailPage(
                           {item.productName.es}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Cant: {item.quantity} × US$ {fmt(item.price)}
+                          Cant: {item.quantity} × {formatUSD(item.price)}
                         </p>
                       </div>
                       <span className="text-sm font-bold shrink-0">
-                        US$ {fmt(item.price * item.quantity)}
+                        {formatUSD(item.price * item.quantity)}
                       </span>
                     </div>
                     {idx < order.items.length - 1 && <Separator />}
@@ -261,16 +227,16 @@ export default async function OrderDetailPage(
             <div className="space-y-2.5 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>US$ {fmt(order.subtotal)}</span>
+                <span>{formatUSD(order.subtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Envío</span>
-                <span>{order.shippingCost > 0 ? `US$ ${fmt(order.shippingCost)}` : "Gratis"}</span>
+                <span>{order.shippingCost > 0 ? formatUSD(order.shippingCost) : "Gratis"}</span>
               </div>
               <Separator />
               <div className="flex justify-between font-bold text-base">
                 <span>Total</span>
-                <span className="text-primary">US$ {fmt(total)}</span>
+                <span className="text-primary">{formatUSD(total)}</span>
               </div>
             </div>
           </div>
@@ -318,10 +284,12 @@ export default async function OrderDetailPage(
 
             <div className="flex items-center gap-3">
               <div className="w-10 h-7 rounded bg-muted border flex items-center justify-center">
-                {PAYMENT_ICONS[order.paymentMethod] ?? PAYMENT_ICONS.cash}
+                <span className="text-[10px] font-bold text-muted-foreground uppercase">
+                  {order.paymentMethod.slice(0, 3)}
+                </span>
               </div>
               <div>
-                <p className="font-medium text-foreground">{PAYMENT_LABELS[order.paymentMethod] ?? order.paymentMethod}</p>
+                <p className="font-medium text-foreground">{PAYMENT_METHOD_LABELS[order.paymentMethod] ?? order.paymentMethod}</p>
                 {paymentInfo?.gateway && (
                   <p className="text-xs text-muted-foreground capitalize">{paymentInfo.gateway}</p>
                 )}
@@ -335,13 +303,7 @@ export default async function OrderDetailPage(
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Fecha de pago</span>
                     <span className="font-medium text-foreground">
-                      {new Date(paymentInfo.paidAt).toLocaleDateString("es-PY", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {formatDateShort(paymentInfo.paidAt)}
                     </span>
                   </div>
                 )}

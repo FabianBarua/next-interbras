@@ -14,15 +14,15 @@ export function PayerDetails({ details }: { details: PayerDetail }) {
     { label: "Nombre del pagador", value: details.payerName },
     { label: "Documento", value: details.payerDocument, mono: true },
     { label: "Banco", value: details.payerBankName },
-    { label: "Cód. banco", value: details.payerBankNumber, mono: true },
+    { label: "Cod. banco", value: details.payerBankNumber, mono: true },
   ]
 
   const hasAny = rows.some((r) => r.value)
   if (!hasAny) return null
 
   return (
-    <div className="border rounded-lg p-4 space-y-3">
-      <h2 className="font-medium text-sm">Datos del pagador (webhook)</h2>
+    <div>
+      <h3 className="text-sm font-medium mb-3">Datos del pagador (webhook)</h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
         {rows.map(
           (r) =>
