@@ -1,0 +1,126 @@
+/**
+ * Server-side data loader for the PDF catalog page.
+ * Builds flat CatalogEntry rows directly from external_codes joined with
+ * their variant + product + category.
+ */
+
+import "server-only"
+import { db } from "@/lib/db"
+import {
+  externalCodes,
+  variants,
+  products,
+  productImages,
+  categories,
+} from "@/lib/db/schema"
+import { and, asc, eq, inArray } from "drizzle-orm"
+import { cachedQuery } from "@/lib/cache"
+import type { CatalogCategory, CatalogEntry } from "./types"
+import { normalizeVoltageFilter } from "./helpers"
+
+interface CatalogDataset {
+  entries: CatalogEntry[]
+  categories: CatalogCategory[]
+}
+
+async function loadCatalogDataset(): Promise<CatalogDataset> {
+  // 1. external_codes ⨝ variants ⨝ products (active only)
+  const rows = await db
+    .select({
+      ec: externalCodes,
+      v: variants,
+      p: products,
+    })
+    .from(externalCodes)
+    .innerJoin(variants, eq(externalCodes.variantId, variants.id))
+    .innerJoin(products, eq(variants.productId, products.id))
+    .where(and(eq(products.active, true), eq(variants.active, true)))
+    .orderBy(asc(products.sortOrder), asc(variants.sortOrder))
+
+  if (rows.length === 0) return { entries: [], categories: [] }
+
+  const variantIds = Array.from(new Set(rows.map(r => r.v.id)))
+  const categoryIds = Array.from(
+    new Set(rows.map(r => r.p.categoryId).filter((x): x is string => !!x)),
+  )
+
+  // 2. Main variant image per variant
+  const imgRows = variantIds.length
+    ? await db
+        .select({
+          id: productImages.id,
+          variantId: productImages.variantId,
+          url: productImages.url,
+          sortOrder: productImages.sortOrder,
+        })
+        .from(productImages)
+        .where(inArray(productImages.variantId, variantIds))
+        .orderBy(asc(productImages.sortOrder))
+    : []
+
+  const mainImageByVariant = new Map<string, string>()
+  for (const img of imgRows) {
+    if (img.variantId && !mainImageByVariant.has(img.variantId)) {
+      mainImageByVariant.set(img.variantId, img.url)
+    }
+  }
+
+  // 3. Categories
+  const catRows = categoryIds.length
+    ? await db.select().from(categories).where(inArray(categories.id, categoryIds))
+    : []
+
+  const catMap: CatalogCategory[] = catRows
+    .map(c => ({
+      id: c.id,
+      slug: c.slug,
+      name: (c.name as Record<string, string>) ?? {},
+      sortOrder: c.sortOrder ?? 0,
+    }))
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+
+  // 4. Build flat CatalogEntry list
+  const entries: CatalogEntry[] = rows.map(({ ec, v, p }) => {
+    const attrs = (v.options ?? {}) as Record<string, unknown>
+    const normalizedAttrs: Record<string, string> = {}
+    for (const [k, val] of Object.entries(attrs)) {
+      if (val === null || val === undefined) continue
+      normalizedAttrs[k] = typeof val === "string" ? val : String(val)
+    }
+
+    const rawVoltage = typeof attrs.voltage === "string" ? attrs.voltage : null
+    const voltage = normalizeVoltageFilter(rawVoltage) ?? rawVoltage
+
+    const qtyPerBox = v.unitsPerBox ?? null
+
+    const promo = attrs.promo === true || attrs.promo === "true"
+
+    return {
+      id: ec.id,
+      code: ec.code,
+      externalName: ec.externalName ?? null,
+      variantId: v.id,
+      productId: p.id,
+      categoryId: p.categoryId ?? null,
+      name: (p.name as Record<string, string>) ?? {},
+      imageUrl: mainImageByVariant.get(v.id) ?? null,
+      sku: v.sku,
+      attributes: normalizedAttrs,
+      specs: (p.specs as CatalogEntry["specs"]) ?? null,
+      voltage: voltage ?? null,
+      qtyPerBox,
+      priceUsd: ec.priceUsd ? Number(ec.priceUsd) : null,
+      priceGs: ec.priceGs ? Number(ec.priceGs) : null,
+      priceBrl: ec.priceBrl ? Number(ec.priceBrl) : null,
+      promo,
+      stock: ec.stock ?? null,
+      sortOrder: v.sortOrder ?? 0,
+    }
+  })
+
+  return { entries, categories: catMap }
+}
+
+export async function getCatalogDataset(): Promise<CatalogDataset> {
+  return cachedQuery("pdf:catalog-dataset", () => loadCatalogDataset(), 300)
+}

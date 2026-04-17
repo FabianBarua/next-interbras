@@ -471,6 +471,98 @@ const es = {
     ctaSubtitle: "Explorá nuestro catálogo con +100 productos, garantía oficial y envío a todo el país.",
     ctaButton: "Ver Catálogo",
   },
+
+  catalog: {
+    // Page
+    title: "Generador de Catálogo PDF",
+    subtitle: "Personalizá y descargá tu catálogo de productos",
+    // Modes
+    modeEdit: "Edición",
+    modePreview: "Vista previa",
+    // Viewport
+    viewportDesktop: "Escritorio",
+    viewportMobile: "Móvil",
+    // Toolbar actions
+    showPrices: "Mostrar precios",
+    hidePrices: "Ocultar precios",
+    currency: "Moneda",
+    language: "Idioma",
+    exportPdf: "Descargar PDF",
+    resetAll: "Restablecer todo",
+    resetAllConfirm: "¿Borrar toda la configuración del catálogo?",
+    // Filters
+    filters: "Filtros",
+    searchPlaceholder: "Buscar por nombre o código…",
+    allCategories: "Todas las categorías",
+    allVoltages: "Todos los voltajes",
+    onlyPromo: "Solo promociones",
+    clearFilters: "Limpiar",
+    // Cover
+    coverTitle: "Portada",
+    coverTitleLabel: "Título",
+    coverSubtitleLabel: "Subtítulo",
+    coverUploadHint: "Subir imagen de portada",
+    coverChange: "Cambiar imagen",
+    coverRemove: "Quitar imagen",
+    coverDefault: "Catálogo de Productos",
+    // Sections
+    sectionHidden: "Categorías ocultas",
+    hideSection: "Ocultar sección",
+    showSection: "Mostrar sección",
+    dragToReorder: "Arrastrá para reordenar",
+    noSections: "No hay secciones para mostrar",
+    noSectionsHint: "Ajustá los filtros o agregá secciones personalizadas.",
+    // Custom sections
+    customSections: "Secciones personalizadas",
+    newSection: "Nueva sección",
+    editSection: "Editar sección",
+    sectionName: "Nombre",
+    sectionColor: "Color",
+    sectionIcon: "Ícono",
+    sectionProducts: "Productos incluidos",
+    addProducts: "Agregar productos",
+    pickFromCatalog: "Elegir del catálogo",
+    addManualProduct: "Agregar producto manual",
+    emptyCustomSection: "Esta sección aún no tiene productos.",
+    save: "Guardar",
+    cancel: "Cancelar",
+    delete: "Eliminar",
+    deleteSectionConfirm: "¿Eliminar esta sección y sus productos manuales?",
+    // Product card
+    hideProduct: "Ocultar producto",
+    showProduct: "Mostrar producto",
+    editProduct: "Editar producto",
+    resetProduct: "Restablecer",
+    code: "Código",
+    voltage: "Voltaje",
+    qtyPerBox: "Unidades por caja",
+    price: "Precio",
+    specs: "Especificaciones",
+    attributes: "Atributos",
+    name: "Nombre",
+    imageLabel: "Imagen",
+    uploadImage: "Subir imagen",
+    productHidden: "Oculto",
+    // Manual product
+    newManualProduct: "Nuevo producto manual",
+    editManualProduct: "Editar producto manual",
+    specsHint: "Una línea por especificación",
+    selectSection: "Sección",
+    // Export
+    exportTitle: "Exportar catálogo a PDF",
+    exportDescription: "Se capturará cada sección y se unirán en un único PDF.",
+    exportVariant: "Versión",
+    exportStart: "Generar PDF",
+    exportCapturing: "Capturando {current} de {total}…",
+    exportRendering: "Procesando {current} de {total}…",
+    exportSaving: "Guardando PDF…",
+    exportDone: "¡Listo!",
+    // Badges
+    badgePromo: "Promo",
+    // Misc
+    products: "productos",
+    hiddenProductsCount: "{count} ocultos",
+  },
 } as const
 
 // Widen literal string types to string so translations can differ
