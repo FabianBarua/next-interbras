@@ -216,9 +216,6 @@ interface BulkRow {
 }
 
 function emptyRow(): BulkRow {
-  return { sku: "", optionKey: "", optionValue: "", unitsPerBox: "", ecSystem: "cec", ecCode: "", priceUsd: "", priceGs: "", priceBrl: "", price1: "", price2: "", price3
-
-function emptyRow(): BulkRow {
   return { sku: "", optionKey: "", optionValue: "", unitsPerBox: "", ecSystem: "cec", ecCode: "", priceUsd: "", priceGs: "", priceBrl: "", price1: "", price2: "", price3: "" }
 }
 
