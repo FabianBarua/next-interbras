@@ -258,9 +258,6 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
       externalCode: r.ecCode.trim() ? {
         system: r.ecSystem.trim() || "cec",
         code: r.ecCode.trim(),
-        price1: r.price1 || undefined,
-        price2: r.price2 || undefined,
-        price3: r.price3 || undefined,
         priceUsd: r.priceUsd || undefined,
         priceGs: r.priceGs || undefined,
         priceBrl: r.priceBrl || undefined,
