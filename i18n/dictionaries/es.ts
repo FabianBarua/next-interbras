@@ -497,6 +497,7 @@ const es = {
     allVoltages: "Todos los voltajes",
     onlyPromo: "Solo promociones",
     clearFilters: "Limpiar",
+    showOutOfStock: "Incluir sin stock",
     // Cover
     coverTitle: "Portada",
     coverTitleLabel: "Título",

@@ -25,6 +25,7 @@ interface BuildArgs {
     search: string
     categoryId: string | null
     voltage: "all" | "110V" | "220V" | "Bivolt"
+    showOutOfStock: boolean
   }
   /** Whether hidden entries should be excluded from render. */
   excludeHidden: boolean
@@ -43,6 +44,7 @@ export function buildRenderedSections({
   // --- Filter entries once, globally ---
   const search = filters.search.trim().toLowerCase()
   const passesFilters = (entry: CatalogEntry): boolean => {
+    if (!filters.showOutOfStock && (entry.stock === null || entry.stock <= 0)) return false
     if (filters.categoryId && entry.categoryId !== filters.categoryId) return false
     if (filters.voltage !== "all") {
       const norm = entry.voltage?.trim().toUpperCase()

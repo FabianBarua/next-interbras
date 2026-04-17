@@ -63,6 +63,7 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
     search: "",
     categoryId: null,
     voltage: "all",
+    showOutOfStock: false,
   })
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null)
   const [manualDialog, setManualDialog] = useState<{

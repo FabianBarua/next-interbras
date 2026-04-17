@@ -1,4 +1,5 @@
-import { requireAdmin } from "@/lib/auth/get-session"
+import { notFound } from "next/navigation"
+import { getCurrentUser } from "@/lib/auth/get-session"
 import { getCatalogDataset } from "@/lib/pdf/data"
 import { getSiteConfig } from "@/lib/site-config"
 import { CatalogBuilder } from "@/components/pdf/catalog-builder"
@@ -7,7 +8,8 @@ import { HydrationGate } from "@/components/pdf/hydration-gate"
 export const dynamic = "force-dynamic"
 
 export default async function PdfCatalogPage() {
-  await requireAdmin()
+  const user = await getCurrentUser()
+  if (!user || user.role !== "admin") notFound()
 
   const [{ entries, categories }, site] = await Promise.all([
     getCatalogDataset(),

@@ -494,6 +494,7 @@ const pt: Dictionary = {
     allVoltages: "Todas as voltagens",
     onlyPromo: "Somente promoções",
     clearFilters: "Limpar",
+    showOutOfStock: "Incluir sem estoque",
     coverTitle: "Capa",
     coverTitleLabel: "Título",
     coverSubtitleLabel: "Subtítulo",

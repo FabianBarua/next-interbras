@@ -18,6 +18,7 @@ export interface CatalogFiltersState {
   search: string
   categoryId: string | null
   voltage: "all" | "110V" | "220V" | "Bivolt"
+  showOutOfStock: boolean
 }
 
 interface Props {
@@ -33,7 +34,8 @@ export function CatalogFilters({ value, onChange, categories }: Props) {
   const hasFilters =
     value.search.trim() !== "" ||
     value.categoryId !== null ||
-    value.voltage !== "all"
+    value.voltage !== "all" ||
+    value.showOutOfStock
 
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border/60 bg-card p-3 shadow-xs">
@@ -83,12 +85,24 @@ export function CatalogFilters({ value, onChange, categories }: Props) {
         </SelectContent>
       </Select>
 
+      <label className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground select-none">
+        <input
+          type="checkbox"
+          checked={value.showOutOfStock}
+          onChange={(e) =>
+            onChange({ ...value, showOutOfStock: e.target.checked })
+          }
+          className="accent-primary size-3.5 rounded"
+        />
+        {t.showOutOfStock}
+      </label>
+
       {hasFilters && (
         <Button
           variant="ghost"
           size="sm"
           onClick={() =>
-            onChange({ search: "", categoryId: null, voltage: "all" })
+            onChange({ search: "", categoryId: null, voltage: "all", showOutOfStock: false })
           }
         >
           <X className="h-4 w-4" />
