@@ -42,7 +42,9 @@ export async function GET(
     return new NextResponse(data, {
       headers: {
         "Content-Type": contentType,
+        "Content-Disposition": "inline",
         "Cache-Control": "public, max-age=31536000, immutable",
+        "X-Content-Type-Options": "nosniff",
       },
     })
   } catch {
