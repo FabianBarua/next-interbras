@@ -2,6 +2,7 @@ import { db } from "@/lib/db"
 import {
   orders,
   orderItems,
+  payments,
   variants as variantsTable,
   products as productsTable,
   externalCodes,
@@ -10,7 +11,7 @@ import {
 import { eq, desc, sql, and, inArray, count } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
 import { resolveFlow } from "@/lib/order-flow-resolver"
-import type { Order, OrderItem, AdminOrder, DetailOrder } from "@/types/order"
+import type { Order, OrderItem, AdminOrder, DetailOrder, OrderPaymentSummary } from "@/types/order"
 
 // ---------------------------------------------------------------------------
 // Mapping helpers
@@ -54,8 +55,17 @@ export async function getOrders(userId: string): Promise<Order[]> {
     if (orderRows.length === 0) return []
 
     const orderIds = orderRows.map(o => o.id)
-    const itemRows = await db.select().from(orderItems)
-      .where(inArray(orderItems.orderId, orderIds))
+    const [itemRows, paymentRows] = await Promise.all([
+      db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds)),
+      db.select({
+        orderId: payments.orderId,
+        status: payments.status,
+        gateway: payments.gateway,
+        paidAt: payments.paidAt,
+        metadata: payments.metadata,
+        createdAt: payments.createdAt,
+      }).from(payments).where(inArray(payments.orderId, orderIds)).orderBy(desc(payments.createdAt)),
+    ])
 
     const itemsMap = new Map<string, OrderItem[]>()
     for (const item of itemRows) {
@@ -64,7 +74,24 @@ export async function getOrders(userId: string): Promise<Order[]> {
       itemsMap.set(item.orderId, list)
     }
 
-    return orderRows.map(o => mapOrder(o, itemsMap.get(o.id) ?? []))
+    // Keep only the latest payment per order
+    const paymentMap = new Map<string, OrderPaymentSummary>()
+    for (const p of paymentRows) {
+      if (!paymentMap.has(p.orderId)) {
+        const meta = p.metadata as Record<string, unknown> | null
+        paymentMap.set(p.orderId, {
+          status: p.status as OrderPaymentSummary["status"],
+          gateway: p.gateway,
+          paidAt: p.paidAt ? p.paidAt.toISOString() : null,
+          hasReceipt: !!(meta?.receiptUrl),
+        })
+      }
+    }
+
+    return orderRows.map(o => ({
+      ...mapOrder(o, itemsMap.get(o.id) ?? []),
+      paymentInfo: paymentMap.get(o.id) ?? null,
+    }))
   }, 60)
 }
 
@@ -95,8 +122,25 @@ export async function getOrderDetailById(id: string): Promise<DetailOrder | null
     if (orderRows.length === 0) return null
     const row = orderRows[0]
 
-    const itemRows = await db.select().from(orderItems)
-      .where(eq(orderItems.orderId, id))
+    const [itemRows, payment] = await Promise.all([
+      db.select().from(orderItems).where(eq(orderItems.orderId, id)),
+      db.query.payments.findFirst({
+        where: eq(payments.orderId, id),
+        orderBy: [desc(payments.createdAt)],
+        columns: { status: true, gateway: true, paidAt: true, metadata: true },
+      }),
+    ])
+
+    let paymentInfo: OrderPaymentSummary | null = null
+    if (payment) {
+      const meta = payment.metadata as Record<string, unknown> | null
+      paymentInfo = {
+        status: payment.status as OrderPaymentSummary["status"],
+        gateway: payment.gateway,
+        paidAt: payment.paidAt ? payment.paidAt.toISOString() : null,
+        hasReceipt: !!(meta?.receiptUrl),
+      }
+    }
 
     return {
       ...mapOrder(row, itemRows.map(mapOrderItem)),
@@ -106,6 +150,7 @@ export async function getOrderDetailById(id: string): Promise<DetailOrder | null
       subtotal: Number(row.subtotal),
       shippingAddress: row.shippingAddress as DetailOrder["shippingAddress"],
       trackingCode: row.trackingCode,
+      paymentInfo,
     }
   }, 60)
 }

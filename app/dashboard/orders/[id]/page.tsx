@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation"
+import Image from "next/image"
 import Link from "next/link"
 import { getOrderDetail, getOrderPaymentDetails } from "@/lib/actions/orders"
 import { PayerDetails } from "@/components/dashboard/payer-details"
-import { getStatusLabel, getStatusColor } from "@/lib/order-status-helpers"
+import { getStatusLabel, getStatusColor, getAllStatusesForDisplay } from "@/lib/order-status-helpers"
 import { OrderActions } from "./order-actions"
 import { OrderNotes } from "./order-notes"
+import { OrderStatusForm } from "./status-form"
 import { Separator } from "@/components/ui/separator"
 
 const PAYMENT_STATUS_LABELS: Record<string, string> = {
@@ -13,6 +15,21 @@ const PAYMENT_STATUS_LABELS: Record<string, string> = {
   succeeded: "Aprobado",
   failed: "Fallido",
   refunded: "Reembolsado",
+}
+
+const PAYMENT_STATUS_COLORS: Record<string, string> = {
+  pending: "#f59e0b",
+  processing: "#3b82f6",
+  succeeded: "#22c55e",
+  failed: "#ef4444",
+  refunded: "#8b5cf6",
+}
+
+const PAYMENT_METHOD_LABELS: Record<string, string> = {
+  cash: "Efectivo",
+  card: "Tarjeta",
+  transfer: "Transferencia bancaria",
+  pix: "PIX",
 }
 
 const fmt = (v: string | number) =>
@@ -28,9 +45,10 @@ export default async function AdminOrderDetailPage({
 }) {
   const { id } = await params
 
-  const [data, payerDetails] = await Promise.all([
+  const [data, payerDetails, allStatuses] = await Promise.all([
     getOrderDetail(id),
     getOrderPaymentDetails(id),
+    getAllStatusesForDisplay("es"),
   ])
 
   if (!data) notFound()
@@ -47,6 +65,9 @@ export default async function AdminOrderDetailPage({
     getStatusColor(order.status),
   ])
 
+  const meta = (payment?.metadata ?? null) as Record<string, unknown> | null
+  const receiptUrl = meta?.receiptUrl as string | undefined
+
   return (
     <div>
       <div className="flex items-center gap-3 mb-6">
@@ -60,7 +81,7 @@ export default async function AdminOrderDetailPage({
         <span className="text-sm font-mono">{order.id.slice(0, 8)}…</span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-6">
         {/* ── Main column ── */}
         <div className="space-y-6">
           {/* Header */}
@@ -232,20 +253,32 @@ export default async function AdminOrderDetailPage({
             </div>
           )}
 
-          {/* Payer details */}
+          {/* Payer details (PIX webhook data) */}
           {payerDetails && <PayerDetails details={payerDetails} />}
         </div>
 
         {/* ── Sidebar ── */}
         <div className="space-y-6">
-          {/* Payment info */}
+          {/* Status update form */}
+          <OrderStatusForm
+            orderId={order.id}
+            currentStatus={order.status}
+            currentTrackingCode={order.trackingCode ?? ""}
+            statuses={allStatuses.map((s) => ({
+              slug: s.slug,
+              label: s.label,
+              color: s.color,
+            }))}
+          />
+
+          {/* Order info */}
           <div className="border rounded-lg p-4 space-y-2 text-sm">
             <h2 className="font-medium">Info del pedido</h2>
             <div className="space-y-1 text-muted-foreground">
               <p>
                 Método de pago:{" "}
-                <span className="capitalize text-foreground">
-                  {order.paymentMethod ?? "—"}
+                <span className="text-foreground font-medium">
+                  {PAYMENT_METHOD_LABELS[order.paymentMethod] ?? order.paymentMethod ?? "—"}
                 </span>
               </p>
               <p>
@@ -281,15 +314,20 @@ export default async function AdminOrderDetailPage({
 
           {/* Payment status */}
           {payment && (
-            <div className="border rounded-lg p-4 space-y-2 text-sm">
-              <h2 className="font-medium">Pago</h2>
+            <div className="border rounded-lg p-4 space-y-3 text-sm">
+              <div className="flex items-center justify-between">
+                <h2 className="font-medium">Pago</h2>
+                <span
+                  className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+                  style={{
+                    backgroundColor: `${PAYMENT_STATUS_COLORS[payment.status] ?? "#6b7280"}20`,
+                    color: PAYMENT_STATUS_COLORS[payment.status] ?? "#6b7280",
+                  }}
+                >
+                  {PAYMENT_STATUS_LABELS[payment.status] ?? payment.status}
+                </span>
+              </div>
               <div className="space-y-1 text-muted-foreground">
-                <p>
-                  Estado:{" "}
-                  <span className="text-foreground">
-                    {PAYMENT_STATUS_LABELS[payment.status] ?? payment.status}
-                  </span>
-                </p>
                 <p>
                   Gateway:{" "}
                   <span className="capitalize text-foreground">
@@ -325,12 +363,85 @@ export default async function AdminOrderDetailPage({
                   </p>
                 )}
               </div>
+
+              {/* Transfer bank details from metadata */}
+              {order.paymentMethod === "transfer" && !!meta && (
+                <div className="border-t pt-3 mt-3 space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Datos bancarios (transferencia)</p>
+                  {!!meta.bankName && (
+                    <p>Banco: <span className="text-foreground font-medium">{String(meta.bankName)}</span></p>
+                  )}
+                  {!!meta.accountType && (
+                    <p>Tipo: <span className="text-foreground">{String(meta.accountType)}</span></p>
+                  )}
+                  {!!meta.holder && (
+                    <p>Titular: <span className="text-foreground font-medium">{String(meta.holder)}</span></p>
+                  )}
+                  {!!meta.accountNumber && (
+                    <p>Cuenta: <span className="text-foreground font-mono">{String(meta.accountNumber)}</span></p>
+                  )}
+                </div>
+              )}
+
+              {/* PIX data from metadata */}
+              {order.paymentMethod === "pix" && !!meta && (
+                <div className="border-t pt-3 mt-3 space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Datos PIX</p>
+                  {!!meta.pixCode && (
+                    <div>
+                      <p className="text-xs text-muted-foreground mb-1">Código PIX (copia e cola):</p>
+                      <p className="text-xs font-mono bg-muted p-2 rounded break-all text-foreground">
+                        {String(meta.pixCode).slice(0, 120)}…
+                      </p>
+                    </div>
+                  )}
+                  {!!meta.expiresAt && (
+                    <p>Expiración: <span className="text-foreground">{new Date(String(meta.expiresAt)).toLocaleString("es-PY")}</span></p>
+                  )}
+                </div>
+              )}
+
+              {/* Card data from metadata */}
+              {order.paymentMethod === "card" && !!meta && !!meta.checkoutUrl && (
+                <div className="border-t pt-3 mt-3 space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Datos de tarjeta</p>
+                  <p>
+                    URL checkout:{" "}
+                    <a href={String(meta.checkoutUrl)} target="_blank" rel="noopener noreferrer" className="text-primary underline text-xs break-all">
+                      {String(meta.checkoutUrl).slice(0, 60)}…
+                    </a>
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Receipt image (transfer) */}
+          {receiptUrl && (
+            <div className="border rounded-lg p-4 space-y-3">
+              <h2 className="font-medium text-sm">Comprobante de pago</h2>
+              <a href={receiptUrl} target="_blank" rel="noopener noreferrer" className="block">
+                <Image
+                  src={receiptUrl}
+                  alt="Comprobante de pago"
+                  width={320}
+                  height={400}
+                  className="rounded-lg border w-full object-contain max-h-[400px]"
+                  unoptimized
+                />
+              </a>
+              <p className="text-xs text-muted-foreground">Haga clic para ver en tamaño completo</p>
             </div>
           )}
 
           <Separator />
 
-          <OrderActions orderId={order.id} orderStatus={order.status} />
+          <OrderActions
+            orderId={order.id}
+            orderStatus={order.status}
+            paymentStatus={payment?.status ?? null}
+            paymentMethod={order.paymentMethod}
+          />
 
           <Separator />
 

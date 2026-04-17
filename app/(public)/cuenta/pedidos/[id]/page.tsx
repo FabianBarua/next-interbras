@@ -17,6 +17,22 @@ const PAYMENT_LABELS: Record<string, string> = {
   pix: "PIX",
 }
 
+const PAYMENT_STATUS_LABELS: Record<string, string> = {
+  pending: "Pendiente",
+  processing: "Procesando",
+  succeeded: "Pagado",
+  failed: "Fallido",
+  refunded: "Reembolsado",
+}
+
+const PAYMENT_STATUS_COLORS: Record<string, string> = {
+  pending: "#f59e0b",
+  processing: "#3b82f6",
+  succeeded: "#22c55e",
+  failed: "#ef4444",
+  refunded: "#8b5cf6",
+}
+
 const PAYMENT_ICONS: Record<string, React.ReactNode> = {
   cash: (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground"><line x1="12" x2="12" y1="1" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
@@ -83,6 +99,13 @@ export default async function OrderDetailPage(
   const addr = order.shippingAddress
   const total = order.subtotal + order.shippingCost
 
+  // Payment info
+  const paymentInfo = order.paymentInfo
+  const needsPayment =
+    order.status === "pending" &&
+    (!paymentInfo || paymentInfo.status === "pending" || paymentInfo.status === "failed")
+  const paymentFailed = paymentInfo?.status === "failed"
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -114,6 +137,37 @@ export default async function OrderDetailPage(
           <span>Tracking: <strong className="text-foreground font-mono">{order.trackingCode}</strong></span>
         )}
       </div>
+
+      {/* Payment action banner */}
+      {needsPayment && (
+        <div className={`rounded-2xl border p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 ${
+          paymentFailed
+            ? "border-red-200 bg-red-50 dark:border-red-800/40 dark:bg-red-950/20"
+            : "border-amber-200 bg-amber-50 dark:border-amber-800/40 dark:bg-amber-950/20"
+        }`}>
+          <div className="flex-1">
+            <p className={`text-sm font-semibold ${paymentFailed ? "text-red-800 dark:text-red-200" : "text-amber-800 dark:text-amber-200"}`}>
+              {paymentFailed ? "El pago no pudo ser procesado" : "Pago pendiente"}
+            </p>
+            <p className={`text-xs mt-1 ${paymentFailed ? "text-red-700/80 dark:text-red-300/80" : "text-amber-700/80 dark:text-amber-300/80"}`}>
+              {paymentFailed
+                ? "Hubo un problema con su pago. Puede intentar nuevamente con otro método."
+                : "Complete el pago para que su pedido sea procesado."}
+            </p>
+          </div>
+          <a
+            href={`/checkout/payment/${order.id}`}
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-colors shrink-0 ${
+              paymentFailed
+                ? "bg-red-600 hover:bg-red-700"
+                : "bg-amber-600 hover:bg-amber-700"
+            }`}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
+            {paymentFailed ? "Reintentar pago" : "Completar pago"}
+          </a>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
         {/* LEFT COLUMN */}
@@ -169,7 +223,7 @@ export default async function OrderDetailPage(
             </div>
           </div>
 
-          {/* Timeline / Activity log — derived from flow steps */}
+          {/* Timeline / Activity log */}
           <div className="rounded-3xl border border-border/50 bg-card p-6 sm:p-8 shadow-sm ring-1 ring-black/5 dark:ring-white/5">
             <h2 className="font-bold text-base mb-4">Historial de Actividad</h2>
             <div className="relative pl-6 space-y-5 before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-px before:bg-border">
@@ -245,17 +299,79 @@ export default async function OrderDetailPage(
             )}
           </div>
 
-          {/* Payment */}
+          {/* Payment — enhanced */}
           <div className="rounded-3xl border border-border/50 bg-card text-sm p-6 shadow-sm ring-1 ring-black/5 dark:ring-white/5">
-            <h2 className="font-bold text-base mb-3">Pago</h2>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-bold text-base">Pago</h2>
+              {paymentInfo && (
+                <span
+                  className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+                  style={{
+                    backgroundColor: `${PAYMENT_STATUS_COLORS[paymentInfo.status] ?? "#6b7280"}20`,
+                    color: PAYMENT_STATUS_COLORS[paymentInfo.status] ?? "#6b7280",
+                  }}
+                >
+                  {PAYMENT_STATUS_LABELS[paymentInfo.status] ?? paymentInfo.status}
+                </span>
+              )}
+            </div>
+
             <div className="flex items-center gap-3">
               <div className="w-10 h-7 rounded bg-muted border flex items-center justify-center">
                 {PAYMENT_ICONS[order.paymentMethod] ?? PAYMENT_ICONS.cash}
               </div>
               <div>
                 <p className="font-medium text-foreground">{PAYMENT_LABELS[order.paymentMethod] ?? order.paymentMethod}</p>
+                {paymentInfo?.gateway && (
+                  <p className="text-xs text-muted-foreground capitalize">{paymentInfo.gateway}</p>
+                )}
               </div>
             </div>
+
+            {/* Payment details */}
+            {paymentInfo && (
+              <div className="mt-3 pt-3 border-t space-y-1.5">
+                {paymentInfo.paidAt && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Fecha de pago</span>
+                    <span className="font-medium text-foreground">
+                      {new Date(paymentInfo.paidAt).toLocaleDateString("es-PY", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                )}
+                {paymentInfo.hasReceipt && paymentInfo.status !== "succeeded" && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600"><path d="M20 6 9 17l-5-5" /></svg>
+                    <span>Comprobante enviado — en verificación</span>
+                  </div>
+                )}
+                {paymentInfo.hasReceipt && paymentInfo.status === "succeeded" && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600"><path d="M20 6 9 17l-5-5" /></svg>
+                    <span>Comprobante verificado</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Retry payment button inline */}
+            {needsPayment && (
+              <div className="mt-4">
+                <a
+                  href={`/checkout/payment/${order.id}`}
+                  className="flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="14" x="2" y="5" rx="2" /><line x1="2" x2="22" y1="10" y2="10" /></svg>
+                  {paymentFailed ? "Reintentar pago" : "Completar pago"}
+                </a>
+              </div>
+            )}
           </div>
 
           {/* Help */}

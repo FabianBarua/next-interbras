@@ -21,6 +21,15 @@ export interface Order {
   items: OrderItem[]
   createdAt: string
   updatedAt: string
+  paymentInfo?: OrderPaymentSummary | null
+}
+
+/** Payment status info exposed to client */
+export interface OrderPaymentSummary {
+  status: "pending" | "processing" | "succeeded" | "failed" | "refunded"
+  gateway: string | null
+  paidAt: string | null
+  hasReceipt: boolean
 }
 
 /** Extended order for the authenticated detail page */
@@ -37,6 +46,7 @@ export interface DetailOrder extends Order {
     country: string
   } | null
   trackingCode: string | null
+  paymentInfo?: OrderPaymentSummary | null
 }
 
 export interface AdminOrder extends Order {

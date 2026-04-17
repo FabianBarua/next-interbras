@@ -652,3 +652,96 @@ export async function registerRefund(orderId: string, reason: string) {
   revalidatePath(`/dashboard/orders/${orderId}`)
   return { success: true }
 }
+
+// ───────── Confirm payment manually (admin) ─────────
+
+export async function confirmPaymentManually(orderId: string) {
+  await requireAdmin()
+  if (!UUID_RE.test(orderId)) return { error: "ID inválido" }
+
+  const order = await db.query.orders.findFirst({
+    where: eq(orders.id, orderId),
+    columns: { id: true, status: true, paymentMethod: true },
+  })
+  if (!order) return { error: "Pedido no encontrado" }
+
+  const payment = await db.query.payments.findFirst({
+    where: eq(payments.orderId, orderId),
+    orderBy: [desc(payments.createdAt)],
+    columns: { id: true, status: true },
+  })
+
+  if (!payment) return { error: "No existe registro de pago para este pedido" }
+  if (payment.status === "succeeded") return { error: "El pago ya fue confirmado" }
+  if (payment.status === "refunded") return { error: "El pago fue reembolsado" }
+
+  await db
+    .update(payments)
+    .set({ status: "succeeded", paidAt: new Date() })
+    .where(eq(payments.id, payment.id))
+
+  // Transition order to confirmed
+  if (order.status === "pending" || order.status === "processing") {
+    await db
+      .update(orders)
+      .set({ status: "confirmed" })
+      .where(eq(orders.id, orderId))
+
+    await runStatusSideEffects(orderId, "confirmed")
+  }
+
+  await db.insert(orderNotes).values({
+    orderId,
+    content: "Pago confirmado manualmente por administrador.",
+  })
+
+  revalidatePath(`/dashboard/orders/${orderId}`)
+  revalidatePath("/dashboard/orders")
+  return { success: true }
+}
+
+// ───────── Cancel order (admin) ─────────
+
+export async function cancelOrderAdmin(orderId: string, reason: string) {
+  await requireAdmin()
+  if (!UUID_RE.test(orderId)) return { error: "ID inválido" }
+
+  const safeReason = (reason || "").slice(0, 500)
+
+  const order = await db.query.orders.findFirst({
+    where: eq(orders.id, orderId),
+    columns: { id: true, status: true },
+  })
+  if (!order) return { error: "Pedido no encontrado" }
+  if (["cancelled", "refunded"].includes(order.status)) {
+    return { error: "El pedido ya está cancelado o reembolsado" }
+  }
+
+  await db
+    .update(orders)
+    .set({ status: "cancelled" })
+    .where(eq(orders.id, orderId))
+
+  await runStatusSideEffects(orderId, "cancelled")
+
+  await db.insert(orderNotes).values({
+    orderId,
+    content: `Pedido cancelado por administrador. Motivo: ${safeReason || "No informado"}`,
+  })
+
+  revalidatePath(`/dashboard/orders/${orderId}`)
+  revalidatePath("/dashboard/orders")
+  return { success: true }
+}
+
+// ───────── Get payment info for client order ─────────
+
+export async function getOrderPaymentInfo(orderId: string) {
+  if (!UUID_RE.test(orderId)) return null
+  const payment = await db.query.payments.findFirst({
+    where: eq(payments.orderId, orderId),
+    orderBy: [desc(payments.createdAt)],
+    columns: { id: true, status: true, gateway: true, paidAt: true, metadata: true },
+  })
+  return payment ?? null
+}
