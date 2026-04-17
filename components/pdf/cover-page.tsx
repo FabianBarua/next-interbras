@@ -36,7 +36,7 @@ export const CoverPage = forwardRef<HTMLDivElement, Props>(function CoverPage(
       <div className="flex items-center justify-between rounded-t-2xl bg-linear-to-r from-brand-500 to-brand-600 px-10 py-6">
         <InterbrasLogo className="h-4 text-white dark:text-white" />
         <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-white/90">
-          {siteName} · {year}
+         Catalogo · {year}
         </span>
       </div>
 
@@ -50,8 +50,24 @@ export const CoverPage = forwardRef<HTMLDivElement, Props>(function CoverPage(
             className="h-72 w-full object-cover"
           />
         ) : (
-          <div className="flex h-72 w-full items-center justify-center bg-linear-to-br from-brand-500/10 via-brand-500/20 to-brand-500/30">
-            <InterbrasLogo className="h-16 w-auto text-brand-600/60" />
+          <div className="relative flex h-72 w-full items-center justify-center overflow-hidden bg-linear-to-br from-brand-500/10 via-brand-500/20 to-brand-500/30">
+            {/* Decorative grid pattern */}
+            <div className="absolute inset-0 opacity-[0.07]" style={{
+              backgroundImage: `radial-gradient(circle, currentColor 1px, transparent 1px)`,
+              backgroundSize: "24px 24px",
+            }} />
+            {/* Large accent circles */}
+            <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-brand-500/10" />
+            <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-brand-500/8" />
+            {/* Center content */}
+            <div className="relative flex flex-col items-center gap-3">
+              <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-500 shadow-lg shadow-brand-500/25">
+                <InterbrasLogo className="h-4 w-auto text-white" />
+              </span>
+              <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-brand-600/70">
+                {siteName}
+              </span>
+            </div>
           </div>
         )}
         {/* Fade to white at bottom */}
