@@ -4,11 +4,13 @@ import { useDictionary } from "@/i18n/context"
 import { useCatalogStore } from "@/lib/pdf/store"
 import { forwardRef } from "react"
 import { InterbrasLogo } from "@/components/store/interbras-logo"
+import { MiniProductStrip, type MiniProduct } from "./mini-product-strip"
 
 interface Props {
   siteName?: string
   productCount?: number
   categoryCount?: number
+  sampleProducts?: MiniProduct[]
 }
 
 /**
@@ -17,7 +19,7 @@ interface Props {
  * No overflow-hidden on outer wrapper to avoid capture clipping.
  */
 export const CoverPage = forwardRef<HTMLDivElement, Props>(function CoverPage(
-  { siteName = "Interbras", productCount, categoryCount },
+  { siteName = "Interbras", productCount, categoryCount, sampleProducts = [] },
   ref,
 ) {
   const { locale } = useDictionary()
@@ -50,24 +52,14 @@ export const CoverPage = forwardRef<HTMLDivElement, Props>(function CoverPage(
             className="h-72 w-full object-cover"
           />
         ) : (
-          <div className="relative flex h-72 w-full items-center justify-center overflow-hidden bg-linear-to-br from-brand-500/10 via-brand-500/20 to-brand-500/30">
-            {/* Decorative grid pattern */}
-            <div className="absolute inset-0 opacity-[0.07]" style={{
-              backgroundImage: `radial-gradient(circle, currentColor 1px, transparent 1px)`,
-              backgroundSize: "24px 24px",
+          <div className="relative h-72 w-full overflow-hidden bg-linear-to-br from-brand-500/5 via-brand-500/10 to-brand-500/15">
+            {/* Dot pattern background */}
+            <div className="absolute inset-0 opacity-[0.05]" style={{
+              backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
+              backgroundSize: "20px 20px",
             }} />
-            {/* Large accent circles */}
-            <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-brand-500/10" />
-            <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-brand-500/8" />
-            {/* Center content */}
-            <div className="relative flex flex-col items-center gap-3">
-              <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-brand-500 shadow-lg shadow-brand-500/25">
-                <InterbrasLogo className="h-4 w-auto text-white" />
-              </span>
-              <span className="text-[11px] font-bold uppercase tracking-[0.25em] text-brand-600/70">
-                {siteName}
-              </span>
-            </div>
+            {/* Mini product cards strip */}
+            <MiniProductStrip products={sampleProducts} />
           </div>
         )}
         {/* Fade to white at bottom */}

@@ -140,6 +140,21 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
     [entries, editingEntryId],
   )
 
+  /** Pick up to 8 entries with images for the cover mini-strip. */
+  const sampleProducts = useMemo(
+    () =>
+      entries
+        .filter((e) => e.imageUrl)
+        .slice(0, 8)
+        .map((e) => ({
+          id: e.id,
+          name: e.name[language] ?? Object.values(e.name)[0] ?? e.code,
+          code: e.code,
+          imageUrl: e.imageUrl,
+        })),
+    [entries, language],
+  )
+
   // ── Refs for PDF export ─────────────────────────────────────────
   const coverRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<Map<string, HTMLElement>>(new Map())
@@ -215,6 +230,7 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
               siteName={siteName}
               productCount={entries.length}
               categoryCount={categories.length}
+              sampleProducts={sampleProducts}
             />
           </div>
 
