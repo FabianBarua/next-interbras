@@ -13,6 +13,9 @@ export interface AdminExternalCode {
   priceUsd: string | null
   priceGs: string | null
   priceBrl: string | null
+  price1: string | null
+  price2: string | null
+  price3: string | null
   stock: number | null
   variantId: string | null
   variantSku: string | null
@@ -54,6 +57,9 @@ export async function getAllExternalCodesAdmin(opts?: { search?: string; system?
     priceUsd: ec.priceUsd,
     priceGs: ec.priceGs,
     priceBrl: ec.priceBrl,
+    price1: ec.price1,
+    price2: ec.price2,
+    price3: ec.price3,
     stock: ec.stock,
     variantId: ec.variantId,
     variantSku: variantSku ?? null,
@@ -105,6 +111,9 @@ export async function getExternalCodeByIdAdmin(id: string): Promise<AdminExterna
     priceUsd: ec.priceUsd,
     priceGs: ec.priceGs,
     priceBrl: ec.priceBrl,
+    price1: ec.price1,
+    price2: ec.price2,
+    price3: ec.price3,
     stock: ec.stock,
     variantId: ec.variantId,
     variantSku: variantSku ?? null,
@@ -124,6 +133,9 @@ export interface UpdateExternalCodeInput {
   priceUsd?: string | null
   priceGs?: string | null
   priceBrl?: string | null
+  price1?: string | null
+  price2?: string | null
+  price3?: string | null
   stock?: number | null
 }
 
@@ -137,13 +149,16 @@ export async function deleteExternalCode(id: string): Promise<void> {
   await invalidateCache("products:*", "variants:*")
 }
 
-export async function bulkUpdatePrices(updates: { id: string; priceUsd?: string; priceGs?: string; priceBrl?: string }[]): Promise<number> {
+export async function bulkUpdatePrices(updates: { id: string; priceUsd?: string; priceGs?: string; priceBrl?: string; price1?: string; price2?: string; price3?: string }[]): Promise<number> {
   let updated = 0
   for (const u of updates) {
     const set: any = {}
     if (u.priceUsd !== undefined) set.priceUsd = u.priceUsd
     if (u.priceGs !== undefined) set.priceGs = u.priceGs
     if (u.priceBrl !== undefined) set.priceBrl = u.priceBrl
+    if (u.price1 !== undefined) set.price1 = u.price1
+    if (u.price2 !== undefined) set.price2 = u.price2
+    if (u.price3 !== undefined) set.price3 = u.price3
     if (Object.keys(set).length > 0) {
       await db.update(externalCodes).set(set).where(eq(externalCodes.id, u.id))
       updated++
@@ -161,6 +176,9 @@ export interface CreateExternalCodeInput {
   priceUsd?: string | null
   priceGs?: string | null
   priceBrl?: string | null
+  price1?: string | null
+  price2?: string | null
+  price3?: string | null
   stock?: number | null
 }
 
@@ -173,6 +191,9 @@ export async function createExternalCode(input: CreateExternalCodeInput): Promis
     priceUsd: input.priceUsd ?? null,
     priceGs: input.priceGs ?? null,
     priceBrl: input.priceBrl ?? null,
+    price1: input.price1 ?? null,
+    price2: input.price2 ?? null,
+    price3: input.price3 ?? null,
     stock: input.stock ?? null,
   }).returning({ id: externalCodes.id })
   await invalidateCache("products:*", "variants:*")
@@ -239,6 +260,9 @@ export async function searchExternalCodes({
     : sortBy === "priceUsd" ? externalCodes.priceUsd
     : sortBy === "priceGs" ? externalCodes.priceGs
     : sortBy === "priceBrl" ? externalCodes.priceBrl
+    : sortBy === "price1" ? externalCodes.price1
+    : sortBy === "price2" ? externalCodes.price2
+    : sortBy === "price3" ? externalCodes.price3
     : externalCodes.updatedAt
   const direction = sortDir === "asc" ? asc : desc
 
@@ -256,6 +280,9 @@ export async function searchExternalCodes({
       priceUsd: ec.priceUsd,
       priceGs: ec.priceGs,
       priceBrl: ec.priceBrl,
+      price1: ec.price1,
+      price2: ec.price2,
+      price3: ec.price3,
       stock: ec.stock,
       variantId: ec.variantId,
       variantSku: variantSku ?? null,

@@ -317,6 +317,9 @@ function VariantCard({
   const [priceUsd, setPriceUsd] = useState(variant.externalCode?.priceUsd ?? "")
   const [priceGs, setPriceGs] = useState(variant.externalCode?.priceGs ?? "")
   const [priceBrl, setPriceBrl] = useState(variant.externalCode?.priceBrl ?? "")
+  const [price1, setPrice1] = useState(variant.externalCode?.price1 ?? "")
+  const [price2, setPrice2] = useState(variant.externalCode?.price2 ?? "")
+  const [price3, setPrice3] = useState(variant.externalCode?.price3 ?? "")
 
   const handleSave = () => {
     setError(null)
@@ -332,6 +335,9 @@ function VariantCard({
       priceUsd: priceUsd || undefined,
       priceGs: priceGs || undefined,
       priceBrl: priceBrl || undefined,
+      price1: price1 || undefined,
+      price2: price2 || undefined,
+      price3: price3 || undefined,
     } : undefined
 
     startTransition(async () => {
@@ -471,6 +477,20 @@ function VariantCard({
             <input value={priceBrl} onChange={e => setPriceBrl(e.target.value)} placeholder="0.00" className={inputCls} />
           </div>
         </div>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Precio 1</label>
+            <input value={price1} onChange={e => setPrice1(e.target.value)} placeholder="0.00" className={inputCls} />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Precio 2</label>
+            <input value={price2} onChange={e => setPrice2(e.target.value)} placeholder="0.00" className={inputCls} />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Precio 3</label>
+            <input value={price3} onChange={e => setPrice3(e.target.value)} placeholder="0.00" className={inputCls} />
+          </div>
+        </div>
         {variant.externalCode?.stock != null && (
           <div className="text-xs text-muted-foreground">
             Stock actual: <span className="font-medium text-foreground">{variant.externalCode.stock}</span>
@@ -538,6 +558,9 @@ function InlineVariantCreate({
   const [priceUsd, setPriceUsd] = useState("")
   const [priceGs, setPriceGs] = useState("")
   const [priceBrl, setPriceBrl] = useState("")
+  const [price1, setPrice1] = useState("")
+  const [price2, setPrice2] = useState("")
+  const [price3, setPrice3] = useState("")
 
   const handleCreate = () => {
     setError(null)
@@ -554,6 +577,9 @@ function InlineVariantCreate({
       priceUsd: priceUsd || undefined,
       priceGs: priceGs || undefined,
       priceBrl: priceBrl || undefined,
+      price1: price1 || undefined,
+      price2: price2 || undefined,
+      price3: price3 || undefined,
     } : undefined
 
     startTransition(async () => {
@@ -643,6 +669,20 @@ function InlineVariantCreate({
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground">Precio BRL</label>
             <input value={priceBrl} onChange={e => setPriceBrl(e.target.value)} placeholder="0.00" className={inputCls} />
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Precio 1</label>
+            <input value={price1} onChange={e => setPrice1(e.target.value)} placeholder="0.00" className={inputCls} />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Precio 2</label>
+            <input value={price2} onChange={e => setPrice2(e.target.value)} placeholder="0.00" className={inputCls} />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Precio 3</label>
+            <input value={price3} onChange={e => setPrice3(e.target.value)} placeholder="0.00" className={inputCls} />
           </div>
         </div>
       </div>

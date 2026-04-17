@@ -181,6 +181,30 @@ export function ExternalCodesTable({
       className: "font-mono text-xs tabular-nums",
       cell: (ec) => <>{ec.priceBrl ?? "—"}</>,
     },
+    {
+      key: "price1",
+      header: "Precio 1",
+      sortable: true,
+      align: "right" as const,
+      className: "font-mono text-xs tabular-nums",
+      cell: (ec) => <>{ec.price1 ?? "—"}</>,
+    },
+    {
+      key: "price2",
+      header: "Precio 2",
+      sortable: true,
+      align: "right" as const,
+      className: "font-mono text-xs tabular-nums",
+      cell: (ec) => <>{ec.price2 ?? "—"}</>,
+    },
+    {
+      key: "price3",
+      header: "Precio 3",
+      sortable: true,
+      align: "right" as const,
+      className: "font-mono text-xs tabular-nums",
+      cell: (ec) => <>{ec.price3 ?? "—"}</>,
+    },
   ]
 
   const onDelete = async (id: string) => {

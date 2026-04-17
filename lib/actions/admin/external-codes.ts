@@ -23,6 +23,9 @@ const createSchema = z.object({
   priceUsd: z.string().max(20).nullable().optional(),
   priceGs: z.string().max(20).nullable().optional(),
   priceBrl: z.string().max(20).nullable().optional(),
+  price1: z.string().max(20).nullable().optional(),
+  price2: z.string().max(20).nullable().optional(),
+  price3: z.string().max(20).nullable().optional(),
   stock: z.number().int().min(0).nullable().optional(),
 })
 
@@ -33,6 +36,9 @@ const updateSchema = z.object({
   priceUsd: z.string().max(20).nullable().optional(),
   priceGs: z.string().max(20).nullable().optional(),
   priceBrl: z.string().max(20).nullable().optional(),
+  price1: z.string().max(20).nullable().optional(),
+  price2: z.string().max(20).nullable().optional(),
+  price3: z.string().max(20).nullable().optional(),
   stock: z.number().int().min(0).nullable().optional(),
 })
 
@@ -120,6 +126,9 @@ const bulkPriceSchema = z.array(z.object({
   priceUsd: z.string().max(20).optional(),
   priceGs: z.string().max(20).optional(),
   priceBrl: z.string().max(20).optional(),
+  price1: z.string().max(20).optional(),
+  price2: z.string().max(20).optional(),
+  price3: z.string().max(20).optional(),
 })).min(1).max(200)
 
 export async function bulkUpdatePricesAction(data: unknown) {

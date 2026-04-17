@@ -37,6 +37,9 @@ export function ExternalCodeEditForm({ ec }: { ec: AdminExternalCode }) {
   const [priceUsd, setPriceUsd] = useState(ec.priceUsd ?? "")
   const [priceGs, setPriceGs] = useState(ec.priceGs ?? "")
   const [priceBrl, setPriceBrl] = useState(ec.priceBrl ?? "")
+  const [price1, setPrice1] = useState(ec.price1 ?? "")
+  const [price2, setPrice2] = useState(ec.price2 ?? "")
+  const [price3, setPrice3] = useState(ec.price3 ?? "")
   const [stock, setStock] = useState(ec.stock?.toString() ?? "")
 
   // Variant search state
@@ -86,6 +89,9 @@ export function ExternalCodeEditForm({ ec }: { ec: AdminExternalCode }) {
         priceUsd: priceUsd || null,
         priceGs: priceGs || null,
         priceBrl: priceBrl || null,
+        price1: price1 || null,
+        price2: price2 || null,
+        price3: price3 || null,
         stock: stock !== "" ? parseInt(stock, 10) : null,
       })
       if ("error" in res) {
@@ -187,6 +193,42 @@ export function ExternalCodeEditForm({ ec }: { ec: AdminExternalCode }) {
             <input
               value={priceBrl}
               onChange={(e) => setPriceBrl(e.target.value)}
+              placeholder="0.00"
+              className={inputCls + " font-mono"}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">
+              Precio 1
+            </label>
+            <input
+              value={price1}
+              onChange={(e) => setPrice1(e.target.value)}
+              placeholder="0.00"
+              className={inputCls + " font-mono"}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">
+              Precio 2
+            </label>
+            <input
+              value={price2}
+              onChange={(e) => setPrice2(e.target.value)}
+              placeholder="0.00"
+              className={inputCls + " font-mono"}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">
+              Precio 3
+            </label>
+            <input
+              value={price3}
+              onChange={(e) => setPrice3(e.target.value)}
               placeholder="0.00"
               className={inputCls + " font-mono"}
             />

@@ -23,6 +23,9 @@ export interface AdminVariant {
     priceUsd: string | null
     priceGs: string | null
     priceBrl: string | null
+    price1: string | null
+    price2: string | null
+    price3: string | null
   } | null
   createdAt: string
   updatedAt: string
@@ -69,6 +72,9 @@ export async function getAllVariantsForProduct(productId: string): Promise<Admin
         priceUsd: ec.priceUsd,
         priceGs: ec.priceGs,
         priceBrl: ec.priceBrl,
+        price1: ec.price1,
+        price2: ec.price2,
+        price3: ec.price3,
       })
     }
   }
@@ -121,6 +127,9 @@ export async function getVariantById(variantId: string): Promise<AdminVariant | 
       priceUsd: ec.priceUsd,
       priceGs: ec.priceGs,
       priceBrl: ec.priceBrl,
+      price1: ec.price1,
+      price2: ec.price2,
+      price3: ec.price3,
     } : null,
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt.toISOString(),
@@ -142,6 +151,9 @@ export interface CreateVariantInput {
     priceUsd?: string
     priceGs?: string
     priceBrl?: string
+    price1?: string
+    price2?: string
+    price3?: string
   }
 }
 
@@ -175,6 +187,9 @@ export async function createVariant(input: CreateVariantInput): Promise<string> 
       priceUsd: input.externalCode.priceUsd,
       priceGs: input.externalCode.priceGs,
       priceBrl: input.externalCode.priceBrl,
+      price1: input.externalCode.price1,
+      price2: input.externalCode.price2,
+      price3: input.externalCode.price3,
     })
   }
 
@@ -223,6 +238,9 @@ export async function updateVariant(
           priceUsd: externalCode.priceUsd,
           priceGs: externalCode.priceGs,
           priceBrl: externalCode.priceBrl,
+          price1: externalCode.price1,
+          price2: externalCode.price2,
+          price3: externalCode.price3,
         })
       }
     }

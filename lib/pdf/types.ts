@@ -40,6 +40,9 @@ export interface CatalogEntry {
   priceUsd: number | null
   priceGs: number | null
   priceBrl: number | null
+  price1: number | null
+  price2: number | null
+  price3: number | null
   /** Is this variant part of a promo? (currently derived from attributes.promo boolean) */
   promo: boolean
   /** Stock */

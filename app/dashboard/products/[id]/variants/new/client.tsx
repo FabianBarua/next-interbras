@@ -81,6 +81,9 @@ function SingleVariantForm({ productId, attributeDefs }: { productId: string; at
   const [priceUsd, setPriceUsd] = useState("")
   const [priceGs, setPriceGs] = useState("")
   const [priceBrl, setPriceBrl] = useState("")
+  const [price1, setPrice1] = useState("")
+  const [price2, setPrice2] = useState("")
+  const [price3, setPrice3] = useState("")
 
   const addOption = () => setOptions([...options, { key: "", value: "" }])
   const removeOption = (i: number) => setOptions(options.filter((_, idx) => idx !== i))
@@ -108,6 +111,9 @@ function SingleVariantForm({ productId, attributeDefs }: { productId: string; at
       priceUsd: priceUsd || undefined,
       priceGs: priceGs || undefined,
       priceBrl: priceBrl || undefined,
+      price1: price1 || undefined,
+      price2: price2 || undefined,
+      price3: price3 || undefined,
     } : undefined
 
     startTransition(async () => {
@@ -170,6 +176,9 @@ function SingleVariantForm({ productId, attributeDefs }: { productId: string; at
         priceUsd={priceUsd} setPriceUsd={setPriceUsd}
         priceGs={priceGs} setPriceGs={setPriceGs}
         priceBrl={priceBrl} setPriceBrl={setPriceBrl}
+        price1={price1} setPrice1={setPrice1}
+        price2={price2} setPrice2={setPrice2}
+        price3={price3} setPrice3={setPrice3}
       />
 
       {/* Images */}
@@ -201,10 +210,16 @@ interface BulkRow {
   priceUsd: string
   priceGs: string
   priceBrl: string
+  price1: string
+  price2: string
+  price3: string
 }
 
 function emptyRow(): BulkRow {
-  return { sku: "", optionKey: "", optionValue: "", unitsPerBox: "", ecSystem: "cec", ecCode: "", priceUsd: "", priceGs: "", priceBrl: "" }
+  return { sku: "", optionKey: "", optionValue: "", unitsPerBox: "", ecSystem: "cec", ecCode: "", priceUsd: "", priceGs: "", priceBrl: "", price1: "", price2: "", price3
+
+function emptyRow(): BulkRow {
+  return { sku: "", optionKey: "", optionValue: "", unitsPerBox: "", ecSystem: "cec", ecCode: "", priceUsd: "", priceGs: "", priceBrl: "", price1: "", price2: "", price3: "" }
 }
 
 function BulkVariantForm({ productId, attributeDefs }: { productId: string; attributeDefs: AttrDef[] }) {
@@ -246,9 +261,15 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
       externalCode: r.ecCode.trim() ? {
         system: r.ecSystem.trim() || "cec",
         code: r.ecCode.trim(),
+        price1: r.price1 || undefined,
+        price2: r.price2 || undefined,
+        price3: r.price3 || undefined,
         priceUsd: r.priceUsd || undefined,
         priceGs: r.priceGs || undefined,
         priceBrl: r.priceBrl || undefined,
+        price1: r.price1 || undefined,
+        price2: r.price2 || undefined,
+        price3: r.price3 || undefined,
       } : undefined,
     }))
 
@@ -299,12 +320,18 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
               <th className="px-2 py-2 text-left font-semibold">SKU *</th>
               <th className="px-2 py-2 text-left font-semibold">Opción clave</th>
               <th className="px-2 py-2 text-left font-semibold">Opción valor</th>
+              <th className="px-2 py-2 text-left font-semibold">P1</th>
+              <th className="px-2 py-2 text-left font-semibold">P2</th>
+              <th className="px-2 py-2 text-left font-semibold">P3</th>
               <th className="px-2 py-2 text-left font-semibold">Uds/Caja</th>
               <th className="px-2 py-2 text-left font-semibold">Sistema</th>
               <th className="px-2 py-2 text-left font-semibold">Cód. ext.</th>
               <th className="px-2 py-2 text-left font-semibold">USD</th>
               <th className="px-2 py-2 text-left font-semibold">Gs</th>
               <th className="px-2 py-2 text-left font-semibold">BRL</th>
+              <th className="px-2 py-2 text-left font-semibold">P1</th>
+              <th className="px-2 py-2 text-left font-semibold">P2</th>
+              <th className="px-2 py-2 text-left font-semibold">P3</th>
               <th className="w-8"></th>
             </tr>
           </thead>
@@ -328,6 +355,9 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
                 </td>
                 <td className="px-1 py-1"><input value={r.unitsPerBox} onChange={e => updateRow(i, "unitsPerBox", e.target.value)} placeholder="—" className={smallCls} /></td>
                 <td className="px-1 py-1">
+                <td className="px-1 py-1"><input value={r.price1} onChange={e => updateRow(i, "price1", e.target.value)} placeholder="0.00" className={smallCls} /></td>
+                <td className="px-1 py-1"><input value={r.price2} onChange={e => updateRow(i, "price2", e.target.value)} placeholder="0.00" className={smallCls} /></td>
+                <td className="px-1 py-1"><input value={r.price3} onChange={e => updateRow(i, "price3", e.target.value)} placeholder="0.00" className={smallCls} /></td>
                   <select value={r.ecSystem} onChange={e => updateRow(i, "ecSystem", e.target.value)} className={smallCls}>
                     <option value="cec">CEC</option>
                     <option value="custom">Custom</option>
@@ -337,6 +367,9 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
                 <td className="px-1 py-1"><input value={r.priceUsd} onChange={e => updateRow(i, "priceUsd", e.target.value)} placeholder="0.00" className={smallCls} /></td>
                 <td className="px-1 py-1"><input value={r.priceGs} onChange={e => updateRow(i, "priceGs", e.target.value)} placeholder="0" className={smallCls} /></td>
                 <td className="px-1 py-1"><input value={r.priceBrl} onChange={e => updateRow(i, "priceBrl", e.target.value)} placeholder="0.00" className={smallCls} /></td>
+                <td className="px-1 py-1"><input value={r.price1} onChange={e => updateRow(i, "price1", e.target.value)} placeholder="0.00" className={smallCls} /></td>
+                <td className="px-1 py-1"><input value={r.price2} onChange={e => updateRow(i, "price2", e.target.value)} placeholder="0.00" className={smallCls} /></td>
+                <td className="px-1 py-1"><input value={r.price3} onChange={e => updateRow(i, "price3", e.target.value)} placeholder="0.00" className={smallCls} /></td>
                 <td className="px-1 py-1">
                   <button type="button" onClick={() => removeRow(i)} className="text-destructive hover:underline text-xs" disabled={rows.length <= 1}>✕</button>
                 </td>
@@ -457,6 +490,9 @@ function ExternalCodeFields({
   priceUsd, setPriceUsd,
   priceGs, setPriceGs,
   priceBrl, setPriceBrl,
+  price1, setPrice1,
+  price2, setPrice2,
+  price3, setPrice3,
 }: {
   ecSystem: string; setEcSystem: (v: string) => void
   ecCode: string; setEcCode: (v: string) => void
@@ -464,6 +500,9 @@ function ExternalCodeFields({
   priceUsd: string; setPriceUsd: (v: string) => void
   priceGs: string; setPriceGs: (v: string) => void
   priceBrl: string; setPriceBrl: (v: string) => void
+  price1: string; setPrice1: (v: string) => void
+  price2: string; setPrice2: (v: string) => void
+  price3: string; setPrice3: (v: string) => void
 }) {
   const inputCls = "w-full h-9 rounded-lg border border-input bg-background px-3 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 transition-shadow"
 
@@ -499,6 +538,20 @@ function ExternalCodeFields({
         <div className="space-y-1.5">
           <label className="text-xs text-muted-foreground">Precio BRL</label>
           <input value={priceBrl} onChange={e => setPriceBrl(e.target.value)} placeholder="0.00" className={inputCls} />
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-3">
+        <div className="space-y-1.5">
+          <label className="text-xs text-muted-foreground">Precio 1</label>
+          <input value={price1} onChange={e => setPrice1(e.target.value)} placeholder="0.00" className={inputCls} />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs text-muted-foreground">Precio 2</label>
+          <input value={price2} onChange={e => setPrice2(e.target.value)} placeholder="0.00" className={inputCls} />
+        </div>
+        <div className="space-y-1.5">
+          <label className="text-xs text-muted-foreground">Precio 3</label>
+          <input value={price3} onChange={e => setPrice3(e.target.value)} placeholder="0.00" className={inputCls} />
         </div>
       </div>
     </div>

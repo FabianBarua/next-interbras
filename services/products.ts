@@ -89,6 +89,9 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
         priceUsd: ec.priceUsd ? Number(ec.priceUsd) : null,
         priceGs: ec.priceGs ? Number(ec.priceGs) : null,
         priceBrl: ec.priceBrl ? Number(ec.priceBrl) : null,
+        price1: ec.price1 ? Number(ec.price1) : null,
+        price2: ec.price2 ? Number(ec.price2) : null,
+        price3: ec.price3 ? Number(ec.price3) : null,
         metadata: ec.metadata ?? null,
       } satisfies ExternalCode,
     }

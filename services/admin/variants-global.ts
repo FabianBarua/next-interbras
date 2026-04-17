@@ -19,6 +19,9 @@ export interface AdminVariantGlobal {
   priceUsd: string | null
   priceGs: string | null
   priceBrl: string | null
+  price1: string | null
+  price2: string | null
+  price3: string | null
   createdAt: string
 }
 
@@ -58,10 +61,10 @@ export async function getAllVariantsGlobal(opts?: { search?: string; categoryId?
   const ecRows = await db.select().from(externalCodes)
     .where(inArray(externalCodes.variantId, variantIds))
 
-  const priceMap = new Map<string, { priceUsd: string | null; priceGs: string | null; priceBrl: string | null }>()
+  const priceMap = new Map<string, { priceUsd: string | null; priceGs: string | null; priceBrl: string | null; price1: string | null; price2: string | null; price3: string | null }>()
   for (const ec of ecRows) {
     if (ec.variantId && !priceMap.has(ec.variantId)) {
-      priceMap.set(ec.variantId, { priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl })
+      priceMap.set(ec.variantId, { priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl, price1: ec.price1, price2: ec.price2, price3: ec.price3 })
     }
   }
 
@@ -82,6 +85,9 @@ export async function getAllVariantsGlobal(opts?: { search?: string; categoryId?
       priceUsd: prices?.priceUsd ?? null,
       priceGs: prices?.priceGs ?? null,
       priceBrl: prices?.priceBrl ?? null,
+      price1: prices?.price1 ?? null,
+      price2: prices?.price2 ?? null,
+      price3: prices?.price3 ?? null,
       createdAt: v.createdAt.toISOString(),
     }
   })
@@ -174,10 +180,10 @@ export async function searchVariantsGlobal({
     if (img.variantId && !imgMap.has(img.variantId)) imgMap.set(img.variantId, img.url)
   }
 
-  const priceMap = new Map<string, { priceUsd: string | null; priceGs: string | null; priceBrl: string | null }>()
+  const priceMap = new Map<string, { priceUsd: string | null; priceGs: string | null; priceBrl: string | null; price1: string | null; price2: string | null; price3: string | null }>()
   for (const ec of ecRows) {
     if (ec.variantId && !priceMap.has(ec.variantId)) {
-      priceMap.set(ec.variantId, { priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl })
+      priceMap.set(ec.variantId, { priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl, price1: ec.price1, price2: ec.price2, price3: ec.price3 })
     }
   }
 
@@ -198,6 +204,9 @@ export async function searchVariantsGlobal({
       priceUsd: prices?.priceUsd ?? null,
       priceGs: prices?.priceGs ?? null,
       priceBrl: prices?.priceBrl ?? null,
+      price1: prices?.price1 ?? null,
+      price2: prices?.price2 ?? null,
+      price3: prices?.price3 ?? null,
       createdAt: v.createdAt.toISOString(),
     }
   })

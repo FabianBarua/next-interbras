@@ -26,6 +26,9 @@ export function ExternalCodeCreateForm() {
   const [priceUsd, setPriceUsd] = useState("")
   const [priceGs, setPriceGs] = useState("")
   const [priceBrl, setPriceBrl] = useState("")
+  const [price1, setPrice1] = useState("")
+  const [price2, setPrice2] = useState("")
+  const [price3, setPrice3] = useState("")
   const [stock, setStock] = useState("")
 
   // Variant search
@@ -78,6 +81,9 @@ export function ExternalCodeCreateForm() {
         priceUsd: priceUsd || null,
         priceGs: priceGs || null,
         priceBrl: priceBrl || null,
+        price1: price1 || null,
+        price2: price2 || null,
+        price3: price3 || null,
         stock: stock !== "" ? parseInt(stock, 10) : null,
       })
       if ("error" in res) {
@@ -229,6 +235,42 @@ export function ExternalCodeCreateForm() {
             <input
               value={priceBrl}
               onChange={(e) => setPriceBrl(e.target.value)}
+              placeholder="0.00"
+              className={inputCls + " font-mono"}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">
+              Precio 1
+            </label>
+            <input
+              value={price1}
+              onChange={(e) => setPrice1(e.target.value)}
+              placeholder="0.00"
+              className={inputCls + " font-mono"}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">
+              Precio 2
+            </label>
+            <input
+              value={price2}
+              onChange={(e) => setPrice2(e.target.value)}
+              placeholder="0.00"
+              className={inputCls + " font-mono"}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-muted-foreground">
+              Precio 3
+            </label>
+            <input
+              value={price3}
+              onChange={(e) => setPrice3(e.target.value)}
               placeholder="0.00"
               className={inputCls + " font-mono"}
             />

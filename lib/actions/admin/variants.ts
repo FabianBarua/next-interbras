@@ -22,6 +22,9 @@ const externalCodeSchema = z.object({
   priceUsd: z.string().max(20).optional(),
   priceGs: z.string().max(20).optional(),
   priceBrl: z.string().max(20).optional(),
+  price1: z.string().max(20).optional(),
+  price2: z.string().max(20).optional(),
+  price3: z.string().max(20).optional(),
 }).optional()
 
 const createSchema = z.object({

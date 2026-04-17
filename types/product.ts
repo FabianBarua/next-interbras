@@ -9,6 +9,9 @@ export interface ExternalCode {
   priceUsd: number | null
   priceGs: number | null
   priceBrl: number | null
+  price1: number | null
+  price2: number | null
+  price3: number | null
   metadata: any | null
 }
 
