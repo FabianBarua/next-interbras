@@ -10,7 +10,7 @@ import {
 import { eq, desc, sql, and, inArray, count } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
 import { resolveFlow } from "@/lib/order-flow-resolver"
-import type { Order, OrderItem, AdminOrder } from "@/types/order"
+import type { Order, OrderItem, AdminOrder, DetailOrder } from "@/types/order"
 
 // ---------------------------------------------------------------------------
 // Mapping helpers
@@ -86,6 +86,28 @@ export async function getOrderByIdPublic(id: string): Promise<Omit<Order, "userI
   if (!order) return null
   const { userId, ...safeOrder } = order
   return safeOrder
+}
+
+/** Detail view for authenticated user — includes shipping, payment, subtotal */
+export async function getOrderDetailById(id: string): Promise<DetailOrder | null> {
+  return cachedQuery(`order-detail:${id}`, async () => {
+    const orderRows = await db.select().from(orders).where(eq(orders.id, id)).limit(1)
+    if (orderRows.length === 0) return null
+    const row = orderRows[0]
+
+    const itemRows = await db.select().from(orderItems)
+      .where(eq(orderItems.orderId, id))
+
+    return {
+      ...mapOrder(row, itemRows.map(mapOrderItem)),
+      paymentMethod: row.paymentMethod,
+      shippingMethod: row.shippingMethod,
+      shippingCost: Number(row.shippingCost),
+      subtotal: Number(row.subtotal),
+      shippingAddress: row.shippingAddress as DetailOrder["shippingAddress"],
+      trackingCode: row.trackingCode,
+    }
+  }, 60)
 }
 
 // ---------------------------------------------------------------------------
@@ -166,7 +188,7 @@ export async function updateOrderStatus(
   const values: Record<string, unknown> = { status }
   if (trackingCode !== undefined) values.trackingCode = trackingCode
   await db.update(orders).set(values).where(eq(orders.id, id))
-  await invalidateCache(`order:${id}`, "orders:user:*")
+  await invalidateCache(`order:${id}`, `order-detail:${id}`, "orders:user:*")
 }
 
 // ---------------------------------------------------------------------------

@@ -28,8 +28,6 @@ export default async function PublicTrackingPage({ params }: { params: Promise<{
     return { slug: step.statusSlug, label: info?.label ?? step.statusSlug, icon: info?.icon ?? "Circle" }
   })
 
-  if (!order) return notFound()
-
   return (
     <div className="container max-w-3xl px-4 py-16 min-h-[60vh] flex flex-col items-center">
       <div className="w-full bg-card rounded-3xl border shadow-xl overflow-hidden">

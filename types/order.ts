@@ -23,6 +23,22 @@ export interface Order {
   updatedAt: string
 }
 
+/** Extended order for the authenticated detail page */
+export interface DetailOrder extends Order {
+  paymentMethod: string
+  shippingMethod: string | null
+  shippingCost: number
+  subtotal: number
+  shippingAddress: {
+    street: string
+    city: string
+    state: string
+    zipCode?: string
+    country: string
+  } | null
+  trackingCode: string | null
+}
+
 export interface AdminOrder extends Order {
   customerName: string
   customerEmail: string
