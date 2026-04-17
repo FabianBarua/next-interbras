@@ -80,6 +80,8 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
   }>({ open: false, sectionId: null })
   const [exportOpen, setExportOpen] = useState(false)
   const [manageOpen, setManageOpen] = useState(false)
+  /** True while the export is capturing — forces a hard fixed width on the container. */
+  const [exporting, setExporting] = useState(false)
 
   // ── Derived data ────────────────────────────────────────────────
   const sections = useMemo(
@@ -206,9 +208,14 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
       <main className="flex-1 overflow-x-auto">
         <div
           className={cn(
-            "mx-auto space-y-6 px-4 py-6 transition-[max-width] md:px-6",
+            "mx-auto space-y-6 px-4 py-6 md:px-6",
+            !exporting && "transition-[max-width]",
           )}
-          style={{ maxWidth: `${containerWidth}px` }}
+          style={
+            exporting
+              ? { width: `${containerWidth}px`, minWidth: `${containerWidth}px` }
+              : { maxWidth: `${containerWidth}px` }
+          }
         >
           {editable && (
             <>
@@ -353,11 +360,13 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
           preExportViewport.current = viewport
           // Force the chosen format's viewport width for capture
           setViewport(format)
+          setExporting(true)
           setMode("preview")
-          // Wait for React + layout paint (cover transitions from display:none)
-          await new Promise<void>((r) => setTimeout(r, 500))
+          // Wait for React + layout paint (cover transitions, fixed width applied)
+          await new Promise<void>((r) => setTimeout(r, 600))
         }}
         onAfterExport={() => {
+          setExporting(false)
           setMode("edit")
           setViewport(preExportViewport.current)
         }}

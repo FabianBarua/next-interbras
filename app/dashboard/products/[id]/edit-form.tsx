@@ -310,12 +310,30 @@ function VariantCard({
   const [images, setImages] = useState<string[]>(variant.images.map(i => i.url))
   const [error, setError] = useState<string | null>(null)
 
+  // External code state
+  const [ecSystem, setEcSystem] = useState(variant.externalCode?.system ?? "cec")
+  const [ecCode, setEcCode] = useState(variant.externalCode?.code ?? "")
+  const [ecName, setEcName] = useState(variant.externalCode?.externalName ?? "")
+  const [priceUsd, setPriceUsd] = useState(variant.externalCode?.priceUsd ?? "")
+  const [priceGs, setPriceGs] = useState(variant.externalCode?.priceGs ?? "")
+  const [priceBrl, setPriceBrl] = useState(variant.externalCode?.priceBrl ?? "")
+
   const handleSave = () => {
     setError(null)
     const optionsObj: Record<string, string> = {}
     for (const o of options) {
       if (o.key.trim()) optionsObj[o.key.trim()] = o.value.trim()
     }
+
+    const ecData = ecCode.trim() ? {
+      system: ecSystem || "cec",
+      code: ecCode.trim(),
+      externalName: ecName || undefined,
+      priceUsd: priceUsd || undefined,
+      priceGs: priceGs || undefined,
+      priceBrl: priceBrl || undefined,
+    } : undefined
+
     startTransition(async () => {
       const res = await updateVariantAction(variant.id, productId, {
         sku,
@@ -324,6 +342,7 @@ function VariantCard({
         sortOrder,
         active,
         images,
+        externalCode: ecData,
       })
       if ("error" in res && res.error) setError(res.error)
       else onDone()
@@ -418,18 +437,46 @@ function VariantCard({
         </div>
       </div>
 
-      {/* External code (read-only) */}
-      {variant.externalCode && (
-        <div className="rounded-lg border p-3 space-y-1">
-          <h4 className="text-xs font-semibold uppercase text-muted-foreground">Código externo</h4>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-            <div><span className="text-muted-foreground">Sistema:</span> {variant.externalCode.system}</div>
-            <div><span className="text-muted-foreground">Código:</span> {variant.externalCode.code}</div>
-            <div><span className="text-muted-foreground">USD:</span> {variant.externalCode.priceUsd ?? "—"}</div>
-            <div><span className="text-muted-foreground">Stock:</span> {variant.externalCode.stock ?? "—"}</div>
+      {/* External Code & Prices */}
+      <div className="rounded-lg border p-3 space-y-3">
+        <h4 className="text-xs font-semibold uppercase text-muted-foreground">Código externo / Precios</h4>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Sistema *</label>
+            <select value={ecSystem} onChange={e => setEcSystem(e.target.value)} className={inputCls}>
+              <option value="cec">CEC</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Código *</label>
+            <input value={ecCode} onChange={e => setEcCode(e.target.value)} placeholder="Código externo" className={inputCls + " font-mono"} />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Nombre externo</label>
+            <input value={ecName} onChange={e => setEcName(e.target.value)} placeholder="Nombre en sistema externo" className={inputCls} />
           </div>
         </div>
-      )}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Precio USD</label>
+            <input value={priceUsd} onChange={e => setPriceUsd(e.target.value)} placeholder="0.00" className={inputCls} />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Precio Gs</label>
+            <input value={priceGs} onChange={e => setPriceGs(e.target.value)} placeholder="0" className={inputCls} />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-muted-foreground">Precio BRL</label>
+            <input value={priceBrl} onChange={e => setPriceBrl(e.target.value)} placeholder="0.00" className={inputCls} />
+          </div>
+        </div>
+        {variant.externalCode?.stock != null && (
+          <div className="text-xs text-muted-foreground">
+            Stock actual: <span className="font-medium text-foreground">{variant.externalCode.stock}</span>
+          </div>
+        )}
+      </div>
 
       {/* Images */}
       <ImageUpload value={images} onChange={setImages} max={10} label="Imágenes" />
@@ -485,7 +532,7 @@ function InlineVariantCreate({
   const [active, setActive] = useState(true)
   const [images, setImages] = useState<string[]>([])
 
-  const [ecSystem, setEcSystem] = useState("")
+  const [ecSystem, setEcSystem] = useState("cec")
   const [ecCode, setEcCode] = useState("")
   const [ecName, setEcName] = useState("")
   const [priceUsd, setPriceUsd] = useState("")
@@ -569,29 +616,32 @@ function InlineVariantCreate({
         <h4 className="text-xs font-semibold uppercase text-muted-foreground">Código externo / Precios</h4>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">Sistema</label>
-            <input value={ecSystem} onChange={e => setEcSystem(e.target.value)} placeholder="cec" className={inputCls} />
+            <label className="text-xs text-muted-foreground">Sistema *</label>
+            <select value={ecSystem} onChange={e => setEcSystem(e.target.value)} className={inputCls}>
+              <option value="cec">CEC</option>
+              <option value="custom">Custom</option>
+            </select>
           </div>
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">Código</label>
-            <input value={ecCode} onChange={e => setEcCode(e.target.value)} placeholder="Código externo" className={inputCls} />
+            <label className="text-xs text-muted-foreground">Código *</label>
+            <input value={ecCode} onChange={e => setEcCode(e.target.value)} placeholder="Código externo" className={inputCls + " font-mono"} />
           </div>
           <div className="space-y-1">
             <label className="text-xs text-muted-foreground">Nombre externo</label>
-            <input value={ecName} onChange={e => setEcName(e.target.value)} placeholder="Nombre" className={inputCls} />
+            <input value={ecName} onChange={e => setEcName(e.target.value)} placeholder="Nombre en sistema externo" className={inputCls} />
           </div>
         </div>
         <div className="grid grid-cols-3 gap-3">
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">USD</label>
+            <label className="text-xs text-muted-foreground">Precio USD</label>
             <input value={priceUsd} onChange={e => setPriceUsd(e.target.value)} placeholder="0.00" className={inputCls} />
           </div>
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">Gs</label>
+            <label className="text-xs text-muted-foreground">Precio Gs</label>
             <input value={priceGs} onChange={e => setPriceGs(e.target.value)} placeholder="0" className={inputCls} />
           </div>
           <div className="space-y-1">
-            <label className="text-xs text-muted-foreground">BRL</label>
+            <label className="text-xs text-muted-foreground">Precio BRL</label>
             <input value={priceBrl} onChange={e => setPriceBrl(e.target.value)} placeholder="0.00" className={inputCls} />
           </div>
         </div>

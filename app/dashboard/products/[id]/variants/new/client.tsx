@@ -75,7 +75,7 @@ function SingleVariantForm({ productId, attributeDefs }: { productId: string; at
   const [active, setActive] = useState(true)
   const [images, setImages] = useState<string[]>([])
 
-  const [ecSystem, setEcSystem] = useState("")
+  const [ecSystem, setEcSystem] = useState("cec")
   const [ecCode, setEcCode] = useState("")
   const [ecName, setEcName] = useState("")
   const [priceUsd, setPriceUsd] = useState("")
@@ -102,7 +102,7 @@ function SingleVariantForm({ productId, attributeDefs }: { productId: string; at
 
     const hasEc = ecCode.trim()
     const ecData = hasEc ? {
-      system: ecSystem.trim() || undefined,
+      system: ecSystem.trim() || "cec",
       code: ecCode.trim(),
       externalName: ecName || undefined,
       priceUsd: priceUsd || undefined,
@@ -204,7 +204,7 @@ interface BulkRow {
 }
 
 function emptyRow(): BulkRow {
-  return { sku: "", optionKey: "", optionValue: "", unitsPerBox: "", ecSystem: "", ecCode: "", priceUsd: "", priceGs: "", priceBrl: "" }
+  return { sku: "", optionKey: "", optionValue: "", unitsPerBox: "", ecSystem: "cec", ecCode: "", priceUsd: "", priceGs: "", priceBrl: "" }
 }
 
 function BulkVariantForm({ productId, attributeDefs }: { productId: string; attributeDefs: AttrDef[] }) {
@@ -244,7 +244,7 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
       sortOrder: i,
       active: true,
       externalCode: r.ecCode.trim() ? {
-        system: r.ecSystem.trim() || undefined,
+        system: r.ecSystem.trim() || "cec",
         code: r.ecCode.trim(),
         priceUsd: r.priceUsd || undefined,
         priceGs: r.priceGs || undefined,
@@ -327,7 +327,12 @@ function BulkVariantForm({ productId, attributeDefs }: { productId: string; attr
                   )}
                 </td>
                 <td className="px-1 py-1"><input value={r.unitsPerBox} onChange={e => updateRow(i, "unitsPerBox", e.target.value)} placeholder="—" className={smallCls} /></td>
-                <td className="px-1 py-1"><input value={r.ecSystem} onChange={e => updateRow(i, "ecSystem", e.target.value)} placeholder="Sistema" className={smallCls} /></td>
+                <td className="px-1 py-1">
+                  <select value={r.ecSystem} onChange={e => updateRow(i, "ecSystem", e.target.value)} className={smallCls}>
+                    <option value="cec">CEC</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </td>
                 <td className="px-1 py-1"><input value={r.ecCode} onChange={e => updateRow(i, "ecCode", e.target.value)} placeholder="Código" className={smallCls} /></td>
                 <td className="px-1 py-1"><input value={r.priceUsd} onChange={e => updateRow(i, "priceUsd", e.target.value)} placeholder="0.00" className={smallCls} /></td>
                 <td className="px-1 py-1"><input value={r.priceGs} onChange={e => updateRow(i, "priceGs", e.target.value)} placeholder="0" className={smallCls} /></td>
@@ -467,12 +472,15 @@ function ExternalCodeFields({
       <h3 className="text-xs font-semibold uppercase text-muted-foreground">Código externo / Precios</h3>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="space-y-1.5">
-          <label className="text-xs text-muted-foreground">Sistema</label>
-          <input value={ecSystem} onChange={e => setEcSystem(e.target.value)} placeholder="Sistema externo" className={inputCls} />
+          <label className="text-xs text-muted-foreground">Sistema *</label>
+          <select value={ecSystem} onChange={e => setEcSystem(e.target.value)} className={inputCls}>
+            <option value="cec">CEC</option>
+            <option value="custom">Custom</option>
+          </select>
         </div>
         <div className="space-y-1.5">
-          <label className="text-xs text-muted-foreground">Código</label>
-          <input value={ecCode} onChange={e => setEcCode(e.target.value)} placeholder="Código externo" className={inputCls} />
+          <label className="text-xs text-muted-foreground">Código *</label>
+          <input value={ecCode} onChange={e => setEcCode(e.target.value)} placeholder="Código externo" className={inputCls + " font-mono"} />
         </div>
         <div className="space-y-1.5">
           <label className="text-xs text-muted-foreground">Nombre externo</label>

@@ -16,7 +16,7 @@ const uuidSchema = z.string().uuid()
 const uuidArraySchema = z.array(z.string().uuid()).min(1).max(200)
 
 const externalCodeSchema = z.object({
-  system: z.string().min(1).max(50),
+  system: z.string().max(50).default("cec"),
   code: z.string().min(1).max(100),
   externalName: z.string().max(255).optional(),
   priceUsd: z.string().max(20).optional(),
@@ -46,8 +46,9 @@ export async function createVariantAction(data: unknown) {
     logEvent({ category: "admin", action: "variant.create", entity: "variant", entityId: id, userId: session.id })
     return { id }
   } catch (err: any) {
+    console.error("[createVariant]", err)
     if (err?.code === "23505") return { error: "El SKU o código externo ya existe." }
-    return { error: "Error al crear variante." }
+    return { error: "Error al crear variante: " + (err?.message ?? "desconocido") }
   }
 }
 
