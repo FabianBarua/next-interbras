@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useCallback } from "react"
 import Link from "next/link"
 import type { PaymentBlockProps } from "@/lib/payments/types"
 import { saveReceiptAction } from "@/lib/actions/save-receipt"
@@ -16,7 +16,9 @@ export function TransferBlock({ data, orderId }: PaymentBlockProps) {
   const [uploading, setUploading] = useState(false)
   const [uploaded, setUploaded] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [dragging, setDragging] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
+  const dragCounter = useRef(0)
 
   function handleCopy() {
     navigator.clipboard.writeText(accountNumber).then(() => {
@@ -25,9 +27,7 @@ export function TransferBlock({ data, orderId }: PaymentBlockProps) {
     })
   }
 
-  async function handleUpload() {
-    const file = fileRef.current?.files?.[0]
-    if (!file) return
+  async function uploadFile(file: File) {
     setUploading(true)
     setUploadError(null)
 
@@ -49,6 +49,40 @@ export function TransferBlock({ data, orderId }: PaymentBlockProps) {
       setUploading(false)
     }
   }
+
+  async function handleUpload() {
+    const file = fileRef.current?.files?.[0]
+    if (!file) return
+    await uploadFile(file)
+  }
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current++
+    if (e.dataTransfer.types.includes("Files")) setDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current--
+    if (dragCounter.current === 0) setDragging(false)
+  }, [])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current = 0
+    setDragging(false)
+    const file = e.dataTransfer.files[0]
+    if (file) uploadFile(file)
+  }, [])
 
   if (uploaded) {
     return (
@@ -133,7 +167,13 @@ export function TransferBlock({ data, orderId }: PaymentBlockProps) {
       </div>
 
       {/* Receipt upload */}
-      <div className="rounded-xl border bg-card p-4 space-y-3">
+      <div
+        className={`rounded-xl border bg-card p-4 space-y-3 transition-colors ${dragging ? "border-primary bg-primary/5 ring-2 ring-primary/50" : ""}`}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
         <h3 className="text-sm font-semibold flex items-center gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" />
@@ -141,7 +181,7 @@ export function TransferBlock({ data, orderId }: PaymentBlockProps) {
           Subir comprobante
         </h3>
         <p className="text-xs text-muted-foreground">
-          Adjunte la foto o captura de pantalla de la transferencia realizada.
+          {dragging ? "Suelte la imagen aquí" : "Adjunte la foto o captura de pantalla de la transferencia realizada. También puede arrastrar y soltar."}
         </p>
         <input
           ref={fileRef}

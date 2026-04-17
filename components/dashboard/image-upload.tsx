@@ -13,7 +13,9 @@ interface Props {
 export function ImageUpload({ value, onChange, max = 10, label = "Imágenes" }: Props) {
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [dragging, setDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
+  const dragCounter = useRef(0)
 
   const handleFiles = useCallback(async (files: FileList | null) => {
     if (!files || files.length === 0) return
@@ -41,6 +43,33 @@ export function ImageUpload({ value, onChange, max = 10, label = "Imágenes" }: 
     }
   }, [value, onChange, max])
 
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current++
+    if (e.dataTransfer.types.includes("Files")) setDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current--
+    if (dragCounter.current === 0) setDragging(false)
+  }, [])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current = 0
+    setDragging(false)
+    handleFiles(e.dataTransfer.files)
+  }, [handleFiles])
+
   const remove = (idx: number) => onChange(value.filter((_, i) => i !== idx))
 
   const move = (from: number, to: number) => {
@@ -52,9 +81,15 @@ export function ImageUpload({ value, onChange, max = 10, label = "Imágenes" }: 
   }
 
   return (
-    <div className="space-y-2">
+    <div
+      className="space-y-2"
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <label className="text-xs font-medium text-muted-foreground">{label}</label>
-      <div className="flex flex-wrap gap-2">
+      <div className={`flex flex-wrap gap-2 rounded-lg p-2 -m-2 transition-colors ${dragging ? "bg-primary/10 ring-2 ring-primary/50" : ""}`}>
         {value.map((url, i) => (
           <div key={`${url}-${i}`} className="group relative w-20 h-20 rounded-lg border overflow-hidden bg-muted/30">
             <Image src={url} alt="" fill className="object-contain p-1" unoptimized />
@@ -77,14 +112,14 @@ export function ImageUpload({ value, onChange, max = 10, label = "Imágenes" }: 
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="w-20 h-20 rounded-lg border-2 border-dashed border-muted-foreground/30 flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 hover:text-primary transition-colors"
+            className={`w-20 h-20 rounded-lg border-2 border-dashed flex flex-col items-center justify-center transition-colors ${dragging ? "border-primary text-primary bg-primary/5" : "border-muted-foreground/30 text-muted-foreground hover:border-primary/50 hover:text-primary"}`}
           >
             {uploading ? (
               <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
             ) : (
               <>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
-                <span className="text-[10px] mt-1">Subir</span>
+                <span className="text-[10px] mt-1">{dragging ? "Soltar" : "Subir"}</span>
               </>
             )}
           </button>

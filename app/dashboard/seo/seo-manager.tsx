@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { upsertSeoPage, deleteSeoPage } from "@/lib/actions/admin/seo"
 import { Button } from "@/components/ui/button"
@@ -74,6 +74,8 @@ export function SeoManager({ pages, knownPages, siteUrl, siteName }: Props) {
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [draggingOg, setDraggingOg] = useState(false)
+  const ogDragCounter = useRef(0)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
@@ -123,6 +125,34 @@ export function SeoManager({ pages, knownPages, siteUrl, siteName }: Props) {
     }
     setUploading(false)
   }
+
+  const handleOgDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    ogDragCounter.current++
+    if (e.dataTransfer.types.includes("Files")) setDraggingOg(true)
+  }, [])
+
+  const handleOgDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    ogDragCounter.current--
+    if (ogDragCounter.current === 0) setDraggingOg(false)
+  }, [])
+
+  const handleOgDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
+  const handleOgDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    ogDragCounter.current = 0
+    setDraggingOg(false)
+    const file = e.dataTransfer.files[0]
+    if (file) handleUploadOgImage(file)
+  }, [])
 
   async function handleSave() {
     if (!editing) return
@@ -394,9 +424,15 @@ export function SeoManager({ pages, knownPages, siteUrl, siteName }: Props) {
                     />
                   </div>
 
-                  <div className="space-y-1.5">
+                  <div
+                    className="space-y-1.5"
+                    onDragEnter={handleOgDragEnter}
+                    onDragLeave={handleOgDragLeave}
+                    onDragOver={handleOgDragOver}
+                    onDrop={handleOgDrop}
+                  >
                     <Label>OG Imagen</Label>
-                    <div className="flex gap-2">
+                    <div className={`flex gap-2 rounded-md p-1 -m-1 transition-colors ${draggingOg ? "bg-primary/10 ring-2 ring-primary/50" : ""}`}>
                       <Input
                         value={editing.ogImage}
                         onChange={(e) =>
@@ -427,7 +463,7 @@ export function SeoManager({ pages, knownPages, siteUrl, siteName }: Props) {
                       </label>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                      Recomendado: 1200×630px, JPG/PNG/WebP, máx 2MB
+                      {draggingOg ? "Suelte la imagen aquí" : "Recomendado: 1200×630px, JPG/PNG/WebP, máx 2MB. También puede arrastrar y soltar."}
                     </p>
 
                     {editing.ogImage && (

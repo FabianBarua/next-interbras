@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useState, useCallback } from "react"
 import { Upload, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { fileToScaledDataUrl } from "@/lib/pdf/helpers"
@@ -32,6 +32,8 @@ export function ImageUploadField({
   aspectClassName = "aspect-[16/9]",
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
+  const [dragging, setDragging] = useState(false)
+  const dragCounter = useRef(0)
 
   async function handleFile(file: File | undefined) {
     if (!file) return
@@ -39,8 +41,41 @@ export function ImageUploadField({
     onChange(dataUrl)
   }
 
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current++
+    if (e.dataTransfer.types.includes("Files")) setDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current--
+    if (dragCounter.current === 0) setDragging(false)
+  }, [])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dragCounter.current = 0
+    setDragging(false)
+    handleFile(e.dataTransfer.files[0])
+  }, [])
+
   return (
-    <div className={cn("relative", className)}>
+    <div
+      className={cn("relative", className)}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <input
         ref={inputRef}
         type="file"
@@ -50,10 +85,10 @@ export function ImageUploadField({
       />
 
       {value ? (
-        <div className={cn("group relative overflow-hidden rounded-xl border border-border bg-muted", aspectClassName)}>
+        <div className={cn("group relative overflow-hidden rounded-xl border border-border bg-muted", dragging && "ring-2 ring-primary/50", aspectClassName)}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={value} alt="" className="h-full w-full object-cover" />
-          <div className="absolute inset-0 hidden items-center justify-center gap-2 bg-black/40 group-hover:flex">
+          <div className={cn("absolute inset-0 items-center justify-center gap-2 bg-black/40", dragging ? "flex" : "hidden group-hover:flex")}>
             <Button
               type="button"
               variant="secondary"
@@ -61,9 +96,9 @@ export function ImageUploadField({
               onClick={() => inputRef.current?.click()}
             >
               <Upload className="mr-1 h-3.5 w-3.5" />
-              {uploadLabel}
+              {dragging ? "Soltar aquí" : uploadLabel}
             </Button>
-            {removeLabel && (
+            {removeLabel && !dragging && (
               <Button
                 type="button"
                 variant="destructive"
@@ -81,12 +116,15 @@ export function ImageUploadField({
           type="button"
           onClick={() => inputRef.current?.click()}
           className={cn(
-            "flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-muted/30 p-6 text-sm text-muted-foreground transition hover:border-primary/50 hover:bg-primary/5 hover:text-primary",
+            "flex w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 text-sm transition",
+            dragging
+              ? "border-primary bg-primary/10 text-primary ring-2 ring-primary/50"
+              : "border-border bg-muted/30 text-muted-foreground hover:border-primary/50 hover:bg-primary/5 hover:text-primary",
             aspectClassName,
           )}
         >
           <Upload className="h-6 w-6" />
-          <span>{uploadLabel}</span>
+          <span>{dragging ? "Soltar imagen aquí" : uploadLabel}</span>
         </button>
       )}
     </div>
