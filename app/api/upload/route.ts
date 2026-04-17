@@ -5,7 +5,7 @@ import path from "path"
 import fs from "fs/promises"
 import crypto from "crypto"
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads")
+const UPLOAD_DIR = path.join(process.cwd(), "uploads")
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif"]
 
