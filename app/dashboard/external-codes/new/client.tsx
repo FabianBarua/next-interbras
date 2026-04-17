@@ -20,7 +20,7 @@ export function ExternalCodeCreateForm() {
 
   const [variantId, setVariantId] = useState("")
   const [variantLabel, setVariantLabel] = useState("")
-  const [system, setSystem] = useState("")
+  const [system, setSystem] = useState("cec")
   const [code, setCode] = useState("")
   const [externalName, setExternalName] = useState("")
   const [priceUsd, setPriceUsd] = useState("")
@@ -163,14 +163,16 @@ export function ExternalCodeCreateForm() {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">
-              Sistema
+              Sistema *
             </label>
-            <input
+            <select
               value={system}
               onChange={(e) => setSystem(e.target.value)}
-              placeholder="ej: SAP"
               className={inputCls}
-            />
+            >
+              <option value="cec">CEC</option>
+              <option value="custom">Custom</option>
+            </select>
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">

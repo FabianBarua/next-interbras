@@ -123,13 +123,16 @@ export function ExternalCodeEditForm({ ec }: { ec: AdminExternalCode }) {
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">
-              Sistema
+              Sistema *
             </label>
-            <input
+            <select
               value={system}
               onChange={(e) => setSystem(e.target.value)}
               className={inputCls}
-            />
+            >
+              <option value="cec">CEC</option>
+              <option value="custom">Custom</option>
+            </select>
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">
