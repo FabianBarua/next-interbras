@@ -67,11 +67,11 @@ function ProductCardImpl({
         "group relative flex flex-col overflow-hidden rounded-xl border bg-card transition",
         isHidden
           ? "border-dashed border-border/50 opacity-40 saturate-0"
-          : "border-border/60 hover:border-brand-500/40 hover:shadow-sm",
+          : "border-border/60 hover:border-brand-500/60 hover:shadow-md",
       )}
     >
       {/* Image */}
-      <div className="relative aspect-square w-full bg-muted/30">
+      <div className="relative aspect-square w-full bg-linear-to-br from-brand-500/5 to-transparent">
         {item.imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -88,13 +88,8 @@ function ProductCardImpl({
 
         {/* Badges top-left */}
         <div className="absolute left-2 top-2 flex flex-col gap-1">
-          {item.promo && (
-            <Badge variant="default" className="bg-amber-500 text-xs text-white hover:bg-amber-500">
-              {t.badgePromo}
-            </Badge>
-          )}
           {isHidden && (
-            <Badge variant="outline" className="bg-white/80 text-xs">
+            <Badge variant="outline" className="bg-card/80 text-xs">
               {t.productHidden}
             </Badge>
           )}
@@ -157,12 +152,12 @@ function ProductCardImpl({
         {/* Meta chips */}
         <div className="flex flex-wrap gap-1.5 text-[11px]">
           {item.voltage && (
-            <span className="inline-flex items-center rounded-md bg-brand-50 px-1.5 py-0.5 font-medium text-brand-700">
+            <span className="inline-flex items-center rounded-md bg-brand-500/10 px-1.5 py-0.5 font-semibold text-brand-700 ring-1 ring-brand-500/20">
               {item.voltage}
             </span>
           )}
           {item.qtyPerBox !== null && (
-            <span className="inline-flex items-center rounded-md bg-slate-100 px-1.5 py-0.5 font-medium text-slate-700">
+            <span className="inline-flex items-center rounded-md bg-muted px-1.5 py-0.5 font-medium text-muted-foreground">
               {t.qtyPerBox}: {item.qtyPerBox}
             </span>
           )}
@@ -186,7 +181,7 @@ function ProductCardImpl({
             value={item.price}
             currency={currency}
             show={showPrices}
-            className="text-base text-brand-700"
+            className="text-base font-black text-brand-600"
           />
         </div>
       </div>

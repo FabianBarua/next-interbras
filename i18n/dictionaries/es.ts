@@ -512,6 +512,9 @@ const es = {
     dragToReorder: "Arrastrá para reordenar",
     noSections: "No hay secciones para mostrar",
     noSectionsHint: "Ajustá los filtros o agregá secciones personalizadas.",
+    manageSections: "Gestionar secciones",
+    manageSectionsDescription: "Reordená, ocultá o editá las secciones del catálogo.",
+    manageSectionsHint: "Usá “Gestionar secciones” arriba para reordenar, ocultar o agregar secciones personalizadas.",
     // Custom sections
     customSections: "Secciones personalizadas",
     newSection: "Nueva sección",

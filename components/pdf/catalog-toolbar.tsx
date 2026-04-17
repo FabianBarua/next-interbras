@@ -20,6 +20,7 @@ import {
   DeviceMobile,
   Eye,
   PencilSimple,
+  SlidersHorizontal,
 } from "@phosphor-icons/react"
 
 interface Props {
@@ -28,6 +29,7 @@ interface Props {
   mode: "edit" | "preview"
   onModeChange: (m: "edit" | "preview") => void
   onExportClick: () => void
+  onManageClick: () => void
   siteName: string
 }
 
@@ -37,6 +39,7 @@ export function CatalogToolbar({
   mode,
   onModeChange,
   onExportClick,
+  onManageClick,
   siteName,
 }: Props) {
   const { dict } = useDictionary()
@@ -98,6 +101,17 @@ export function CatalogToolbar({
           </ToggleGroupItem>
         </ToggleGroup>
 
+        {/* Manage sections */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onManageClick}
+          className="gap-1.5 border-brand-500/30 bg-brand-50 text-brand-700 hover:bg-brand-100 hover:text-brand-800"
+        >
+          <SlidersHorizontal className="h-3.5 w-3.5" />
+          {t.manageSections}
+        </Button>
+
         <div className="ml-auto flex flex-wrap items-center gap-3">
           {/* Show prices */}
           <div className="flex items-center gap-2 rounded-md border border-border/60 bg-card px-3 py-1.5">
@@ -142,7 +156,11 @@ export function CatalogToolbar({
           </Button>
 
           {/* Export */}
-          <Button size="sm" onClick={onExportClick}>
+          <Button
+            size="sm"
+            onClick={onExportClick}
+            className="bg-brand-500 text-white shadow-sm hover:bg-brand-600"
+          >
             <Download className="h-4 w-4" />
             {t.exportPdf}
           </Button>

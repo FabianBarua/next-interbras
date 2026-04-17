@@ -75,6 +75,11 @@ async function loadCatalogDataset(): Promise<CatalogDataset> {
       id: c.id,
       slug: c.slug,
       name: (c.name as Record<string, string>) ?? {},
+      description: (c.description as Record<string, string> | null) ?? null,
+      shortDescription: (c.shortDescription as Record<string, string> | null) ?? null,
+      svgIcon: c.svgIcon ?? null,
+      svgIconMeta:
+        (c.svgIconMeta as { library: string; name: string } | null) ?? null,
       sortOrder: c.sortOrder ?? 0,
     }))
     .sort((a, b) => a.sortOrder - b.sortOrder)

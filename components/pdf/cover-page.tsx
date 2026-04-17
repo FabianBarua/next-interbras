@@ -30,12 +30,12 @@ export const CoverPage = forwardRef<HTMLDivElement, Props>(function CoverPage(
     <div
       ref={ref}
       data-export-label="cover"
-      className="w-full rounded-2xl border border-border bg-white shadow-sm"
+      className="w-full rounded-2xl border border-border bg-card shadow-sm"
     >
       {/* Top bar */}
-      <div className="flex items-center justify-between rounded-t-2xl bg-brand-600 px-10 py-5">
-        <InterbrasLogo className="h-5 w-auto text-white" />
-        <span className="text-xs font-medium uppercase tracking-widest text-white/70">
+      <div className="flex items-center justify-between rounded-t-2xl bg-linear-to-r from-brand-500 to-brand-600 px-10 py-6">
+        <InterbrasLogo className="h-4 text-white dark:text-white" />
+        <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-white/90">
           {siteName} · {year}
         </span>
       </div>
@@ -47,47 +47,47 @@ export const CoverPage = forwardRef<HTMLDivElement, Props>(function CoverPage(
           <img
             src={cover}
             alt=""
-            className="h-64 w-full object-cover"
+            className="h-72 w-full object-cover"
           />
         ) : (
-          <div className="flex h-64 w-full items-center justify-center bg-linear-to-br from-brand-100 via-brand-200 to-brand-300">
-            <InterbrasLogo className="h-12 w-auto text-brand-500/40" />
+          <div className="flex h-72 w-full items-center justify-center bg-linear-to-br from-brand-500/10 via-brand-500/20 to-brand-500/30">
+            <InterbrasLogo className="h-16 w-auto text-brand-600/60" />
           </div>
         )}
         {/* Fade to white at bottom */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-linear-to-t from-card to-transparent" />
       </div>
 
       {/* Title block */}
-      <div className="px-10 pb-8 pt-5">
-        <div className="mb-2 flex items-center gap-2">
-          <span className="h-1 w-8 rounded-full bg-brand-500" />
+      <div className="px-10 pb-10 pt-6">
+        <div className="mb-3 flex items-center gap-2">
+          <span className="h-1 w-10 rounded-full bg-brand-500" />
           <span className="text-[11px] font-semibold uppercase tracking-widest text-brand-600">
             {locale === "pt" ? "Catálogo oficial" : "Catálogo oficial"}
           </span>
         </div>
-        <h1 className="text-4xl font-black leading-tight tracking-tight text-slate-900">
+        <h1 className="text-5xl font-black leading-[1.05] tracking-tight text-foreground">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-2 text-base text-slate-500">{subtitle}</p>
+          <p className="mt-3 text-lg text-muted-foreground">{subtitle}</p>
         )}
 
         {/* Stats row */}
         {(productCount !== undefined || categoryCount !== undefined) && (
-          <div className="mt-6 flex gap-8 border-t border-border/60 pt-5">
+          <div className="mt-8 flex gap-10 border-t border-border/60 pt-6">
             {productCount !== undefined && (
               <div>
-                <p className="text-3xl font-black text-brand-600">{productCount}</p>
-                <p className="mt-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+                <p className="text-4xl font-black text-brand-600">{productCount}</p>
+                <p className="mt-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
                   {locale === "pt" ? "Produtos" : "Productos"}
                 </p>
               </div>
             )}
             {categoryCount !== undefined && (
               <div>
-                <p className="text-3xl font-black text-slate-700">{categoryCount}</p>
-                <p className="mt-0.5 text-[11px] uppercase tracking-wide text-muted-foreground">
+                <p className="text-4xl font-black text-foreground">{categoryCount}</p>
+                <p className="mt-1 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
                   {locale === "pt" ? "Categorias" : "Categorías"}
                 </p>
               </div>

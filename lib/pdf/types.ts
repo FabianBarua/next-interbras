@@ -52,6 +52,14 @@ export interface CatalogCategory {
   id: string
   slug: string
   name: Record<string, string>
+  /** Long description (i18n). */
+  description: Record<string, string> | null
+  /** Short description (i18n). */
+  shortDescription: Record<string, string> | null
+  /** Raw SVG markup stored in DB. */
+  svgIcon: string | null
+  /** react-icons library + icon name used to render it. */
+  svgIconMeta: { library: string; name: string } | null
   sortOrder: number
 }
 
@@ -155,7 +163,14 @@ export interface RenderedSection {
   id: string
   kind: "category" | "custom"
   name: string
+  /** Category description for category sections. */
+  description: string | null
   color: string
+  /** Phosphor icon name (custom sections). */
   icon: string | null
+  /** Raw SVG markup (category sections). */
+  svgIcon: string | null
+  /** react-icons meta (category sections). */
+  svgIconMeta: { library: string; name: string } | null
   items: RenderedItem[]
 }

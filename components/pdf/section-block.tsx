@@ -1,17 +1,10 @@
 "use client"
 
-import { useSortable } from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
 import type { RenderedSection, CurrencyCode, RenderedItem } from "@/lib/pdf/types"
 import { getSectionColor } from "@/lib/pdf/constants"
 import { ProductGrid } from "./product-grid"
 import { Button } from "@/components/ui/button"
-import {
-  DotsSixVertical,
-  PencilSimple,
-  Plus,
-  EyeSlash,
-} from "@phosphor-icons/react"
+import { PencilSimple, Plus } from "@phosphor-icons/react"
 import { useDictionary } from "@/i18n/context"
 import { cn } from "@/lib/utils"
 import * as PhIcons from "@phosphor-icons/react"
@@ -31,15 +24,15 @@ interface Props {
   onToggleEntryHidden: (entryId: string) => void
   onEditItem: (item: RenderedItem) => void
   onResetOverride: (entryId: string) => void
-  onHideSection?: () => void
   onEditSection?: () => void
   onAddProducts?: () => void
-  /** Draggable via this id (only used for custom sections + categories). */
-  sortableId: string
-  /** Whether the section can be reordered. */
-  sortable: boolean
 }
 
+/**
+ * A single catalog section (category or custom) rendered as a card.
+ * Reordering and hiding are handled in the "Manage sections" dialog,
+ * so this component is no longer draggable and has no hide/drag UI.
+ */
 export function SectionBlock({
   section,
   currency,
@@ -51,84 +44,93 @@ export function SectionBlock({
   onToggleEntryHidden,
   onEditItem,
   onResetOverride,
-  onHideSection,
   onEditSection,
   onAddProducts,
-  sortableId,
-  sortable,
 }: Props) {
   const { dict } = useDictionary()
   const t = dict.catalog
   const color = getSectionColor(section.color)
+  const isCategory = section.kind === "category"
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: sortableId, disabled: !sortable || !editable })
-
-  const Icon = section.icon ? phIconMap[section.icon] : null
+  const PhosphorIcon = section.icon ? phIconMap[section.icon] : null
 
   return (
     <section
-      ref={setNodeRef}
       data-export-label={section.name}
-      className={cn(
-        "rounded-2xl border bg-card transition",
-        isDragging ? "z-50 shadow-lg ring-2 ring-primary/40" : "border-border/60",
-      )}
-      style={{
-        transform: CSS.Transform.toString(transform),
-        transition,
-      }}
+      className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-xs"
     >
       {/* Header */}
       <header
-        className="flex items-center gap-3 rounded-t-2xl border-b border-border/60 px-5 py-3"
-        style={{ backgroundColor: color.bg, color: color.fg }}
+        className={cn(
+          "flex items-start gap-3 px-5 py-4",
+          isCategory
+            ? "border-b border-brand-700/20 bg-linear-to-r from-brand-500 to-brand-600 text-white"
+            : "border-b",
+        )}
+        style={
+          !isCategory
+            ? { backgroundColor: color.bg, color: color.fg, borderColor: `${color.hex}33` }
+            : undefined
+        }
       >
-        {editable && sortable && (
-          <button
-            data-pdf-hide
-            type="button"
-            className="-ml-1 flex h-8 w-8 cursor-grab items-center justify-center rounded-md hover:bg-black/5 active:cursor-grabbing"
-            title={t.dragToReorder}
-            {...attributes}
-            {...listeners}
-          >
-            <DotsSixVertical className="h-4 w-4" />
-          </button>
-        )}
-
-        {Icon && (
+        {/* Icon slot */}
+        {isCategory && section.svgIcon ? (
           <span
-            className="flex h-8 w-8 items-center justify-center rounded-lg"
-            style={{ backgroundColor: color.hex, color: "#fff" }}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white [&_svg]:h-5 [&_svg]:w-5"
+            dangerouslySetInnerHTML={{ __html: section.svgIcon }}
+          />
+        ) : PhosphorIcon ? (
+          <span
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg"
+            style={
+              isCategory
+                ? undefined
+                : { backgroundColor: color.hex, color: "#fff" }
+            }
           >
-            <Icon className="h-4 w-4" weight="fill" />
+            <PhosphorIcon
+              className={cn("h-5 w-5", isCategory && "text-white")}
+              weight="fill"
+            />
           </span>
-        )}
+        ) : isCategory ? (
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white/15 text-base font-black text-white">
+            {section.name.charAt(0)}
+          </span>
+        ) : null}
 
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-base font-bold tracking-tight">
+          <h2 className="text-lg font-bold leading-tight tracking-tight">
             {section.name}
           </h2>
-          <p className="text-[11px] opacity-70">
+          {section.description && (
+            <p
+              className={cn(
+                "mt-0.5 line-clamp-2 text-[12px] leading-snug",
+                isCategory ? "text-white/85" : "opacity-75",
+              )}
+            >
+              {section.description}
+            </p>
+          )}
+          <p
+            className={cn(
+              "mt-1 text-[10px] font-semibold uppercase tracking-wider",
+              isCategory ? "text-white/70" : "opacity-70",
+            )}
+          >
             {section.items.length} {t.products}
           </p>
         </div>
 
-        {editable && (
+        {editable && !isCategory && (
           <div data-pdf-hide className="flex shrink-0 items-center gap-1">
             {onAddProducts && (
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="h-8 hover:bg-black/5"
+                className="h-8 hover:bg-black/10"
                 onClick={onAddProducts}
                 style={{ color: color.fg }}
               >
@@ -141,25 +143,12 @@ export function SectionBlock({
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 hover:bg-black/5"
+                className="h-8 w-8 hover:bg-black/10"
                 onClick={onEditSection}
                 style={{ color: color.fg }}
                 title={t.editSection}
               >
                 <PencilSimple className="h-3.5 w-3.5" />
-              </Button>
-            )}
-            {onHideSection && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 hover:bg-black/5"
-                onClick={onHideSection}
-                style={{ color: color.fg }}
-                title={t.hideSection}
-              >
-                <EyeSlash className="h-3.5 w-3.5" />
               </Button>
             )}
           </div>

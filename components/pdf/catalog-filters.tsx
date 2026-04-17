@@ -10,8 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Switch } from "@/components/ui/switch"
-import { Label } from "@/components/ui/label"
 import { MagnifyingGlass, X } from "@phosphor-icons/react"
 import type { CatalogCategory } from "@/lib/pdf/types"
 import { pickI18n } from "@/lib/pdf/helpers"
@@ -20,7 +18,6 @@ export interface CatalogFiltersState {
   search: string
   categoryId: string | null
   voltage: "all" | "110V" | "220V" | "Bivolt"
-  promoOnly: boolean
 }
 
 interface Props {
@@ -36,8 +33,7 @@ export function CatalogFilters({ value, onChange, categories }: Props) {
   const hasFilters =
     value.search.trim() !== "" ||
     value.categoryId !== null ||
-    value.voltage !== "all" ||
-    value.promoOnly
+    value.voltage !== "all"
 
   return (
     <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border/60 bg-card p-3 shadow-xs">
@@ -87,23 +83,12 @@ export function CatalogFilters({ value, onChange, categories }: Props) {
         </SelectContent>
       </Select>
 
-      <div className="flex items-center gap-2 rounded-md border border-border/60 bg-background px-3 py-1.5">
-        <Switch
-          id="promo-filter"
-          checked={value.promoOnly}
-          onCheckedChange={(v) => onChange({ ...value, promoOnly: v })}
-        />
-        <Label htmlFor="promo-filter" className="cursor-pointer text-sm">
-          {t.onlyPromo}
-        </Label>
-      </div>
-
       {hasFilters && (
         <Button
           variant="ghost"
           size="sm"
           onClick={() =>
-            onChange({ search: "", categoryId: null, voltage: "all", promoOnly: false })
+            onChange({ search: "", categoryId: null, voltage: "all" })
           }
         >
           <X className="h-4 w-4" />

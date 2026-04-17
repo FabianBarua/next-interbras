@@ -25,7 +25,6 @@ interface BuildArgs {
     search: string
     categoryId: string | null
     voltage: "all" | "110V" | "220V" | "Bivolt"
-    promoOnly: boolean
   }
   /** Whether hidden entries should be excluded from render. */
   excludeHidden: boolean
@@ -53,7 +52,6 @@ export function buildRenderedSections({
         return false
       }
     }
-    if (filters.promoOnly && !entry.promo) return false
     if (search) {
       const name = pickI18n(entry.name, locale).toLowerCase()
       const code = entry.code.toLowerCase()
@@ -142,8 +140,14 @@ export function buildRenderedSections({
       id: cat.id,
       kind: "category",
       name: pickI18n(cat.name, locale),
+      description:
+        (cat.shortDescription && pickI18n(cat.shortDescription, locale)) ||
+        (cat.description && pickI18n(cat.description, locale)) ||
+        null,
       color: "brand",
       icon: null,
+      svgIcon: cat.svgIcon ?? null,
+      svgIconMeta: cat.svgIconMeta ?? null,
       items,
     })
   }
@@ -164,8 +168,11 @@ export function buildRenderedSections({
         id: sec.id,
         kind: "custom" as const,
         name: sec.name,
+        description: null,
         color: getSectionColor(sec.color).key,
         icon: sec.icon,
+        svgIcon: null,
+        svgIconMeta: null,
         items: [...entryItems, ...manualItems],
       }
     })

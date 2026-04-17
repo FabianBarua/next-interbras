@@ -22,7 +22,7 @@ import { CustomSectionDialog } from "./custom-section-dialog"
 import { ManualProductDialog } from "./manual-product-dialog"
 import { PickProductsDialog } from "./pick-products-dialog"
 import { ExportDialog } from "./export-dialog"
-import { HiddenCategoriesPanel } from "./hidden-categories-panel"
+import { ManageSectionsDialog } from "./manage-sections-dialog"
 import { Button } from "@/components/ui/button"
 import { Plus } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
@@ -63,7 +63,6 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
     search: "",
     categoryId: null,
     voltage: "all",
-    promoOnly: false,
   })
   const [editingEntryId, setEditingEntryId] = useState<string | null>(null)
   const [manualDialog, setManualDialog] = useState<{
@@ -80,6 +79,7 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
     sectionId: string | null
   }>({ open: false, sectionId: null })
   const [exportOpen, setExportOpen] = useState(false)
+  const [manageOpen, setManageOpen] = useState(false)
 
   // ── Derived data ────────────────────────────────────────────────
   const sections = useMemo(
@@ -182,6 +182,7 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
         mode={mode}
         onModeChange={setMode}
         onExportClick={() => setExportOpen(true)}
+        onManageClick={() => setManageOpen(true)}
         siteName={siteName}
       />
 
@@ -239,12 +240,10 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
             </div>
           )}
 
-          {editable && (
-            <HiddenCategoriesPanel
-              categories={categories}
-              hiddenIds={hiddenCategoryIds}
-              language={language}
-            />
+          {editable && customSections.length === 0 && (
+            <p className="text-center text-xs text-muted-foreground">
+              {t.manageSectionsHint}
+            </p>
           )}
 
           <SectionList
@@ -263,7 +262,6 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
               setPickDialog({ open: true, sectionId })
             }
             onRegisterRef={registerSectionRef}
-            categoryOrder={categoryOrder}
           />
 
           {/* Manual product quick add (per custom section is inside the section toolbar) */}
@@ -339,6 +337,16 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
         }}
         onAfterExport={() => setMode("edit")}
         fileName={`${siteName.toLowerCase().replace(/\s+/g, "-")}-catalog`}
+      />
+
+      <ManageSectionsDialog
+        open={manageOpen}
+        onClose={() => setManageOpen(false)}
+        categories={categories}
+        onEditCustomSection={(sectionId) => {
+          setManageOpen(false)
+          setSectionDialog({ open: true, sectionId })
+        }}
       />
     </div>
   )
