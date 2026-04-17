@@ -57,7 +57,7 @@ export function ImageUpload({ value, onChange, max = 10, label = "Imágenes" }: 
       <div className="flex flex-wrap gap-2">
         {value.map((url, i) => (
           <div key={`${url}-${i}`} className="group relative w-20 h-20 rounded-lg border overflow-hidden bg-muted/30">
-            <Image src={url} alt="" fill className="object-contain p-1" />
+            <Image src={url} alt="" fill className="object-contain p-1" unoptimized />
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
               {i > 0 && (
                 <button type="button" onClick={() => move(i, i - 1)} className="text-white text-xs p-1 hover:bg-white/20 rounded">←</button>

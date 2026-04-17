@@ -1,4 +1,4 @@
-import type { Locale } from "./config"
+        import type { Locale } from "./config"
 import { defaultLocale } from "./config"
 
 /**
