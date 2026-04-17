@@ -13,19 +13,19 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { useDictionary } from "@/i18n/context"
 import { exportPdf, type ExportProgress } from "@/lib/pdf/export"
-import { Download, Check, CircleNotch } from "@phosphor-icons/react"
+import { Download, Check, CircleNotch, Desktop, DeviceMobile } from "@phosphor-icons/react"
+import { cn } from "@/lib/utils"
 import type { Dictionary } from "@/i18n/dictionaries/es"
+import type { Viewport } from "@/lib/pdf/types"
 
 type CatalogDict = Dictionary["catalog"]
 
 interface Props {
   open: boolean
   onClose: () => void
-  /** Returns the ordered list of capture targets (already in preview state). */
   getTargets: () => HTMLElement[]
-  /** Called before capture starts — use to switch to preview mode + viewport. */
-  onBeforeExport: () => Promise<void>
-  /** Called after download completes — use to restore edit mode. */
+  /** Called before capture — receives the chosen format so width can be forced. */
+  onBeforeExport: (format: Viewport) => Promise<void>
   onAfterExport: () => void
   fileName: string
 }
@@ -55,6 +55,7 @@ export function ExportDialog({
   const { dict } = useDictionary()
   const t = dict.catalog
 
+  const [format, setFormat] = useState<Viewport>("desktop")
   const [busy, setBusy] = useState(false)
   const [progress, setProgress] = useState<ExportProgress | null>(null)
 
@@ -62,8 +63,7 @@ export function ExportDialog({
     setBusy(true)
     setProgress({ index: 0, total: 1, stage: "capturing" })
 
-    // Switch to preview mode so edit controls disappear before capture
-    await onBeforeExport()
+    await onBeforeExport(format)
 
     const targets = getTargets()
     if (targets.length === 0) {
@@ -74,7 +74,7 @@ export function ExportDialog({
     try {
       await exportPdf({
         targets,
-        fileName,
+        fileName: `${fileName}-${format}`,
         pixelRatio: 2,
         onProgress: (p) => setProgress(p),
       })
@@ -107,7 +107,42 @@ export function ExportDialog({
           <DialogDescription>{t.exportDescription}</DialogDescription>
         </DialogHeader>
 
-        <div className="py-2">
+        <div className="space-y-4 py-2">
+          {/* Format picker */}
+          {!busy && (
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setFormat("desktop")}
+                className={cn(
+                  "flex flex-col items-center gap-2 rounded-xl border-2 px-4 py-4 text-sm font-medium transition",
+                  format === "desktop"
+                    ? "border-brand-500 bg-brand-500/10 text-brand-700"
+                    : "border-border bg-card text-muted-foreground hover:border-brand-500/40",
+                )}
+              >
+                <Desktop className="h-6 w-6" />
+                <span>{t.exportDesktop}</span>
+                <span className="text-[10px] font-normal text-muted-foreground">1050 px · 4 col</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormat("mobile")}
+                className={cn(
+                  "flex flex-col items-center gap-2 rounded-xl border-2 px-4 py-4 text-sm font-medium transition",
+                  format === "mobile"
+                    ? "border-brand-500 bg-brand-500/10 text-brand-700"
+                    : "border-border bg-card text-muted-foreground hover:border-brand-500/40",
+                )}
+              >
+                <DeviceMobile className="h-6 w-6" />
+                <span>{t.exportMobile}</span>
+                <span className="text-[10px] font-normal text-muted-foreground">430 px · 2 col</span>
+              </button>
+            </div>
+          )}
+
+          {/* Progress */}
           {busy && progress && (
             <div className="space-y-2">
               <Progress value={pct} />

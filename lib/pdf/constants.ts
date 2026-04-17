@@ -33,7 +33,7 @@ export const PDF_PAGE = {
 
 /** Viewport widths used for catalog preview + canvas capture, in px. */
 export const VIEWPORT_WIDTH: Record<Viewport, number> = {
-  desktop: 1100,
+  desktop: 1050,
   mobile: 430,
 }
 

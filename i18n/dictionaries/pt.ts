@@ -546,6 +546,8 @@ const pt: Dictionary = {
     exportTitle: "Exportar catálogo para PDF",
     exportDescription: "Cada seção será capturada e unida em um único PDF.",
     exportVariant: "Versão",
+    exportDesktop: "Desktop",
+    exportMobile: "Móvel",
     exportStart: "Gerar PDF",
     exportCapturing: "Capturando {current} de {total}…",
     exportRendering: "Processando {current} de {total}…",

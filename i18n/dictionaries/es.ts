@@ -555,6 +555,8 @@ const es = {
     exportTitle: "Exportar catálogo a PDF",
     exportDescription: "Se capturará cada sección y se unirán en un único PDF.",
     exportVariant: "Versión",
+    exportDesktop: "Escritorio",
+    exportMobile: "Móvil",
     exportStart: "Generar PDF",
     exportCapturing: "Capturando {current} de {total}…",
     exportRendering: "Procesando {current} de {total}…",

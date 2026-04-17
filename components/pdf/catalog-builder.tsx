@@ -158,6 +158,8 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
   // ── Refs for PDF export ─────────────────────────────────────────
   const coverRef = useRef<HTMLDivElement>(null)
   const sectionRefs = useRef<Map<string, HTMLElement>>(new Map())
+  /** Viewport that was active before export started, so we can restore it. */
+  const preExportViewport = useRef<Viewport>("desktop")
 
   const registerSectionRef = (id: string, el: HTMLElement | null) => {
     if (el) sectionRefs.current.set(id, el)
@@ -228,8 +230,8 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
             <CoverPage
               ref={coverRef}
               siteName={siteName}
-              productCount={entries.length}
-              categoryCount={categories.length}
+              productCount={sections.reduce((n, s) => n + s.items.length, 0)}
+              categoryCount={sections.length}
               sampleProducts={sampleProducts}
             />
           </div>
@@ -346,12 +348,19 @@ export function CatalogBuilder({ entries, categories, siteName }: Props) {
         open={exportOpen}
         onClose={() => setExportOpen(false)}
         getTargets={getExportTargets}
-        onBeforeExport={async () => {
+        onBeforeExport={async (format) => {
+          // Remember current viewport so we can restore it
+          preExportViewport.current = viewport
+          // Force the chosen format's viewport width for capture
+          setViewport(format)
           setMode("preview")
           // Wait for React + layout paint (cover transitions from display:none)
           await new Promise<void>((r) => setTimeout(r, 500))
         }}
-        onAfterExport={() => setMode("edit")}
+        onAfterExport={() => {
+          setMode("edit")
+          setViewport(preExportViewport.current)
+        }}
         fileName={`${siteName.toLowerCase().replace(/\s+/g, "-")}-catalog`}
       />
 
