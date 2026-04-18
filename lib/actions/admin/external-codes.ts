@@ -101,18 +101,19 @@ export async function searchVariantsBySkuAction(term: string) {
   await requireAdmin()
   if (!term || term.length < 1) return []
   const { db } = await import("@/lib/db")
-  const { variants, products } = await import("@/lib/db/schema")
+  const { variants, products, externalCodes } = await import("@/lib/db/schema")
   const { ilike, eq } = await import("drizzle-orm")
   const { escapeLike } = await import("@/lib/db/multi-search")
   const rows = await db
     .select({
       id: variants.id,
-      sku: variants.sku,
+      sku: externalCodes.code,
       productName: products.name,
     })
     .from(variants)
     .innerJoin(products, eq(variants.productId, products.id))
-    .where(ilike(variants.sku, `%${escapeLike(term)}%`))
+    .innerJoin(externalCodes, eq(externalCodes.variantId, variants.id))
+    .where(ilike(externalCodes.code, `%${escapeLike(term)}%`))
     .limit(20)
   return rows.map((r) => ({
     id: r.id,
@@ -186,12 +187,11 @@ export async function searchAvailableVariantsAction(term: string) {
   await requireAdmin()
   if (!term || term.trim().length < 1) return []
   const { db } = await import("@/lib/db")
-  const { variants, products, externalCodes } = await import("@/lib/db/schema")
-  const { eq, isNull, and, sql } = await import("drizzle-orm")
+  const { variants, products, externalCodes, attributes, attributeValues, variantAttributeValues } = await import("@/lib/db/schema")
+  const { eq, isNull, and, sql, inArray } = await import("drizzle-orm")
   const { multiSearch } = await import("@/lib/db/multi-search")
 
   const searchCond = multiSearch(term, [
-    variants.sku,
     sql`${products.name}->>'es'`,
     sql`${products.name}->>'pt'`,
   ])
@@ -200,9 +200,7 @@ export async function searchAvailableVariantsAction(term: string) {
   const rows = await db
     .select({
       id: variants.id,
-      sku: variants.sku,
       productName: products.name,
-      options: variants.options,
     })
     .from(variants)
     .innerJoin(products, eq(variants.productId, products.id))
@@ -210,11 +208,32 @@ export async function searchAvailableVariantsAction(term: string) {
     .where(and(searchCond, isNull(externalCodes.id)))
     .limit(20)
 
+  if (rows.length === 0) return []
+
+  const ids = rows.map((r) => r.id)
+  const attrRows = await db
+    .select({
+      variantId: variantAttributeValues.variantId,
+      attrSlug: attributes.slug,
+      valueSlug: attributeValues.slug,
+    })
+    .from(variantAttributeValues)
+    .innerJoin(attributes, eq(attributes.id, variantAttributeValues.attributeId))
+    .innerJoin(attributeValues, eq(attributeValues.id, variantAttributeValues.attributeValueId))
+    .where(inArray(variantAttributeValues.variantId, ids))
+
+  const optsByVariant = new Map<string, Record<string, string>>()
+  for (const a of attrRows) {
+    const obj = optsByVariant.get(a.variantId) ?? {}
+    obj[a.attrSlug] = a.valueSlug
+    optsByVariant.set(a.variantId, obj)
+  }
+
   return rows.map((r) => ({
     id: r.id,
-    sku: r.sku,
+    sku: "",
     productName: (r.productName as Record<string, string>)?.es ?? "",
-    options: r.options as Record<string, string>,
+    options: optsByVariant.get(r.id) ?? {},
   }))
 }
 

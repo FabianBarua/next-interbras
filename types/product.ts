@@ -28,9 +28,9 @@ export interface ProductImage {
 export interface Variant {
   id: string
   productId: string
-  sku: string
+  code: string
   name: I18nText | null
-  attributes: Record<string, any>
+  attributes: Record<string, string>
   stock: number | null
   images: ProductImage[]
   externalCode?: ExternalCode
@@ -45,7 +45,6 @@ export interface Product {
   specs: I18nSpecs | null
   review: I18nRichText | null
   included: I18nRichText | null
-  sortOrder: number
   active: boolean
   createdAt: string
   updatedAt: string

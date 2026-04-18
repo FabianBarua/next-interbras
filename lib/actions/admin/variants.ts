@@ -25,14 +25,13 @@ const externalCodeSchema = z.object({
   price1: z.string().max(20).optional(),
   price2: z.string().max(20).optional(),
   price3: z.string().max(20).optional(),
+  stock: z.number().int().min(0).nullable().optional(),
 }).optional()
 
 const createSchema = z.object({
   productId: z.string().uuid(),
-  sku: z.string().min(1).max(100),
-  options: z.record(z.string(), z.string()),
+  attributeValueIds: z.array(z.string().uuid()).max(20).default([]),
   unitsPerBox: z.number().int().min(1).nullable().optional(),
-  sortOrder: z.number().int().min(0).optional(),
   active: z.boolean().optional(),
   images: z.array(z.string().max(500)).max(20).optional(),
   externalCode: externalCodeSchema,
@@ -50,7 +49,7 @@ export async function createVariantAction(data: unknown) {
     return { id }
   } catch (err: any) {
     console.error("[createVariant]", err)
-    if (err?.code === "23505") return { error: "El SKU o código externo ya existe." }
+    if (err?.code === "23505") return { error: "El código externo ya existe." }
     return { error: "Error al crear variante: " + (err?.message ?? "desconocido") }
   }
 }
@@ -65,7 +64,7 @@ export async function updateVariantAction(id: string, productId: string, data: u
     logEvent({ category: "admin", action: "variant.update", entity: "variant", entityId: id, userId: session.id })
     return { success: true }
   } catch (err: any) {
-    if (err?.code === "23505") return { error: "El SKU o código externo ya existe." }
+    if (err?.code === "23505") return { error: "El código externo ya existe." }
     return { error: "Error al actualizar variante." }
   }
 }
@@ -111,7 +110,7 @@ export async function bulkCreateVariantsAction(data: unknown) {
     const ids = await bulkCreateVariants(parsed.data)
     return { ids }
   } catch (err: any) {
-    if (err?.code === "23505") return { error: "SKU o código externo duplicado." }
+    if (err?.code === "23505") return { error: "Código externo duplicado." }
     return { error: "Error al crear variantes." }
   }
 }

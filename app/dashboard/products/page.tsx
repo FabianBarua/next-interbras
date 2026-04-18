@@ -18,7 +18,7 @@ export default async function ProductsPage({
   const perPage = parsePerPage(str("perPage"))
   const search = str("search") || undefined
   const categoryId = str("categoryId") || undefined
-  const sortBy = str("sortBy") || "sortOrder"
+  const sortBy = str("sortBy") || "name"
   const sortDir = str("sortDir") || "asc"
 
   const [result, categories] = await Promise.all([

@@ -313,10 +313,7 @@ export const categories = pgTable("categories", {
 export const variants = pgTable("variants", {
 	id: uuid().defaultRandom().primaryKey().notNull(),
 	productId: uuid("product_id").notNull(),
-	sku: varchar({ length: 100 }).notNull(),
-	options: jsonb().notNull(),
 	unitsPerBox: integer("units_per_box"),
-	sortOrder: integer("sort_order").default(0).notNull(),
 	active: boolean().default(true).notNull(),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: 'string' }).defaultNow().notNull(),
@@ -327,7 +324,6 @@ export const variants = pgTable("variants", {
 			foreignColumns: [products.id],
 			name: "variants_product_id_products_id_fk"
 		}).onDelete("cascade"),
-	unique("variants_sku_unique").on(table.sku),
 ]);
 
 export const productImages = pgTable("product_images", {
@@ -462,6 +458,30 @@ export const attributeValues = pgTable("attribute_values", {
 			columns: [table.attributeId],
 			foreignColumns: [attributes.id],
 			name: "attribute_values_attribute_id_attributes_id_fk"
+		}).onDelete("cascade"),
+]);
+
+export const variantAttributeValues = pgTable("variant_attribute_values", {
+	variantId: uuid("variant_id").notNull(),
+	attributeId: uuid("attribute_id").notNull(),
+	attributeValueId: uuid("attribute_value_id").notNull(),
+}, (table) => [
+	primaryKey({ columns: [table.variantId, table.attributeValueId] }),
+	unique("variant_attribute_values_variant_id_attribute_id_unique").on(table.variantId, table.attributeId),
+	foreignKey({
+			columns: [table.variantId],
+			foreignColumns: [variants.id],
+			name: "variant_attribute_values_variant_id_variants_id_fk"
+		}).onDelete("cascade"),
+	foreignKey({
+			columns: [table.attributeId],
+			foreignColumns: [attributes.id],
+			name: "variant_attribute_values_attribute_id_attributes_id_fk"
+		}).onDelete("cascade"),
+	foreignKey({
+			columns: [table.attributeValueId],
+			foreignColumns: [attributeValues.id],
+			name: "variant_attribute_values_attribute_value_id_attribute_values_id_fk"
 		}).onDelete("cascade"),
 ]);
 

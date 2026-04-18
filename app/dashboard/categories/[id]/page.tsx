@@ -1,7 +1,7 @@
 import { requireAdmin } from "@/lib/auth/get-session"
 import { getCategoryByIdAdmin } from "@/services/admin/categories"
 import { notFound } from "next/navigation"
-import { CategoryEditForm } from "./client"
+import { CategoryForm } from "@/components/dashboard/forms/category-form"
 
 export default async function EditCategoryPage({
   params,
@@ -19,7 +19,7 @@ export default async function EditCategoryPage({
         <h1 className="text-xl font-bold">Editar categoría</h1>
         <p className="text-sm text-muted-foreground">{category.name.es || category.slug}</p>
       </div>
-      <CategoryEditForm category={category} />
+      <CategoryForm category={category} />
     </div>
   )
 }

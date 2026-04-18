@@ -1,5 +1,5 @@
 import { requireAdmin } from "@/lib/auth/get-session"
-import { CategoryForm } from "./client"
+import { CategoryForm } from "@/components/dashboard/forms/category-form"
 
 export default async function NewCategoryPage() {
   await requireAdmin()

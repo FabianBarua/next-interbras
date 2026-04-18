@@ -1,7 +1,7 @@
 import { requireAdmin } from "@/lib/auth/get-session"
 import { getExternalCodeByIdAdmin } from "@/services/admin/external-codes"
 import { notFound } from "next/navigation"
-import { ExternalCodeEditForm } from "./client"
+import { ExternalCodeForm } from "@/components/dashboard/forms/external-code-form"
 
 export default async function EditarCodigoExternoPage({
   params,
@@ -15,7 +15,7 @@ export default async function EditarCodigoExternoPage({
   return (
     <div>
       <h1 className="mb-6 text-xl font-bold">Editar código externo {ec.code}</h1>
-      <ExternalCodeEditForm ec={ec} />
+      <ExternalCodeForm ec={ec} />
     </div>
   )
 }

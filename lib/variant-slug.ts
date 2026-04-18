@@ -2,11 +2,10 @@ import type { Product, Variant } from "@/types/product"
 
 /**
  * Build a URL-friendly slug for a specific variant.
- * Format: {productSlug}-{sku}-{cecCode} (lowercased, sanitised)
+ * Format: {productSlug}-{cecCode} (lowercased, sanitised)
  */
 export function toVariantSlug(product: Product, variant?: Variant): string {
   const parts = [product.slug]
-  if (variant?.sku) parts.push(variant.sku)
   if (variant?.externalCode?.code) parts.push(variant.externalCode.code)
   return parts
     .join("-")

@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm/relations";
-import { users, sessions, passwordResetTokens, eventLogs, emailTemplates, emailLogs, promotions, categories, products, variants, externalCodes, orders, orderItems, productImages, addresses, wishlists, attributes, attributeValues, payments, orderPaymentDetails, adminAlerts, orderNotes, shippingMethods, shippingMethodCountries, countries, shippingPaymentRules, accounts, orderStatuses, orderFlows, orderFlowSteps } from "./schema";
+import { users, sessions, passwordResetTokens, eventLogs, emailTemplates, emailLogs, promotions, categories, products, variants, externalCodes, orders, orderItems, productImages, addresses, wishlists, attributes, attributeValues, variantAttributeValues, payments, orderPaymentDetails, adminAlerts, orderNotes, shippingMethods, shippingMethodCountries, countries, shippingPaymentRules, accounts, orderStatuses, orderFlows, orderFlowSteps } from "./schema";
 
 export const sessionsRelations = relations(sessions, ({one}) => ({
 	user: one(users, {
@@ -78,6 +78,22 @@ export const variantsRelations = relations(variants, ({one, many}) => ({
 	}),
 	productImages: many(productImages),
 	wishlists: many(wishlists),
+	variantAttributeValues: many(variantAttributeValues),
+}));
+
+export const variantAttributeValuesRelations = relations(variantAttributeValues, ({one}) => ({
+	variant: one(variants, {
+		fields: [variantAttributeValues.variantId],
+		references: [variants.id]
+	}),
+	attribute: one(attributes, {
+		fields: [variantAttributeValues.attributeId],
+		references: [attributes.id]
+	}),
+	attributeValue: one(attributeValues, {
+		fields: [variantAttributeValues.attributeValueId],
+		references: [attributeValues.id]
+	}),
 }));
 
 export const orderItemsRelations = relations(orderItems, ({one}) => ({

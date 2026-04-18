@@ -13,7 +13,7 @@ function matchesQuery(entry: VariantEntry, q: string, locale: Locale): boolean {
   const normalized = normalize(q)
   const productName = entry.product.name?.[locale] || entry.product.name?.es || ""
   const categoryName = entry.product.category?.name?.[locale] || entry.product.category?.name?.es || ""
-  const sku = entry.variant?.sku || ""
+  const sku = entry.variant?.code || ""
 
   return (
     normalize(productName).includes(normalized) ||

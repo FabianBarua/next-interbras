@@ -44,7 +44,6 @@ export async function GET(req: NextRequest) {
       productName: products.name,
       productSlug: products.slug,
       categorySlug: categories.slug,
-      sku: variants.sku,
       ecCode: externalCodes.code,
       priceUsd: externalCodes.priceUsd,
     })
@@ -57,7 +56,7 @@ export async function GET(req: NextRequest) {
         sql`${products.name}->>'es' ILIKE ${pattern}`,
         sql`${products.name}->>'pt' ILIKE ${pattern}`,
         sql`${categories.name}->>'es' ILIKE ${pattern}`,
-        sql`${variants.sku} ILIKE ${pattern}`,
+        sql`${externalCodes.code} ILIKE ${pattern}`,
       )
     )
     .limit(MAX_RESULTS)
@@ -83,7 +82,6 @@ export async function GET(req: NextRequest) {
   const results = rows.map(row => {
     const name = (row.productName as Record<string, string>)?.es ?? row.productSlug
     const slugParts = [row.productSlug]
-    if (row.sku) slugParts.push(row.sku)
     if (row.ecCode) slugParts.push(row.ecCode)
     const slug = slugParts
       .join("-")
@@ -99,7 +97,7 @@ export async function GET(req: NextRequest) {
       categorySlug: row.categorySlug ?? "other",
       image: imgMap.get(row.variantId) ?? null,
       price: row.priceUsd ? Number(row.priceUsd) : null,
-      sku: row.sku,
+      sku: row.ecCode,
     }
   })
 

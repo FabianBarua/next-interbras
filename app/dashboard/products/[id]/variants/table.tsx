@@ -16,7 +16,7 @@ import { PER_PAGE_OPTIONS } from "@/hooks/use-table-params"
 import { DataTable, type Column } from "@/components/dashboard/data-table"
 import { bulkDelete, bulkActivate, bulkDeactivate } from "@/components/dashboard/bulk-bar"
 
-type SortKey = "sku" | "unitsPerBox" | "stock" | "active" | "sortOrder"
+type SortKey = "code" | "unitsPerBox" | "stock" | "active" | "sortOrder"
 
 export function VariantsTable({
   productId,
@@ -48,11 +48,10 @@ export function VariantsTable({
   const sorted = useMemo(() => {
     return [...initialVariants].sort((a, b) => {
       let cmp = 0
-      if (sortBy === "sku") cmp = a.sku.localeCompare(b.sku)
+      if (sortBy === "code") cmp = (a.externalCode?.code ?? "").localeCompare(b.externalCode?.code ?? "")
       else if (sortBy === "unitsPerBox") cmp = (a.unitsPerBox ?? 0) - (b.unitsPerBox ?? 0)
       else if (sortBy === "stock") cmp = (a.externalCode?.stock ?? -1) - (b.externalCode?.stock ?? -1)
       else if (sortBy === "active") cmp = Number(a.active) - Number(b.active)
-      else if (sortBy === "sortOrder") cmp = a.sortOrder - b.sortOrder
       return sortDir === "asc" ? cmp : -cmp
     })
   }, [initialVariants, sortBy, sortDir])
@@ -87,21 +86,21 @@ export function VariantsTable({
         ),
     },
     {
-      key: "sku",
-      header: "SKU",
+      key: "code",
+      header: "Código (SKU)",
       sortable: true,
       className: "font-mono text-xs",
-      cell: (v) => <>{v.sku}</>,
+      cell: (v) => <>{v.externalCode?.code ?? "—"}</>,
     },
     {
-      key: "options",
-      header: "Opciones",
+      key: "attributes",
+      header: "Atributos",
       className: "text-xs text-muted-foreground",
       cell: (v) => (
         <>
-          {Object.entries(v.options).map(([k, val]) => (
-            <span key={k} className="inline-block mr-2">
-              {k}: <strong>{val}</strong>
+          {v.attributeValues.map((av) => (
+            <span key={av.valueId} className="inline-block mr-2">
+              {av.attributeName.es ?? av.attributeSlug}: <strong>{av.valueName.es ?? av.valueSlug}</strong>
             </span>
           ))}
         </>
@@ -141,14 +140,6 @@ export function VariantsTable({
           />
         </button>
       ),
-    },
-    {
-      key: "sortOrder",
-      header: "Orden",
-      sortable: true,
-      align: "center" as const,
-      className: "text-xs text-muted-foreground",
-      cell: (v) => <>{v.sortOrder}</>,
     },
   ]
 

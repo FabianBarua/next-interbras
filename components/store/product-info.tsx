@@ -87,10 +87,10 @@ export function ProductInfo({ product, initialVariantId, categorySlug, onVariant
           {product.category?.name?.[locale] || product.category?.name?.es}
         </Badge>
         <h1 className="font-heading text-2xl lg:text-3xl font-semibold tracking-tight leading-tight">{name}</h1>
-        {v?.sku && (
+        {v?.code && (
           <div className="flex items-center gap-2 mt-2">
             <span className="text-xs text-muted-foreground">
-              SKU: {v.sku}
+              SKU: {v.code}
               {cecCode && <span className="ml-2">· CEC: {cecCode}</span>}
             </span>
             <TooltipProvider>

@@ -12,8 +12,11 @@ import {
   products,
   productImages,
   categories,
+  attributes,
+  attributeValues,
+  variantAttributeValues,
 } from "@/lib/db/schema"
-import { and, asc, eq, inArray } from "drizzle-orm"
+import { and, asc, eq, inArray, sql } from "drizzle-orm"
 import { cachedQuery } from "@/lib/cache"
 import type { CatalogCategory, CatalogEntry } from "./types"
 import { normalizeVoltageFilter } from "./helpers"
@@ -35,7 +38,7 @@ async function loadCatalogDataset(): Promise<CatalogDataset> {
     .innerJoin(variants, eq(externalCodes.variantId, variants.id))
     .innerJoin(products, eq(variants.productId, products.id))
     .where(and(eq(products.active, true), eq(variants.active, true)))
-    .orderBy(asc(products.sortOrder), asc(variants.sortOrder))
+    .orderBy(sql`${products.name}->>'es' ASC`, asc(variants.createdAt))
 
   if (rows.length === 0) return { entries: [], categories: [] }
 
@@ -70,6 +73,26 @@ async function loadCatalogDataset(): Promise<CatalogDataset> {
     ? await db.select().from(categories).where(inArray(categories.id, categoryIds))
     : []
 
+  // 3b. Attributes per variant (slug -> slug)
+  const attrRows = variantIds.length
+    ? await db
+        .select({
+          variantId: variantAttributeValues.variantId,
+          attrSlug: attributes.slug,
+          valueSlug: attributeValues.slug,
+        })
+        .from(variantAttributeValues)
+        .innerJoin(attributes, eq(attributes.id, variantAttributeValues.attributeId))
+        .innerJoin(attributeValues, eq(attributeValues.id, variantAttributeValues.attributeValueId))
+        .where(inArray(variantAttributeValues.variantId, variantIds))
+    : []
+  const attrsByVariant = new Map<string, Record<string, string>>()
+  for (const a of attrRows) {
+    const obj = attrsByVariant.get(a.variantId) ?? {}
+    obj[a.attrSlug] = a.valueSlug
+    attrsByVariant.set(a.variantId, obj)
+  }
+
   const catMap: CatalogCategory[] = catRows
     .map(c => ({
       id: c.id,
@@ -86,19 +109,14 @@ async function loadCatalogDataset(): Promise<CatalogDataset> {
 
   // 4. Build flat CatalogEntry list
   const entries: CatalogEntry[] = rows.map(({ ec, v, p }) => {
-    const attrs = (v.options ?? {}) as Record<string, unknown>
-    const normalizedAttrs: Record<string, string> = {}
-    for (const [k, val] of Object.entries(attrs)) {
-      if (val === null || val === undefined) continue
-      normalizedAttrs[k] = typeof val === "string" ? val : String(val)
-    }
+    const normalizedAttrs = attrsByVariant.get(v.id) ?? {}
 
-    const rawVoltage = typeof attrs.voltage === "string" ? attrs.voltage : null
+    const rawVoltage = typeof normalizedAttrs.voltage === "string" ? normalizedAttrs.voltage : null
     const voltage = normalizeVoltageFilter(rawVoltage) ?? rawVoltage
 
     const qtyPerBox = v.unitsPerBox ?? null
 
-    const promo = attrs.promo === true || attrs.promo === "true"
+    const promo = false
 
     return {
       id: ec.id,
@@ -109,7 +127,7 @@ async function loadCatalogDataset(): Promise<CatalogDataset> {
       categoryId: p.categoryId ?? null,
       name: (p.name as Record<string, string>) ?? {},
       imageUrl: mainImageByVariant.get(v.id) ?? null,
-      sku: v.sku,
+      sku: ec.code,
       attributes: normalizedAttrs,
       specs: (p.specs as CatalogEntry["specs"]) ?? null,
       voltage: voltage ?? null,
@@ -122,7 +140,6 @@ async function loadCatalogDataset(): Promise<CatalogDataset> {
       price3: ec.price3 ? Number(ec.price3) : null,
       promo,
       stock: ec.stock ?? null,
-      sortOrder: v.sortOrder ?? 0,
     }
   })
 

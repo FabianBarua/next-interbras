@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { products, categories, productImages } from "@/lib/db/schema"
+import { products, categories, productImages, variants, externalCodes, attributeValues, variantAttributeValues } from "@/lib/db/schema"
 import { eq, asc, desc, inArray, count, ilike, or, sql, and } from "drizzle-orm"
 import { invalidateCache } from "@/lib/cache"
 import { escapeLike } from "@/lib/db/multi-search"
@@ -15,7 +15,6 @@ export interface AdminProduct {
   specs: I18nSpecs | null
   review: I18nRichText | null
   included: I18nRichText | null
-  sortOrder: number
   active: boolean
   imageUrl: string | null
   variantCount: number
@@ -52,11 +51,10 @@ export async function searchProductsAdmin(opts?: {
   const where = conditions.length > 0 ? and(...conditions) : undefined
 
   const orderCol =
-    opts?.sortBy === "name" ? sql`${products.name}->>'es'`
-    : opts?.sortBy === "slug" ? products.slug
+    opts?.sortBy === "slug" ? products.slug
     : opts?.sortBy === "active" ? products.active
     : opts?.sortBy === "createdAt" ? products.createdAt
-    : products.sortOrder
+    : sql`${products.name}->>'es'`
   const dir = opts?.sortDir === "desc" ? sql`DESC` : sql`ASC`
 
   const [rows, [{ total: totalCount }]] = await Promise.all([
@@ -75,7 +73,6 @@ export async function searchProductsAdmin(opts?: {
     return { items: [], total: Number(totalCount), page, totalPages: Math.ceil(Number(totalCount) / limit) }
 
   const productIds = rows.map((r) => r.p.id)
-  const { variants } = await import("@/lib/db/schema")
 
   const [imgRows, vcRows] = await Promise.all([
     db
@@ -108,7 +105,6 @@ export async function searchProductsAdmin(opts?: {
       specs: (p.specs as I18nSpecs) ?? null,
       review: (p.review as I18nRichText) ?? null,
       included: (p.included as I18nRichText) ?? null,
-      sortOrder: p.sortOrder,
       active: p.active,
       imageUrl: firstImg.get(p.id) ?? null,
       variantCount: variantCounts.get(p.id) ?? 0,
@@ -128,7 +124,7 @@ export async function getAllProductsAdmin(): Promise<AdminProduct[]> {
   })
     .from(products)
     .leftJoin(categories, eq(products.categoryId, categories.id))
-    .orderBy(asc(products.sortOrder))
+    .orderBy(sql`${products.name}->>'es' ASC`)
 
   if (rows.length === 0) return []
 
@@ -145,7 +141,6 @@ export async function getAllProductsAdmin(): Promise<AdminProduct[]> {
   }
 
   // Get variant counts
-  const { variants } = await import("@/lib/db/schema")
   const vcRows = await db.select({
     productId: variants.productId,
     count: count(),
@@ -166,7 +161,6 @@ export async function getAllProductsAdmin(): Promise<AdminProduct[]> {
     specs: (p.specs as I18nSpecs) ?? null,
     review: (p.review as I18nRichText) ?? null,
     included: (p.included as I18nRichText) ?? null,
-    sortOrder: p.sortOrder,
     active: p.active,
     imageUrl: firstImg.get(p.id) ?? null,
     variantCount: variantCounts.get(p.id) ?? 0,
@@ -189,7 +183,6 @@ export async function getProductByIdAdmin(id: string) {
     specs: (p.specs as I18nSpecs) ?? null,
     review: (p.review as I18nRichText) ?? null,
     included: (p.included as I18nRichText) ?? null,
-    sortOrder: p.sortOrder,
     active: p.active,
   }
 }
@@ -202,7 +195,6 @@ export interface CreateProductInput {
   specs?: I18nSpecs
   review?: I18nRichText
   included?: I18nRichText
-  sortOrder?: number
   active?: boolean
 }
 
@@ -215,7 +207,6 @@ export async function createProduct(input: CreateProductInput): Promise<string> 
     specs: input.specs,
     review: input.review,
     included: input.included,
-    sortOrder: input.sortOrder ?? 0,
     active: input.active ?? true,
   }).returning({ id: products.id })
 
@@ -245,4 +236,119 @@ export async function bulkDeleteProducts(ids: string[]): Promise<number> {
 export async function bulkUpdateProductsActive(ids: string[], active: boolean): Promise<void> {
   await db.update(products).set({ active }).where(inArray(products.id, ids))
   await invalidateCache("products:*", "variants:*")
+}
+
+/* ─────────── Quick Create: product + variants + ECs in one transaction ─────────── */
+
+export interface QuickCreateVariantInput {
+  attributeValueIds: string[]
+  unitsPerBox?: number | null
+  code: string
+  system?: string
+  externalName?: string
+  stock?: number | null
+  priceUsd?: string
+  priceGs?: string
+  priceBrl?: string
+  price1?: string
+  price2?: string
+  price3?: string
+  images?: string[]
+}
+
+export interface QuickCreateInput {
+  product: CreateProductInput
+  variants: QuickCreateVariantInput[]
+}
+
+export async function quickCreateProductWithVariants(input: QuickCreateInput): Promise<string> {
+  if (input.variants.length === 0) {
+    throw new Error("Debe crear al menos una variante.")
+  }
+
+  // Pre-validate attribute values exist & build attribute_id map (outside tx)
+  const allValueIds = Array.from(new Set(input.variants.flatMap(v => v.attributeValueIds)))
+  const valRows = allValueIds.length > 0
+    ? await db
+        .select({ id: attributeValues.id, attributeId: attributeValues.attributeId })
+        .from(attributeValues)
+        .where(inArray(attributeValues.id, allValueIds))
+    : []
+  if (valRows.length !== allValueIds.length) {
+    throw new Error("Algún attribute_value_id no existe.")
+  }
+  const valToAttr = new Map(valRows.map(r => [r.id, r.attributeId]))
+
+  // Validate per-variant: no duplicate attribute
+  for (const v of input.variants) {
+    const seen = new Set<string>()
+    for (const vid of v.attributeValueIds) {
+      const attrId = valToAttr.get(vid)!
+      if (seen.has(attrId)) {
+        throw new Error("Una variante no puede tener dos valores del mismo atributo.")
+      }
+      seen.add(attrId)
+    }
+  }
+
+  const productId = await db.transaction(async (tx) => {
+    const [p] = await tx.insert(products).values({
+      categoryId: input.product.categoryId,
+      slug: input.product.slug,
+      name: input.product.name,
+      description: input.product.description,
+      specs: input.product.specs,
+      review: input.product.review,
+      included: input.product.included,
+      active: input.product.active ?? true,
+    }).returning({ id: products.id })
+
+    for (const v of input.variants) {
+      const [vRow] = await tx.insert(variants).values({
+        productId: p.id,
+        unitsPerBox: v.unitsPerBox ?? null,
+        active: true,
+      }).returning({ id: variants.id })
+
+      if (v.attributeValueIds.length > 0) {
+        await tx.insert(variantAttributeValues).values(
+          v.attributeValueIds.map(vid => ({
+            variantId: vRow.id,
+            attributeId: valToAttr.get(vid)!,
+            attributeValueId: vid,
+          }))
+        )
+      }
+
+      await tx.insert(externalCodes).values({
+        variantId: vRow.id,
+        system: v.system ?? "cec",
+        code: v.code,
+        externalName: v.externalName,
+        stock: v.stock ?? null,
+        priceUsd: v.priceUsd,
+        priceGs: v.priceGs,
+        priceBrl: v.priceBrl,
+        price1: v.price1,
+        price2: v.price2,
+        price3: v.price3,
+      })
+
+      if (v.images?.length) {
+        await tx.insert(productImages).values(
+          v.images.map((url, i) => ({
+            productId: p.id,
+            variantId: vRow.id,
+            url,
+            sortOrder: i,
+          }))
+        )
+      }
+    }
+
+    return p.id
+  })
+
+  await invalidateCache("products:*", "variants:*", "categories:*")
+  return productId
 }

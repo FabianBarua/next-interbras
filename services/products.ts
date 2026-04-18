@@ -1,5 +1,5 @@
 import { db } from "@/lib/db"
-import { products, categories, variants, productImages, externalCodes } from "@/lib/db/schema"
+import { products, categories, variants, productImages, externalCodes, attributes, attributeValues, variantAttributeValues } from "@/lib/db/schema"
 import { eq, and, desc, asc, ne, sql, inArray } from "drizzle-orm"
 import { cachedQuery, invalidateCache } from "@/lib/cache"
 import { toVariantSlug } from "@/lib/variant-slug"
@@ -24,7 +24,7 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
     .from(products)
     .leftJoin(categories, eq(products.categoryId, categories.id))
     .where(where ? and(eq(products.active, true), where) : eq(products.active, true))
-    .orderBy(asc(products.sortOrder))
+    .orderBy(sql`${products.name}->>'es' ASC`)
 
   if (rows.length === 0) return []
 
@@ -41,8 +41,32 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
     }).from(variants)
       .leftJoin(externalCodes, eq(variants.id, externalCodes.variantId))
       .where(inArray(variants.productId, productIds))
-      .orderBy(asc(variants.sortOrder)),
+      .orderBy(asc(variants.createdAt)),
   ])
+
+  // Load attribute-value pairs for all variants in this batch
+  const variantIdsAll = varRows.map(r => r.v.id)
+  const attrRows = variantIdsAll.length
+    ? await db
+        .select({
+          variantId: variantAttributeValues.variantId,
+          attrSlug: attributes.slug,
+          attrName: attributes.name,
+          valueSlug: attributeValues.slug,
+          valueName: attributeValues.name,
+        })
+        .from(variantAttributeValues)
+        .innerJoin(attributes, eq(attributes.id, variantAttributeValues.attributeId))
+        .innerJoin(attributeValues, eq(attributeValues.id, variantAttributeValues.attributeValueId))
+        .where(inArray(variantAttributeValues.variantId, variantIdsAll))
+    : []
+
+  const attrsByVariant = new Map<string, Record<string, string>>()
+  for (const a of attrRows) {
+    const obj = attrsByVariant.get(a.variantId) ?? {}
+    obj[a.attrSlug] = a.valueSlug
+    attrsByVariant.set(a.variantId, obj)
+  }
 
   // ---- Build FrontendImage objects ----
   const allImages: FrontendImage[] = imgRows.map(img => ({
@@ -71,12 +95,12 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
     if (!v.active) continue
     if (!ec) continue // CEC required for visibility
 
-    const attrs = (v.options ?? {}) as Record<string, any>
+    const attrs = attrsByVariant.get(v.id) ?? {}
 
     const mapped: Variant = {
       id: v.id,
       productId: v.productId,
-      sku: v.sku,
+      code: ec.code,
       name: null,
       attributes: attrs,
       stock: ec.stock ?? null,
@@ -126,7 +150,6 @@ async function loadProductRows(where?: ReturnType<typeof eq>) {
       specs: p.specs ?? null,
       review: p.review ?? null,
       included: p.included ?? null,
-      sortOrder: p.sortOrder,
       active: p.active,
       createdAt: p.createdAt.toISOString(),
       updatedAt: p.updatedAt.toISOString(),

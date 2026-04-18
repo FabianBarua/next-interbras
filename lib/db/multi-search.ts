@@ -10,7 +10,7 @@ export function escapeLike(value: string): string {
  * the provided columns (ILIKE, case-insensitive).
  *
  * Example:
- *   multiSearch("n9 triciclo 8", [variants.sku, productNameEs])
+ *   multiSearch("n9 triciclo 8", [externalCodes.code, productNameEs])
  *
  * Produces:
  *   (sku ILIKE '%n9%' OR name ILIKE '%n9%')

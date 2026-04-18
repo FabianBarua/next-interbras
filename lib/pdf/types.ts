@@ -28,7 +28,7 @@ export interface CatalogEntry {
   imageUrl: string | null
   /** Variant SKU */
   sku: string
-  /** Attributes key/value (from variant.options) */
+  /** Attributes key/value (from variant_attribute_values) */
   attributes: Record<string, string>
   /** Specs from product.specs (i18n) */
   specs: Record<string, Array<{ label: string; value: string }>> | null
@@ -47,8 +47,6 @@ export interface CatalogEntry {
   promo: boolean
   /** Stock */
   stock: number | null
-  /** Sort order within category */
-  sortOrder: number
 }
 
 export interface CatalogCategory {

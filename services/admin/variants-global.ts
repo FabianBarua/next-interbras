@@ -1,8 +1,29 @@
 import { db } from "@/lib/db"
-import { variants, products, categories, externalCodes, productImages } from "@/lib/db/schema"
+import { variants, products, categories, externalCodes, productImages, attributes, attributeValues, variantAttributeValues } from "@/lib/db/schema"
 import { eq, asc, desc, inArray, ilike, or, sql, count } from "drizzle-orm"
 import { escapeLike } from "@/lib/db/multi-search"
 import type { I18nText } from "@/types/common"
+
+async function loadOptsByVariants(variantIds: string[]): Promise<Map<string, Record<string, string>>> {
+  const map = new Map<string, Record<string, string>>()
+  if (variantIds.length === 0) return map
+  const rows = await db
+    .select({
+      variantId: variantAttributeValues.variantId,
+      attrSlug: attributes.slug,
+      valueSlug: attributeValues.slug,
+    })
+    .from(variantAttributeValues)
+    .innerJoin(attributes, eq(attributes.id, variantAttributeValues.attributeId))
+    .innerJoin(attributeValues, eq(attributeValues.id, variantAttributeValues.attributeValueId))
+    .where(inArray(variantAttributeValues.variantId, variantIds))
+  for (const r of rows) {
+    const obj = map.get(r.variantId) ?? {}
+    obj[r.attrSlug] = r.valueSlug
+    map.set(r.variantId, obj)
+  }
+  return map
+}
 
 export interface AdminVariantGlobal {
   id: string
@@ -13,7 +34,6 @@ export interface AdminVariantGlobal {
   sku: string
   options: Record<string, string>
   unitsPerBox: number | null
-  sortOrder: number
   active: boolean
   imageUrl: string | null
   priceUsd: string | null
@@ -35,7 +55,7 @@ export async function getAllVariantsGlobal(opts?: { search?: string; categoryId?
     .from(variants)
     .innerJoin(products, eq(variants.productId, products.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
-    .orderBy(asc(products.slug), asc(variants.sortOrder))
+    .orderBy(asc(products.slug), asc(variants.createdAt))
     .$dynamic()
 
   if (opts?.categoryId) {
@@ -61,12 +81,15 @@ export async function getAllVariantsGlobal(opts?: { search?: string; categoryId?
   const ecRows = await db.select().from(externalCodes)
     .where(inArray(externalCodes.variantId, variantIds))
 
-  const priceMap = new Map<string, { priceUsd: string | null; priceGs: string | null; priceBrl: string | null; price1: string | null; price2: string | null; price3: string | null }>()
+  const priceMap = new Map<string, { code: string; priceUsd: string | null; priceGs: string | null; priceBrl: string | null; price1: string | null; price2: string | null; price3: string | null }>()
   for (const ec of ecRows) {
     if (ec.variantId && !priceMap.has(ec.variantId)) {
-      priceMap.set(ec.variantId, { priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl, price1: ec.price1, price2: ec.price2, price3: ec.price3 })
+      priceMap.set(ec.variantId, { code: ec.code, priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl, price1: ec.price1, price2: ec.price2, price3: ec.price3 })
     }
   }
+
+  // Batch load attribute values per variant
+  const optsMap = await loadOptsByVariants(variantIds)
 
   let result = rows.map(({ v, productName, productSlug, categoryName }) => {
     const prices = priceMap.get(v.id)
@@ -76,10 +99,9 @@ export async function getAllVariantsGlobal(opts?: { search?: string; categoryId?
       productName: productName as I18nText,
       productSlug,
       categoryName: categoryName as I18nText | null,
-      sku: v.sku,
-      options: v.options,
+      sku: prices?.code ?? "",
+      options: optsMap.get(v.id) ?? {},
       unitsPerBox: v.unitsPerBox,
-      sortOrder: v.sortOrder,
       active: v.active,
       imageUrl: imgMap.get(v.id) ?? null,
       priceUsd: prices?.priceUsd ?? null,
@@ -129,7 +151,7 @@ export async function searchVariantsGlobal({
     const term = `%${escapeLike(search)}%`
     conditions.push(
       or(
-        ilike(variants.sku, term),
+        ilike(externalCodes.code, term),
         sql`${products.name}->>'es' ILIKE ${term}`,
         ilike(products.slug, term),
       )!,
@@ -145,16 +167,18 @@ export async function searchVariantsGlobal({
     .from(variants)
     .innerJoin(products, eq(variants.productId, products.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
+    .leftJoin(externalCodes, eq(externalCodes.variantId, variants.id))
 
   const countQuery = db
     .select({ total: count() })
     .from(variants)
     .innerJoin(products, eq(variants.productId, products.id))
     .leftJoin(categories, eq(products.categoryId, categories.id))
+    .leftJoin(externalCodes, eq(externalCodes.variantId, variants.id))
 
   const dirFn = sortOrder === "desc" ? desc : asc
   const orderCols: Record<string, ReturnType<typeof asc>> = {
-    sku: dirFn(variants.sku),
+    sku: dirFn(externalCodes.code),
     product: dirFn(products.slug),
     category: dirFn(sql`${categories.name}->>'es'`),
     active: dirFn(variants.active),
@@ -162,7 +186,7 @@ export async function searchVariantsGlobal({
   const orderBy = orderCols[sortBy] ?? asc(products.slug)
 
   const [rows, [{ total: totalCount }]] = await Promise.all([
-    baseQuery.where(where).orderBy(orderBy, asc(variants.sortOrder)).limit(limit).offset((page - 1) * limit),
+    baseQuery.where(where).orderBy(orderBy, asc(variants.createdAt)).limit(limit).offset((page - 1) * limit),
     countQuery.where(where),
   ])
 
@@ -180,12 +204,14 @@ export async function searchVariantsGlobal({
     if (img.variantId && !imgMap.has(img.variantId)) imgMap.set(img.variantId, img.url)
   }
 
-  const priceMap = new Map<string, { priceUsd: string | null; priceGs: string | null; priceBrl: string | null; price1: string | null; price2: string | null; price3: string | null }>()
+  const priceMap = new Map<string, { code: string; priceUsd: string | null; priceGs: string | null; priceBrl: string | null; price1: string | null; price2: string | null; price3: string | null }>()
   for (const ec of ecRows) {
     if (ec.variantId && !priceMap.has(ec.variantId)) {
-      priceMap.set(ec.variantId, { priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl, price1: ec.price1, price2: ec.price2, price3: ec.price3 })
+      priceMap.set(ec.variantId, { code: ec.code, priceUsd: ec.priceUsd, priceGs: ec.priceGs, priceBrl: ec.priceBrl, price1: ec.price1, price2: ec.price2, price3: ec.price3 })
     }
   }
+
+  const optsMap = await loadOptsByVariants(variantIds)
 
   const items = rows.map(({ v, productName, productSlug, categoryName }) => {
     const prices = priceMap.get(v.id)
@@ -195,10 +221,9 @@ export async function searchVariantsGlobal({
       productName: productName as I18nText,
       productSlug,
       categoryName: categoryName as I18nText | null,
-      sku: v.sku,
-      options: v.options,
+      sku: prices?.code ?? "",
+      options: optsMap.get(v.id) ?? {},
       unitsPerBox: v.unitsPerBox,
-      sortOrder: v.sortOrder,
       active: v.active,
       imageUrl: imgMap.get(v.id) ?? null,
       priceUsd: prices?.priceUsd ?? null,

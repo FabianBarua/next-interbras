@@ -7,7 +7,6 @@ import {
   decimal,
   timestamp,
   uniqueIndex,
-  index,
 } from "drizzle-orm/pg-core"
 import { variants } from "./variants"
 
@@ -30,5 +29,4 @@ export const externalCodes = pgTable("external_codes", {
 }, (t) => [
   uniqueIndex("external_codes_system_code_idx").on(t.system, t.code),
   uniqueIndex("external_codes_variant_id_unique").on(t.variantId),
-  index("external_codes_variant_id_idx").on(t.variantId),
 ])

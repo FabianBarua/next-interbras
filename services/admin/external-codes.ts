@@ -30,7 +30,6 @@ export interface AdminExternalCode {
 export async function getAllExternalCodesAdmin(opts?: { search?: string; system?: string }): Promise<AdminExternalCode[]> {
   let query = db.select({
     ec: externalCodes,
-    variantSku: variants.sku,
     productId: products.id,
     productName: products.name,
     productSlug: products.slug,
@@ -49,7 +48,7 @@ export async function getAllExternalCodesAdmin(opts?: { search?: string; system?
 
   const rows = await query
 
-  let result = rows.map(({ ec, variantSku, productId, productName, productSlug, categoryName }) => ({
+  let result = rows.map(({ ec, productId, productName, productSlug, categoryName }) => ({
     id: ec.id,
     system: ec.system,
     code: ec.code,
@@ -62,7 +61,7 @@ export async function getAllExternalCodesAdmin(opts?: { search?: string; system?
     price3: ec.price3,
     stock: ec.stock,
     variantId: ec.variantId,
-    variantSku: variantSku ?? null,
+    variantSku: ec.variantId ? ec.code : null,
     productId: productId ?? null,
     productName: (productName as I18nText) ?? null,
     productSlug: productSlug ?? null,
@@ -75,7 +74,6 @@ export async function getAllExternalCodesAdmin(opts?: { search?: string; system?
     const s = opts.search.toLowerCase()
     result = result.filter(r =>
       r.code.toLowerCase().includes(s) ||
-      r.variantSku?.toLowerCase().includes(s) ||
       (r.externalName?.toLowerCase().includes(s)) ||
       (r.productName?.es?.toLowerCase().includes(s)) ||
       r.productSlug?.toLowerCase().includes(s)
@@ -88,7 +86,6 @@ export async function getAllExternalCodesAdmin(opts?: { search?: string; system?
 export async function getExternalCodeByIdAdmin(id: string): Promise<AdminExternalCode | null> {
   const rows = await db.select({
     ec: externalCodes,
-    variantSku: variants.sku,
     productId: products.id,
     productName: products.name,
     productSlug: products.slug,
@@ -102,7 +99,7 @@ export async function getExternalCodeByIdAdmin(id: string): Promise<AdminExterna
     .limit(1)
 
   if (rows.length === 0) return null
-  const { ec, variantSku, productId, productName, productSlug, categoryName } = rows[0]
+  const { ec, productId, productName, productSlug, categoryName } = rows[0]
   return {
     id: ec.id,
     system: ec.system,
@@ -116,7 +113,7 @@ export async function getExternalCodeByIdAdmin(id: string): Promise<AdminExterna
     price3: ec.price3,
     stock: ec.stock,
     variantId: ec.variantId,
-    variantSku: variantSku ?? null,
+    variantSku: ec.variantId ? ec.code : null,
     productId: productId ?? null,
     productName: (productName as I18nText) ?? null,
     productSlug: productSlug ?? null,
@@ -223,7 +220,6 @@ export async function searchExternalCodes({
     conditions.push(
       or(
         ilike(externalCodes.code, term),
-        ilike(variants.sku, term),
         sql`${products.name}->>'es' ILIKE ${term}`,
         ilike(externalCodes.externalName, term),
       )!,
@@ -236,7 +232,6 @@ export async function searchExternalCodes({
 
   const baseQuery = db.select({
     ec: externalCodes,
-    variantSku: variants.sku,
     productId: products.id,
     productName: products.name,
     productSlug: products.slug,
@@ -272,7 +267,7 @@ export async function searchExternalCodes({
   ])
 
   return {
-    items: rows.map(({ ec, variantSku, productId, productName, productSlug, categoryName }) => ({
+    items: rows.map(({ ec, productId, productName, productSlug, categoryName }) => ({
       id: ec.id,
       system: ec.system,
       code: ec.code,
@@ -285,7 +280,7 @@ export async function searchExternalCodes({
       price3: ec.price3,
       stock: ec.stock,
       variantId: ec.variantId,
-      variantSku: variantSku ?? null,
+      variantSku: ec.variantId ? ec.code : null,
       productId: productId ?? null,
       productName: (productName as I18nText) ?? null,
       productSlug: productSlug ?? null,

@@ -281,7 +281,7 @@ export async function createOrder(input: CreateOrderInput): Promise<string> {
   const variantMap = new Map<string, { sku: string; price: number; productName: any; stock: number | null }>()
   for (const row of variantRows) {
     variantMap.set(row.v.id, {
-      sku: row.v.sku,
+      sku: row.ec?.code ?? "",
       price: row.ec?.priceUsd ? Number(row.ec.priceUsd) : 0,
       productName: row.pName,
       stock: row.ec?.stock ?? null,

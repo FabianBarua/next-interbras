@@ -32,7 +32,7 @@ export function ProductsTable({ items, categories, total, totalPages, perPage: d
   const search = useSearch()
 
   const { sortBy, sortDir, setSort, page, setPage, perPage, setPerPage } = useTableParams({
-    sortBy: "sortOrder",
+    sortBy: "name",
     sortDir: "asc",
     perPage: defaultPerPage,
   })
@@ -90,14 +90,6 @@ export function ProductsTable({ items, categories, total, totalPages, perPage: d
       header: "Categoría",
       className: "text-xs text-muted-foreground",
       cell: (item) => <>{item.categoryName?.es ?? "—"}</>,
-    },
-    {
-      key: "sortOrder",
-      header: "Orden",
-      sortable: true,
-      align: "center" as const,
-      className: "tabular-nums",
-      cell: (item) => <>{item.sortOrder}</>,
     },
     {
       key: "active",

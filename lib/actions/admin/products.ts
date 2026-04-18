@@ -8,6 +8,7 @@ import {
   deleteProduct,
   bulkDeleteProducts,
   bulkUpdateProductsActive,
+  quickCreateProductWithVariants,
 } from "@/services/admin/products"
 import { logEvent } from "@/lib/logging"
 
@@ -30,7 +31,6 @@ const createSchema = z.object({
   specs: i18nSpecsSchema,
   review: i18nTextSchema.optional(),
   included: i18nTextSchema.optional(),
-  sortOrder: z.number().int().min(0).optional(),
   active: z.boolean().optional(),
 })
 
@@ -95,4 +95,53 @@ export async function bulkToggleProductsAction(ids: unknown, active: boolean) {
   await bulkUpdateProductsActive(parsed.data, active)
   logEvent({ category: "admin", action: "product.bulk_toggle", entity: "product", userId: session.id, meta: { count: parsed.data.length, active } })
   return { success: true }
+}
+
+const quickVariantSchema = z.object({
+  attributeValueIds: z.array(z.string().uuid()),
+  unitsPerBox: z.number().int().positive().nullable().optional(),
+  code: z.string().min(1).max(150),
+  system: z.string().min(1).max(50).optional(),
+  externalName: z.string().max(255).optional(),
+  stock: z.number().int().nonnegative().nullable().optional(),
+  priceUsd: z.string().optional(),
+  priceGs: z.string().optional(),
+  priceBrl: z.string().optional(),
+  price1: z.string().optional(),
+  price2: z.string().optional(),
+  price3: z.string().optional(),
+  images: z.array(z.string().max(500)).max(20).optional(),
+})
+
+const quickCreateSchema = z.object({
+  product: createSchema,
+  variants: z.array(quickVariantSchema).min(1).max(500),
+})
+
+export async function quickCreateProductWithVariantsAction(data: unknown) {
+  const session = await requireAdmin()
+  const parsed = quickCreateSchema.safeParse(data)
+  if (!parsed.success) {
+    return { error: "Datos inválidos: " + parsed.error.issues.map(i => `${i.path.join(".")}: ${i.message}`).join(", ") }
+  }
+  try {
+    const id = await quickCreateProductWithVariants(parsed.data)
+    logEvent({
+      category: "admin",
+      action: "product.quick_create",
+      entity: "product",
+      entityId: id,
+      userId: session.id,
+      meta: { variantCount: parsed.data.variants.length },
+    })
+    return { id }
+  } catch (err: any) {
+    if (err?.code === "23505") {
+      const detail = String(err?.detail ?? err?.message ?? "")
+      if (detail.includes("slug")) return { error: "El slug del producto ya existe." }
+      if (detail.includes("code")) return { error: "Uno de los códigos externos ya existe en otro producto." }
+      return { error: "Conflicto de unicidad: " + detail }
+    }
+    return { error: err?.message ?? "Error al crear producto con variantes." }
+  }
 }

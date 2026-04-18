@@ -14,6 +14,7 @@ export * from "./products"
 export * from "./variants"
 export * from "./product-images"
 export * from "./attributes"
+export * from "./variant-attribute-values"
 
 // external systems & pricing
 export * from "./external-codes"
