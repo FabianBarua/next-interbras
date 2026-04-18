@@ -118,7 +118,7 @@ export function ExternalCodesTable({
       cell: (ec) =>
         ec.productId && ec.variantSku ? (
           <Link
-            href={`/dashboard/products/${ec.productId}/variants`}
+            href={`/dashboard/products/${ec.productId}/variants/${ec.variantId}`}
             className="font-mono text-xs text-primary hover:underline"
           >
             {ec.variantSku}
