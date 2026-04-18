@@ -26,13 +26,13 @@ import {
   TextField,
 } from "./primitives"
 import {
-  AttributeValuePicker,
   emptyExternalCode,
   ExternalCodeFields,
   externalCodeFieldsToPayload,
   type AttrDef,
   type ExternalCodeFieldsValue,
 } from "./attribute-pickers"
+import { AttributeAssignment } from "./attribute-assignment"
 
 /**
  * VariantEditor — single component used for:
@@ -181,7 +181,7 @@ export function VariantEditor({
 
       {/* Attributes */}
       <Field label="Atributos (opcionales)">
-        <AttributeValuePicker
+        <AttributeAssignment
           attributeDefs={attributeDefs}
           value={attributeValueIds}
           onChange={setAttributeValueIds}

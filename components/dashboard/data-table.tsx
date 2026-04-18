@@ -137,10 +137,11 @@ export function DataTable<T>({
       resizingRef.current = { key, startX: e.clientX, startW }
 
       const onMove = (ev: MouseEvent) => {
-        if (!resizingRef.current) return
-        const diff = ev.clientX - resizingRef.current.startX
-        const newW = Math.max(50, resizingRef.current.startW + diff)
-        setColWidths((prev) => ({ ...prev, [resizingRef.current!.key]: newW }))
+        const resizing = resizingRef.current
+        if (!resizing) return
+        const diff = ev.clientX - resizing.startX
+        const newW = Math.max(50, resizing.startW + diff)
+        setColWidths((prev) => ({ ...prev, [resizing.key]: newW }))
       }
       const onUp = () => {
         resizingRef.current = null

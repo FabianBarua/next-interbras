@@ -9,6 +9,7 @@ import { I18nInput } from "@/components/dashboard/i18n-input"
 import { ImageUpload } from "@/components/dashboard/image-upload"
 import { Breadcrumbs } from "@/components/dashboard/breadcrumbs"
 import { PageHeader } from "@/components/dashboard/page-header"
+import { AttributeAssignment } from "@/components/dashboard/form/attribute-assignment"
 
 type AttrDef = {
   id: string
@@ -445,14 +446,6 @@ function VariantCard({
     return labels.join(" · ")
   }, [variant.attributeValueIds, attributeDefs])
 
-  const setAttrValue = (attrId: string, valueId: string) => {
-    const others = variant.attributeValueIds.filter(
-      (id) => !attributeDefs.find((a) => a.id === attrId)?.values.some((v) => v.id === id)
-    )
-    const next = valueId ? [...others, valueId] : others
-    onChange({ attributeValueIds: next })
-  }
-
   return (
     <div className="rounded-2xl border bg-card overflow-hidden">
       {/* Header */}
@@ -527,33 +520,11 @@ function VariantCard({
             <label className="text-xs font-medium text-muted-foreground">
               Atributos <span className="text-muted-foreground/60">(opcionales)</span>
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-              {attributeDefs.map((attr) => {
-                const sel =
-                  variant.attributeValueIds.find((id) =>
-                    attr.values.some((v) => v.id === id)
-                  ) ?? ""
-                return (
-                  <div key={attr.id} className="flex items-center gap-2">
-                    <label className="text-[11px] text-muted-foreground w-20 shrink-0 truncate">
-                      {attr.name.es ?? attr.slug}
-                    </label>
-                    <select
-                      value={sel}
-                      onChange={(e) => setAttrValue(attr.id, e.target.value)}
-                      className={smallInputCls + " flex-1"}
-                    >
-                      <option value="">—</option>
-                      {attr.values.map((v) => (
-                        <option key={v.id} value={v.id}>
-                          {v.name.es ?? v.slug}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )
-              })}
-            </div>
+            <AttributeAssignment
+              attributeDefs={attributeDefs}
+              value={variant.attributeValueIds}
+              onChange={(ids) => onChange({ attributeValueIds: ids })}
+            />
           </div>
         )}
 

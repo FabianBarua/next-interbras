@@ -112,8 +112,9 @@ export function ProductsTable({ items, categories, total, totalPages, perPage: d
       align: "center" as const,
       cell: (item) => (
         <Link
-          href={`/dashboard/products/${item.id}/variants`}
+          href={`/dashboard/variants?productId=${item.id}`}
           className="text-primary hover:underline font-medium"
+          title="Ver variantes en /dashboard/variants"
         >
           {item.variantCount}
         </Link>
@@ -175,7 +176,7 @@ export function ProductsTable({ items, categories, total, totalPages, perPage: d
               <Pencil className="size-3.5" />
             </Link>
             <Link
-              href={`/dashboard/products/${item.id}/variants`}
+              href={`/dashboard/variants?productId=${item.id}`}
               title="Variantes"
               className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
             >

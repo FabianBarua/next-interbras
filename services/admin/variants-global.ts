@@ -132,6 +132,7 @@ export async function searchVariantsGlobal({
   limit = 50,
   search,
   categoryId,
+  productId,
   sortBy = "product",
   sortOrder = "asc",
 }: {
@@ -139,11 +140,15 @@ export async function searchVariantsGlobal({
   limit?: number
   search?: string
   categoryId?: string
+  productId?: string
   sortBy?: string
   sortOrder?: string
 }): Promise<{ items: AdminVariantGlobal[]; total: number; page: number; totalPages: number }> {
   const conditions: ReturnType<typeof eq>[] = []
 
+  if (productId) {
+    conditions.push(eq(variants.productId, productId))
+  }
   if (categoryId) {
     conditions.push(eq(products.categoryId, categoryId))
   }

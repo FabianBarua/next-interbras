@@ -17,6 +17,7 @@ import { useTableParams } from "@/hooks/use-table-params"
 import { useSearch } from "@/hooks/use-search"
 import { DataTable, type Column } from "@/components/dashboard/data-table"
 import { bulkDelete, bulkActivate, bulkDeactivate } from "@/components/dashboard/bulk-bar"
+import { ProductPicker, type ProductPickerItem } from "@/components/dashboard/product-picker"
 
 const fmtAmount = (v: string | number | null) =>
   v ? Number(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "—"
@@ -28,9 +29,10 @@ interface Props {
   totalPages: number
   perPage: number
   categories: Category[]
+  initialProductItem?: ProductPickerItem | null
 }
 
-export function VariantsTable({ variants, total, totalPages, perPage: defaultPerPage, categories }: Props) {
+export function VariantsTable({ variants, total, totalPages, perPage: defaultPerPage, categories, initialProductItem }: Props) {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -44,6 +46,16 @@ export function VariantsTable({ variants, total, totalPages, perPage: defaultPer
     const params = new URLSearchParams(searchParams.toString())
     if (val) params.set("categoryId", val)
     else params.delete("categoryId")
+    params.delete("page")
+    startTransition(() => router.push(`${pathname}?${params.toString()}`))
+  }
+
+  // Product filter
+  const productId = searchParams.get("productId")
+  const setProductFilter = (val: string | null) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (val) params.set("productId", val)
+    else params.delete("productId")
     params.delete("page")
     startTransition(() => router.push(`${pathname}?${params.toString()}`))
   }
@@ -173,12 +185,20 @@ export function VariantsTable({ variants, total, totalPages, perPage: defaultPer
               </option>
             ))}
           </select>
+          <ProductPicker
+            value={productId}
+            onChange={(id) => setProductFilter(id)}
+            initialItem={initialProductItem ?? null}
+            placeholder="Filtrar producto…"
+            clearable
+            buttonClassName="w-56"
+          />
         </>
       }
       renderActions={(v) => (
         <div className="flex items-center justify-end gap-1">
           <Link
-            href={`/dashboard/products/${v.productId}/variants/${v.id}`}
+            href={`/dashboard/variants/${v.id}`}
             title="Editar"
             className="inline-flex h-7 w-7 items-center justify-center rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
           >

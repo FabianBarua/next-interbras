@@ -145,3 +145,49 @@ export async function quickCreateProductWithVariantsAction(data: unknown) {
     return { error: err?.message ?? "Error al crear producto con variantes." }
   }
 }
+
+
+export async function searchProductsForPickerAction(term: string) {
+  await requireAdmin()
+  const s = term.trim().slice(0, 100)
+  if (s.length < 1) return { items: [] as { id: string; slug: string; name: string }[] }
+  const { db } = await import("@/lib/db")
+  const { products } = await import("@/lib/db/schema")
+  const { ilike, or, sql } = await import("drizzle-orm")
+  const { escapeLike } = await import("@/lib/db/multi-search")
+  const term2 = `%${escapeLike(s)}%`
+  const rows = await db
+    .select({ id: products.id, slug: products.slug, name: products.name })
+    .from(products)
+    .where(
+      or(
+        ilike(products.slug, term2),
+        sql`${products.name}->>'es' ILIKE ${term2}`,
+        sql`${products.name}->>'pt' ILIKE ${term2}`,
+      )!,
+    )
+    .limit(20)
+  return {
+    items: rows.map((r) => ({
+      id: r.id,
+      slug: r.slug,
+      name: ((r.name as Record<string, string>)?.es) ?? ((r.name as Record<string, string>)?.pt) ?? r.slug,
+    })),
+  }
+}
+
+export async function getProductLabelAction(id: string) {
+  await requireAdmin()
+  if (!uuidSchema.safeParse(id).success) return null
+  const { db } = await import("@/lib/db")
+  const { products } = await import("@/lib/db/schema")
+  const { eq } = await import("drizzle-orm")
+  const rows = await db.select({ id: products.id, slug: products.slug, name: products.name }).from(products).where(eq(products.id, id)).limit(1)
+  if (rows.length === 0) return null
+  const r = rows[0]
+  return {
+    id: r.id,
+    slug: r.slug,
+    name: ((r.name as Record<string, string>)?.es) ?? ((r.name as Record<string, string>)?.pt) ?? r.slug,
+  }
+}
